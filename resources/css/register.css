@@ -1,0 +1,11 @@
+/* Custom styles for gender radio buttons */
+.gender-group {
+    display: flex;
+    align-items: center;
+    gap: 1rem; /* Adjust gap as needed */
+    margin-top: 0.5rem;
+}
+
+.gender-group .form-check {
+    margin-bottom: 0; /* Remove bottom margin */
+}

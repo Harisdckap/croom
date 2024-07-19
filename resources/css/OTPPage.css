@@ -1,0 +1,31 @@
+/* OTPPage.css */
+.otp-container {
+    background-color: #f8f9fa;
+  }
+  
+  .otp-image-container {
+    background-color: #007bff;
+  }
+  
+  .otp-logo {
+    max-width: 80%;
+    border-radius: 15px;
+  }
+  
+  .otp-form-container {
+    max-width: 400px;
+    width: 100%;
+    padding: 2rem;
+    border-radius: 15px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .otp-form-container h1 {
+    color: #007bff;
+  }
+  
+  .otp-form-container .btn {
+    width: 100%;
+  }
+  

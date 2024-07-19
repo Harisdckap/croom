@@ -1,0 +1,18 @@
+/* Navbar.css */
+.navbar {
+    height: 60px; /* Adjust height as needed */
+  }
+  
+  .navbar img {
+    max-height: 50px; /* Adjust logo size */
+  }
+  
+  .navbar .btn {
+    font-size: 0.875rem; /* Smaller font size for buttons */
+    padding: 0.25rem 0.5rem; /* Adjust padding for buttons */
+  }
+  
+  .dropdown-menu {
+    min-width: 150px; /* Adjust dropdown width if needed */
+  }
+  
