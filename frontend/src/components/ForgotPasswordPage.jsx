@@ -63,6 +63,7 @@ function ForgotPasswordPage() {
                                         className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                                     />
                                 </div>
+
                                 {/* Submit Button */}
                                 <button
                                     type="submit"
@@ -71,6 +72,7 @@ function ForgotPasswordPage() {
                                     Send Reset Link
                                 </button>
                             </form>
+                            
                             {/* Message Display */}
                             {message && (
                                 <p className="mt-4 text-green-600">{message}</p>
