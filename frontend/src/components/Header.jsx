@@ -39,6 +39,8 @@ const Header = () => {
             <FaHeart className="mr-1" />
             Favorites
           </div>
+          <div>
+          </div>
           <div className="relative">
             {isLoggedIn ? (
               <>
