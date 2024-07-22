@@ -6,8 +6,9 @@ import RegisterPage from './components/RegisterPage';
 import OTPPage from './components/OTPPage';
 import ForgetPasswordPage from './components/ForgotPasswordPage';
 import ResetPasswordPage from './components/ResetPasswordPage';
-import RentListing from './components/RentPageComponent/ListingDetails';
+import ListingPage from './components/RentPageComponent/ListingPage'
 import PrivateRoute from './components/PrivateRoute';
+import AddHouse from './components/RentPageComponent/addListingForm';
 
 function App() {
     return (
@@ -19,7 +20,8 @@ function App() {
                 <Route path="/verifyotp" element={<OTPPage />} />
                 <Route path="/forgot-password" element={<ForgetPasswordPage />} />
                 <Route path="/password/reset" element={<ResetPasswordPage />} />
-                <Route path="/rentlisting" element={<PrivateRoute><RentListing /></PrivateRoute>} />
+                <Route path="/rentlisting" element={<PrivateRoute><ListingPage /></PrivateRoute>} />
+                <Route path="/addHouse" element={<AddHouse />} />
             </Routes>
         </Router>
     );

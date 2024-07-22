@@ -21,6 +21,10 @@ const Home = () => {
             <Link to="/rentlisting" className="bg-blue-500 text-white px-8 py-3 rounded-full text-lg font-semibold shadow-md hover:bg-blue-600 transition duration-300">
               Explore Listings
             </Link>
+            <Link to="/addHouse" className="bg-blue-500 text-white px-8 py-3 rounded-full text-lg font-semibold shadow-md hover:bg-blue-600 transition duration-300">
+             Add House
+            </Link>
+
           </div>
         </section>
         <section className="py-12 bg-gray-100">

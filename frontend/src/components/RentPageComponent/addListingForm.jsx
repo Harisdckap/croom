@@ -17,7 +17,7 @@ const AddRoomForm = ({ showModal, setShowModal }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.post('/api/listings', formData)
+    axios.post('http://127.0.0.1:8000/api/listings', formData)
       .then(response => {
         console.log('Room added successfully:', response.data);
         // Optionally reset the form and close the modal
