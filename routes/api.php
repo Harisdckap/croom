@@ -22,5 +22,15 @@ Route::post('/verify-otp', [OTPVerificationController::class, 'verifyOtp']);
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
 Route::post('reset-password', [ResetPasswordController::class, 'reset']);
 Route::get('/password/reset/', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset');
+
+
+
+Route::get('/listings', [ListingController::class, 'index']);
+Route::get('/listings/{id}', [ListingController::class, 'show']);
+Route::post('/listings', [ListingController::class, 'store']);
+Route::put('/listings/{id}', [ListingController::class, 'update']);
+Route::delete('/listings/{id}', [ListingController::class, 'destroy']);
+
 Route::post('/listings', [ListingController::class, 'store']);
 Route::get('/properties', [PropertyController::class, 'index']);
+Route::get('/properties/{id}', [PropertyController::class, 'show']);

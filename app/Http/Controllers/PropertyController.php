@@ -23,4 +23,15 @@ class PropertyController extends Controller
 
         return response()->json($listings);
     }
+
+    public function show($id)
+{
+    $property = Listing::find($id);
+
+    if ($property) {
+        return response()->json($property);
+    } else {
+        return response()->json(['message' => 'Property not found'], 404);
+    }
+}
 }

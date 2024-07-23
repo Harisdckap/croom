@@ -57,6 +57,9 @@ const Header = () => {
                     <a href="#" className="block px-4 py-2">Logout</a>
                   </div>
                 )}
+                 <Link to="/addlistingForm" className="text-blue-500 hover:underline">
+                 Add listing
+                </Link>
               </>
             ) : (
               <div className="flex space-x-4">
@@ -66,6 +69,8 @@ const Header = () => {
                 <Link to="/login" className="text-blue-500 hover:underline">
                   Login
                 </Link>
+               
+
               </div>
             )}
           </div>
