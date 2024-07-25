@@ -1,13 +1,23 @@
 import React, { useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import "../Add_RoommateForm/Rommate.css";
 
 export const RoommateForm = () => {
   const [lookingFor, setLookingFor] = useState('Any');
   const [roomType, setRoomType] = useState('Single');
   const [selectedHighlights, setSelectedHighlights] = useState([]);
+  const [location, setLocation] = useState('');
+  const [rent, setRent] = useState('');
+  const [postContent, setPostContent] = useState('');
+  const [files, setFiles] = useState([]);
 
   const handleFileClick = () => {
     document.getElementById('fileInput').click();
+  };
+
+  const handleFileChange = (e) => {
+    setFiles(e.target.files);
   };
 
   const buttonLabels = [
@@ -28,7 +38,7 @@ export const RoommateForm = () => {
   const Amenities = [
     'TV',
     'Fridge',
-    'kichen',
+    'Kitchen',
     'Wifi',
     'Machine',
     'AC',
@@ -37,11 +47,44 @@ export const RoommateForm = () => {
     'Parking'
   ];
 
-
   const toggleHighlight = (label) => {
     setSelectedHighlights((prev) =>
       prev.includes(label) ? prev.filter((item) => item !== label) : [...prev, label]
     );
+  };
+
+  const showToastMessage = (message) => {
+    toast.error(message, { position: "top-center" });
+  };
+
+  const validateInputs = () => {
+    if (!location) {
+      showToastMessage("Location is required");
+      return false;
+    }
+
+    if (!rent || isNaN(rent)) {
+      showToastMessage("Valid rent amount is required");
+      return false;
+    }
+
+    if (!postContent) {
+      showToastMessage("Post content is required");
+      return false;
+    }
+
+    if (files.length < 3) {
+      showToastMessage("Please upload at least 3 photos of your room");
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = () => {
+    if (validateInputs()) {
+      toast.success("Form submitted successfully", { position: "top-center" });
+    }
   };
 
   return (
@@ -55,6 +98,8 @@ export const RoommateForm = () => {
           <div>
             <label className="block text-sm font-medium text-gray-700">Add Your Location</label>
             <input
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
               type="text"
               className="mt-1 block px-2 py-3 border w-96 border-gray-300 rounded-md shadow-sm sm:text-sm"
             />
@@ -81,6 +126,8 @@ export const RoommateForm = () => {
             <div>
               <label className="block text-sm font-medium text-gray-700">Approx Rent</label>
               <input
+                value={rent}
+                onChange={(e) => setRent(e.target.value)}
                 type="text"
                 className="mt-1 block px-2 py-3 border w-96 border-gray-300 rounded-md shadow-sm sm:text-sm"
               />
@@ -113,6 +160,7 @@ export const RoommateForm = () => {
             multiple
             type="file"
             autoComplete="off"
+            onChange={handleFileChange}
             style={{ display: 'none' }}
           />
           <div className="w-full h-full grid place-content-center p-3">
@@ -160,27 +208,29 @@ export const RoommateForm = () => {
           ))}
         </div>
 
-
         <div className="mt-8">
-        <label className="block text-sm font-medium text-gray-700">
-          Write your post:
-          <textarea
-            rows={4}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          ></textarea>
-        </label>
+          <label className="block text-sm font-medium text-gray-700">
+            Write your post:
+            <textarea
+              value={postContent}
+              onChange={(e) => setPostContent(e.target.value)}
+              rows={4}
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            ></textarea>
+          </label>
+        </div>
+        <div className="mt-6">
+          <button
+            onClick={handleSubmit}
+            type="submit"
+            className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white color hover:bg-indigo-700 focus:outline-none bgHover"
+          >
+            Submit
+          </button>
+          <ToastContainer />
+          <p className="mt-2 text-sm text-gray-500">Looking for a room? Add Requirement</p>
+        </div>
       </div>
-      <div className="mt-6">
-        <button
-          type="submit"
-          className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white color hover:bg-indigo-700 focus:outline-none bgHover"
-        >
-          Submit
-        </button>
-        <p className="mt-2 text-sm text-gray-500">Looking for a room ? Add Requirment</p>
-      </div>
-      </div>
-
     </div>
   );
 };
