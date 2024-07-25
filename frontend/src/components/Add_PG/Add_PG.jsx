@@ -32,16 +32,18 @@ export const Add_PG = () => {
   };
 
   const validateInputs = () => {
-    if (!mobileNum) {
-      showToastMessage("Mobile Number is required");
-      return false;
-    }
-
+    
     if (!pgName) {
       showToastMessage("PG name is required");
       return false;
     }
 
+    if (!mobileNum) {
+      showToastMessage("Mobile Number is required");
+      return false;
+    }
+
+    
     if (!ownerName) {
       showToastMessage("Owner name is required");
       return false;
@@ -279,7 +281,6 @@ export const Add_PG = () => {
           </div>
         </div>
       </div>
-
       <div className="mt-12">
         <div className="mt-8">
           <label className="block text-sm font-medium text-gray-700">
