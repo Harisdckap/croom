@@ -346,8 +346,8 @@ class ComposerStaticInit7177aeaf81feb4e445e5323037010d7c
         ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-message/src',
-            1 => __DIR__ . '/..' . '/psr/http-factory/src',
+            0 => __DIR__ . '/..' . '/psr/http-factory/src',
+            1 => __DIR__ . '/..' . '/psr/http-message/src',
         ),
         'Psr\\Http\\Client\\' => 
         array (
@@ -536,11 +536,17 @@ class ComposerStaticInit7177aeaf81feb4e445e5323037010d7c
         'App\\Http\\Controllers\\Auth\\ForgotPasswordController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/ForgotPasswordController.php',
         'App\\Http\\Controllers\\Auth\\LoginController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/LoginController.php',
         'App\\Http\\Controllers\\Auth\\OTPController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/OTPController.php',
+        'App\\Http\\Controllers\\Auth\\OTPVerificationController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/OTPVerificationController.php',
         'App\\Http\\Controllers\\Auth\\RegisterController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/RegisterController.php',
         'App\\Http\\Controllers\\Auth\\ResetPasswordController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/ResetPasswordController.php',
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
+        'App\\Http\\Controllers\\ImageController' => __DIR__ . '/../..' . '/app/Http/Controllers/ImageController.php',
         'App\\Http\\Controllers\\ListingController' => __DIR__ . '/../..' . '/app/Http/Controllers/ListingController.php',
+        'App\\Http\\Controllers\\PropertyController' => __DIR__ . '/../..' . '/app/Http/Controllers/PropertyController.php',
+        'App\\Http\\Controllers\\RoomController' => __DIR__ . '/../..' . '/app/Http/Controllers/RoomController.php',
         'App\\Mail\\OTPMail' => __DIR__ . '/../..' . '/app/Mail/OTPMail.php',
+        'App\\Models\\Listing' => __DIR__ . '/../..' . '/app/Models/Listing.php',
+        'App\\Models\\ListingPhoto' => __DIR__ . '/../..' . '/app/Models/ListingPhoto.php',
         'App\\Models\\OTPVerification' => __DIR__ . '/../..' . '/app/Models/OTPVerification.php',
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
