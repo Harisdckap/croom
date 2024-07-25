@@ -71,5 +71,5 @@ npm install vite
 composer install
 npm i
 
-
 <!-- Prakash branch created -->
+npm install --save react-toastify
