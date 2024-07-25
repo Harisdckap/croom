@@ -20,32 +20,6 @@ export const RoommateForm = () => {
     setFiles(e.target.files);
   };
 
-  const buttonLabels = [
-    'Attached washroom',
-    'Market nearby',
-    'Attached balcony',
-    'Close to metro station',
-    'Public transport nearby',
-    'Gated society',
-    'No Restriction',
-    'Newly built',
-    'Separate washrooms',
-    'House keeping',
-    'Gym nearby',
-    'Park nearby'
-  ];
-
-  const Amenities = [
-    'TV',
-    'Fridge',
-    'Kitchen',
-    'Wifi',
-    'Machine',
-    'AC',
-    'PowerBackup',
-    'Cook',
-    'Parking'
-  ];
 
   const toggleHighlight = (label) => {
     setSelectedHighlights((prev) =>
@@ -176,39 +150,7 @@ export const RoommateForm = () => {
       </div>
 
       <div className="mt-12">
-        <label className="text-sm text-gray-600 block font-medium">Choose Highlights for your room</label>
-        <div className="flex gap-2 md:gap-y-3 items-center flex-wrap mt-3">
-          {buttonLabels.map((label, index) => (
-            <button
-              key={index}
-              className={`bg-gray-100 hover:bg-gray-200 text-gray-600 px-3 py-1.5 md:px-6 md:py-2 text-xs rounded-full cursor-pointer ${
-                selectedHighlights.includes(label) ? 'color ' : ''
-              }`}
-              onClick={() => toggleHighlight(label)}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="mt-12">
-        <label className="text-sm text-gray-600 block font-medium">Choose Highlights for your room</label>
-        <div className="flex gap-2 md:gap-y-3 items-center flex-wrap mt-3">
-          {Amenities.map((label, index) => (
-            <button
-              key={index}
-              className={`bg-gray-100 hover:bg-gray-200 text-gray-600 px-3 py-1.5 md:px-6 md:py-2 text-xs rounded-full cursor-pointer ${
-                selectedHighlights.includes(label) ? 'color ' : ''
-              }`}
-              onClick={() => toggleHighlight(label)}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-
-        <div className="mt-8">
+          <div className="mt-8">
           <label className="block text-sm font-medium text-gray-700">
             Write your post:
             <textarea
