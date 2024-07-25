@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { resetPassword } from "../js/api/auth";
 import resetImg from "../assets/resetpassword.png";
