@@ -9,7 +9,6 @@ export const Add_PG = () => {
   const [pgName, setPgName] = useState('');
   const [ownerName, setOwnerName] = useState('');
   const [pgAddress, setPgAddress] = useState('');
-  const [pgRent, setPgRent] = useState('');
   const [singleOccupancy, setSingleOccupancy] = useState('');
   const [doubleOccupancy, setDoubleOccupancy] = useState('');
   const [tripleOccupancy, setTripleOccupancy] = useState('');
