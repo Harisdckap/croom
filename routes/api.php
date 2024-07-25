@@ -10,6 +10,8 @@ use App\Http\Controllers\ListingController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\OTPVerificationController;
 use App\Http\Controllers\PropertyController;
+use App\Http\Controllers\ImageController;
+
 
 
 // routes/api
@@ -34,3 +36,12 @@ Route::delete('/listings/{id}', [ListingController::class, 'destroy']);
 Route::post('/listings', [ListingController::class, 'store']);
 Route::get('/properties', [PropertyController::class, 'index']);
 Route::get('/properties/{id}', [PropertyController::class, 'show']);
+Route::post('/upload', [ImageController::class, 'upload']);
+
+// use App\Http\Controllers\RoomController;
+// Route::get('/rooms', [RoomController::class, 'index']);
+// Route::get('/rooms/{id}', [RoomController::class, 'show']);
+use App\Http\Controllers\RoomListingController;
+
+Route::get('/rooms', [RoomListingController::class, 'index']);
+Route::get('/rooms/{id}', [RoomListingController::class, 'show']);

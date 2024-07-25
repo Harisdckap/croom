@@ -4,60 +4,63 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Listing;
+use Illuminate\Support\Facades\Storage;
 
 class ListingController extends Controller
 {
-// Laravel example: in your controller
-public function store(Request $request)
-{
-    $request->validate([
-        'title' => 'required|string|max:255',
-        'location' => 'required|string|max:255',
-        'price' => 'required|numeric',
-        'rooms' => 'required|integer',
-        'facilities' => 'required|string',
-        'contact' => 'required|string|max:255',
-        'looking_for' => 'required|string',
-        'occupancy' => 'required|string',
-        'photos.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        'highlighted_features' => 'nullable|array',
-        'amenities' => 'nullable|array',
-        'description' => 'required|string',
-    ]);
-
-    $listing = new Listing([
-        'title' => $request->title,
-        'location' => $request->location,
-        'price' => $request->price,
-        'rooms' => $request->rooms,
-        'facilities' => $request->facilities,
-        'contact' => $request->contact,
-        'looking_for' => $request->looking_for,
-        'occupancy' => $request->occupancy,
-        'highlighted_features' => json_encode($request->highlighted_features),
-        'amenities' => json_encode($request->amenities),
-        'description' => $request->description,
-    ]);
-
-    if ($request->hasFile('photos')) {
-        $photos = [];
-        foreach ($request->file('photos') as $file) {
-            $path = $file->store('public/photos');
-            $photos[] = basename($path);
-        }
-        $listing->photos = json_encode($photos);
-    }
-
-    $listing->save();
-
-    return response()->json(['message' => 'Room added successfully'], 201);
-}
-
-
-    public function index()
+    public function store(Request $request)
     {
-        $listings = Listing::all();
-        return response()->json($listings);
+        // Validate request data
+        // $validatedData = $request->validate([
+        //     'title' => 'required|string|max:255',
+        //     'location' => 'required|string|max:255',
+        //     'price' => 'required|numeric',
+        //     'rooms' => 'required|integer',
+        //     'facilities' => 'required|string',
+        //     'contact' => 'required|string|max:255',
+        //     'looking_for' => 'required|string|in:male,female,any',
+        //     'occupancy' => 'required|string|in:single,shared,any',
+        //     'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        //     'highlighted_features' => 'nullable|json',
+        //     'amenities' => 'nullable|json',
+        //     'description' => 'required|string'
+        // ]);
+
+        $validatedData = $request->validate([
+            'title' => 'required|string|max:255',
+            'location' => 'required|string|max:255',
+            'price' => 'required|numeric',
+            'rooms' => 'required|numeric', // Ensure rooms is validated
+            'facilities' => 'required|string', // Ensure facilities is validated
+            'contact' => 'required|string|max:255',
+            'looking_for' => 'nullable|string|max:255',
+            'occupancy' => 'nullable|string|max:255',
+            'highlighted_features' => 'nullable|json',
+            'amenities' => 'nullable|json',
+            'description' => 'nullable|string',
+            'listing_type' => 'required|string|max:255',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        // Handle file upload
+        if ($request->hasFile('photo')) {
+            $image = $request->file('photo');
+            $imagePath = $image->store('images', 'public');
+            $validatedData['photo'] = $imagePath;
+        }
+
+        // Decode JSON strings back to arrays
+        $validatedData['highlighted_features'] = isset($validatedData['highlighted_features'])
+            ? json_decode($validatedData['highlighted_features'], true)
+            : [];
+        $validatedData['amenities'] = isset($validatedData['amenities'])
+            ? json_decode($validatedData['amenities'], true)
+            : [];
+
+        // Create a new listing
+        $listing = Listing::create($validatedData);
+
+        return response()->json($listing, 201);
     }
 
     public function show($id)
@@ -79,6 +82,7 @@ public function store(Request $request)
             return response()->json(['message' => 'Listing not found'], 404);
         }
 
+        // Validate request data
         $request->validate([
             'title' => 'required|string',
             'location' => 'required|string',
@@ -86,13 +90,26 @@ public function store(Request $request)
             'rooms' => 'required|numeric',
             'facilities' => 'required|string',
             'contact' => 'required|string',
-            'photos.*' => 'image|mimes:jpeg,png,jpg|max:2048', // Adjust validation as needed
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'highlighted_features' => 'nullable|json',
             'amenities' => 'nullable|json',
             'description' => 'required|string',
         ]);
 
-        $listing->update($request->all());
+        // Handle file upload
+        if ($request->hasFile('photo')) {
+            // Delete old photo if it exists
+            if ($listing->photo) {
+                Storage::disk('public')->delete($listing->photo);
+            }
+
+            $image = $request->file('photo');
+            $imagePath = $image->store('images', 'public');
+            $request->merge(['photo' => $imagePath]);
+        }
+
+        // Update listing data
+        $listing->update($request->except('photo'));
 
         return response()->json(['message' => 'Listing updated successfully', 'data' => $listing]);
     }
@@ -103,6 +120,11 @@ public function store(Request $request)
 
         if (!$listing) {
             return response()->json(['message' => 'Listing not found'], 404);
+        }
+
+        // Delete the image file from storage if it exists
+        if ($listing->photo) {
+            Storage::disk('public')->delete($listing->photo);
         }
 
         $listing->delete();

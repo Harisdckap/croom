@@ -6,6 +6,11 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateListingsTable extends Migration
 {
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
     public function up()
     {
         Schema::create('listings', function (Blueprint $table) {
@@ -18,14 +23,20 @@ class CreateListingsTable extends Migration
             $table->string('contact');
             $table->enum('looking_for', ['male', 'female', 'any']);
             $table->enum('occupancy', ['single', 'shared', 'any']);
-            $table->json('photos'); // JSON type to store multiple photos
+            $table->text('photo');  // Changed from photos to photo for single image
             $table->json('highlighted_features'); // JSON type to store highlighted features
             $table->json('amenities'); // JSON type to store amenities
             $table->text('description');
+            $table->string('listing_type')->default('room'); // Default value for listing type
             $table->timestamps();
         });
     }
 
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
     public function down()
     {
         Schema::dropIfExists('listings');

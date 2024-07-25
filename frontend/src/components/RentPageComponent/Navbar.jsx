@@ -11,9 +11,9 @@ const Navbar = ({ search, onSearchChange, onSearchSubmit }) => {
         {/* Navigation Links */}
         <div className="flex items-center space-x-6">
         <img src={alllistingImg} alt="house icon" className="h-6 w-6" />
-          <a href="/alllisting" className="text-gray-700 hover:text-blue-600 font-medium">All Listings</a>
+          <a href="/AllExploreRooms" className="text-gray-700 hover:text-blue-600 font-medium">All Listings</a>
           <img src={roomsImg} alt="rooms icon" className="h-6 w-6" />
-          <a href="/rooms" className="text-gray-700 hover:text-blue-600 font-medium">Rooms</a>
+          <a href="/AllRoomsPage" className="text-gray-700 hover:text-blue-600 font-medium">Rooms</a>
           <img src={roomatesImg} alt="roommates icon" className="h-6 w-6" />
           <a href="/roommates" className="text-gray-700 hover:text-blue-600 font-medium">Roommates</a>
           <img src={pgImg} alt="pg icon" className="h-6 w-6" />

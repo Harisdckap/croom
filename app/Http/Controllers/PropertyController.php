@@ -35,3 +35,4 @@ class PropertyController extends Controller
     }
 }
 }
+
