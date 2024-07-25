@@ -14,6 +14,7 @@ import ListingDetailPage from './components/RentPageComponent/ListingDetailPage'
 import PostRequirementPage  from './components/PostRequirementPage';
 import RoomPage from './components/RentPageComponent/AllRoomsPage';
 import RoomDetailPage from './components/RentPageComponent/RoomDetailPage';
+import AllRoommatesPage from './components/RentPageComponent/AllRoomatesPage';
 
 function App() {
     return (
@@ -32,6 +33,7 @@ function App() {
                 <Route path="/NeedRoomateForm" element={<NeedRoomate />} />
                 <Route path="/PostRequirementPage" element={<PostRequirementPage />} />
                  <Route path="/AllRoomsPage" element={<RoomPage />} />
+                 <Route path="/AllRoommates" element={<AllRoommatesPage />} />
               
             </Routes>
         </Router>

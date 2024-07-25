@@ -45,3 +45,11 @@ use App\Http\Controllers\RoomListingController;
 
 Route::get('/rooms', [RoomListingController::class, 'index']);
 Route::get('/rooms/{id}', [RoomListingController::class, 'show']);
+
+
+use App\Http\Controllers\RequirementController;
+
+
+Route::post('/requirements', [RequirementController::class, 'store']);
+Route::get('/requirements', [RequirementController::class, 'index']);
+Route::get('/requirements/{id}', [RequirementController::class, 'show']);
