@@ -5,19 +5,21 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Listing extends Model
+class Profile extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'title', 'price', 'location', 'bedrooms', 'bathrooms', 'available_from', 'description', 'user_id', 'images'
+        'user_id',
+        'first_name',
+        'last_name',
+        'sex',
+        'date_of_birth',
+        'profile_image',
+        'cover_image',
     ];
 
-    protected $casts = [
-        'images' => 'array',
-    ];
-
-    // Define relationships if any, such as:
+    // Define the relationship with the User model
     public function user()
     {
         return $this->belongsTo(User::class);

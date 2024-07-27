@@ -21,7 +21,6 @@ class RegisterController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
-            'userType' => 'required|string',
             'gender' => 'required|string',
             'mobile' => 'required|string|max:10',
         ]);
@@ -34,7 +33,6 @@ class RegisterController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'userType' => $request->userType,
             'gender' => $request->gender,
             'mobile' => $request->mobile,
         ]);
@@ -52,7 +50,6 @@ class RegisterController extends Controller
         // Generate JWT token
         $token = JWTAuth::fromUser($user);
 
-
         // Send OTP via email
         Mail::send('auth.emails.otp', ['otp' => $otp, 'auth_token' => $token], function($message) use ($user) {
             $message->to($user->email);
@@ -69,9 +66,8 @@ class RegisterController extends Controller
 
     public function details()
     {
-        // $user = Auth::user();
         $user = Auth::guard('api')->user();
         return response()->json(['user' => $user], 200);
     }
+   
 }
-

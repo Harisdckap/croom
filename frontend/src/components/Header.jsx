@@ -15,24 +15,11 @@ const Header = () => {
   }, []);
 
   return (
-    <nav className="sticky top-0 z-1 bg-white text-gray-900 p-4 border-b-2">
+    <nav className="sticky top-0 z-10 bg-white text-gray-900 p-4 border-b-2">
       <div className="container mx-auto flex items-center justify-between">
         <div className="flex items-center space-x-10">
-          <img src={logo} alt="Logo" className="w-30 h-10" /> {/* Use the imported image */}
-          <select className="bg-gray-100 text-gray-900 p-3 rounded">
-            <option>Options</option>
-            <option>Option 1</option>
-            <option>Option 2</option>
-            <option>Option 3</option>
-            {/* Add more categories here */}
-          </select>
-          <div className="searchbar">
-            <input
-              type="text"
-              placeholder="Search"
-              className="p-2 rounded bg-gray-100 text-gray-900 w-96"
-            />
-          </div>
+          <img src={logo} alt="Logo" className="w-30 h-10" />
+
         </div>
         <div className="flex items-center space-x-4">
           <div className="flex items-center cursor-pointer">
@@ -67,6 +54,10 @@ const Header = () => {
               </div>
             )}
           </div>
+          {/* Add Listing Button */}
+          <Link to="/PostRequirementPage" className="text-blue-500 hover:underline ml-4 border-2 border-blue-500 px-4 py-2 rounded">
+            Add Listing
+          </Link>
         </div>
       </div>
     </nav>
