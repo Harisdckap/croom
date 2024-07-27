@@ -21,13 +21,14 @@ class CreateListingsTable extends Migration
             $table->integer('rooms');
             $table->text('facilities');
             $table->string('contact');
-            $table->enum('looking_for', ['male', 'female', 'any']);
+            $table->enum('looking_for_gender', ['male', 'female', 'any']);
             $table->enum('occupancy', ['single', 'shared', 'any']);
             $table->text('photo');  // Changed from photos to photo for single image
             $table->json('highlighted_features'); // JSON type to store highlighted features
             $table->json('amenities'); // JSON type to store amenities
             $table->text('description');
             $table->string('listing_type')->default('room'); // Default value for listing type
+            $table->string('looking_for')->default('Roomates');
             $table->timestamps();
         });
     }

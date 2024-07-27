@@ -41,7 +41,7 @@ const ListingDetailPage = () => {
     return (
         <div>
             <HomeNavBar />
-            <div className="container mx-auto p-6 bg-white rounded-lg shadow-lg">
+            <div className="container mx-auto p-6 bg-white shadow-lg">
                 <div className="flex flex-col lg:flex-row gap-6">
                     {/* Image Section */}
                     <div className="flex-none w-full lg:w-1/3 mb-6 lg:mb-0">
@@ -120,7 +120,7 @@ const ListingDetailPage = () => {
                                 <FaUser className="mr-2 text-gray-500" />
                                 <p>
                                     <strong>Looking For:</strong>{" "}
-                                    {listing.looking_for}
+                                    {listing.looking_for_gender}
                                 </p>
                             </div>
                             <div className="flex items-center text-lg text-gray-600">

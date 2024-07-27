@@ -10,21 +10,7 @@ class ListingController extends Controller
 {
     public function store(Request $request)
     {
-        // Validate request data
-        // $validatedData = $request->validate([
-        //     'title' => 'required|string|max:255',
-        //     'location' => 'required|string|max:255',
-        //     'price' => 'required|numeric',
-        //     'rooms' => 'required|integer',
-        //     'facilities' => 'required|string',
-        //     'contact' => 'required|string|max:255',
-        //     'looking_for' => 'required|string|in:male,female,any',
-        //     'occupancy' => 'required|string|in:single,shared,any',
-        //     'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        //     'highlighted_features' => 'nullable|json',
-        //     'amenities' => 'nullable|json',
-        //     'description' => 'required|string'
-        // ]);
+     
 
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
@@ -39,6 +25,7 @@ class ListingController extends Controller
             'amenities' => 'nullable|json',
             'description' => 'nullable|string',
             'listing_type' => 'required|string|max:255',
+            'looking_for_gender' => 'nullable|string|max:255', 
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 

@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faArrowRight, faEye } from '@fortawesome/free-solid-svg-icons';
 
-const ListingsPage = () => {
+const AllRoommatesPage = () => {
   const [listings, setListings] = useState([]);
   const [page, setPage] = useState(1);
   const [address, setAddress] = useState('');
@@ -18,7 +18,7 @@ const ListingsPage = () => {
   useEffect(() => {
     const fetchListings = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/api/properties?address=${address}&p=${page}`);
+        const response = await axios.get(`http://127.0.0.1:8000/api/requirements?address=${address}&p=${page}`);
         setListings(response.data.data);
         setTotalPages(response.data.last_page);
       } catch (error) {
@@ -46,7 +46,7 @@ const ListingsPage = () => {
   };
 
   const handleViewClick = (id) => {
-    navigate(`/listing/${id}`);
+    navigate(`/roomates/${id}`);
   };
 
   return (
@@ -58,7 +58,7 @@ const ListingsPage = () => {
         onSearchSubmit={handleSearchSubmit} 
       />
 
-      <h1 className="text-4xl font-bold mb-8 text-center">All Listings</h1>
+      <h1 className="text-4xl font-bold mb-8 text-center">All Roommates</h1>
 
       <div className="container mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8 p-4">
         {listings.length > 0 ? (
@@ -66,9 +66,11 @@ const ListingsPage = () => {
             <div key={listing.id} className="border rounded-lg p-4 shadow-lg bg-white hover:shadow-xl transition-shadow duration-300">
               <h2 className="text-xl font-semibold mb-2">{listing.title}</h2>
               <p className="text-gray-700 mb-2">Location: {listing.location}</p>
-              <p className="text-gray-700 mb-2">Price: ${listing.price}</p>
-              <p className="text-gray-700 mb-2">Rooms: {listing.rooms}</p>
-              <p className="text-gray-700 mb-2">Facilities: {listing.facilities}</p>
+              <p className="text-gray-700 mb-2">Approx Rent: ${listing.approx_rent}</p>
+              <p className="text-gray-700 mb-2">Looking For: {listing.looking_for}</p>
+              <p className="text-gray-700 mb-2">Looking_Gender_For: {listing.looking_for_gender}</p>
+              <p className="text-gray-700 mb-2">Highlights: {listing.highlights}</p>
+
               <div className="mt-4 flex justify-end">
                 <button
                   onClick={() => handleViewClick(listing.id)}
@@ -108,4 +110,4 @@ const ListingsPage = () => {
   );
 };
 
-export default ListingsPage;
+export default AllRoommatesPage;

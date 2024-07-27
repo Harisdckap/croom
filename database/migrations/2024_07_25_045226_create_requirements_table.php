@@ -11,7 +11,8 @@ class CreateRequirementsTable extends Migration
         Schema::create('requirements', function (Blueprint $table) {
             $table->id();
             $table->string('location');
-            $table->string('looking_for');
+            $table->string('looking_for_gender'); 
+            $table->string('looking_for')->default('Room'); 
             $table->string('approx_rent');
             $table->string('room_type');
             $table->string('highlights');

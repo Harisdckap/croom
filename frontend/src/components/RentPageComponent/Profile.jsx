@@ -17,7 +17,7 @@ const Profile = () => {
             try {
                 const response = await axios.get('http://127.0.0.1:8000/api/profile', {
                     headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
                     }
                 });
                 setFormData(response.data);
@@ -47,7 +47,7 @@ const Profile = () => {
         });
 
         try {
-            const response = await axios.post('/api/profile', data, {
+            const response = await axios.post('http://127.0.0.1:8000/api/profile', data, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     'Authorization': `Bearer ${localStorage.getItem('token')}`

@@ -69,7 +69,7 @@ const RoomsPage = () => {
               <p className="text-gray-700 mb-2">Location: {room.location}</p>
               <p className="text-gray-700 mb-2">Price: ${room.price}</p>
               <p className="text-gray-700 mb-2">Rooms: {room.rooms}</p>
-              <p className="text-gray-700 mb-2">Facilities: {room.facilities}</p>
+              <p className="text-gray-700 mb-2">Looking For: {room.looking_for}</p>
               <div className="mt-4 flex justify-end">
                 <button
                   onClick={() => handleViewClick(room.id)}

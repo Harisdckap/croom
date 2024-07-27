@@ -53,3 +53,10 @@ use App\Http\Controllers\RequirementController;
 Route::post('/requirements', [RequirementController::class, 'store']);
 Route::get('/requirements', [RequirementController::class, 'index']);
 Route::get('/requirements/{id}', [RequirementController::class, 'show']);
+
+
+use App\Http\Controllers\ProfileController;
+
+Route::post('/profile', [ProfileController::class, 'update']);
+
+

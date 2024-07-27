@@ -11,6 +11,7 @@ class RequirementController extends Controller
     {
         $request->validate([
             'location' => 'required|string',
+            'looking_for_gender' => 'required|string', 
             'looking_for' => 'required|string',
             'approx_rent' => 'required|string',
             'room_type' => 'required|string',
@@ -22,7 +23,8 @@ class RequirementController extends Controller
 
         $requirement = new Requirement();
         $requirement->location = $request->location;
-        $requirement->looking_for = $request->looking_for;
+        $requirement->looking_for_gender = $request->looking_for_gender;  // Add this line to validate gender field value. It should be either 'male' or 'female' only.
+        $requirement->looking_for = $request->looking_for ?? 'Room';
         $requirement->approx_rent = $request->approx_rent;
         $requirement->room_type = $request->room_type;
         $requirement->highlights = $request->highlights;
@@ -50,6 +52,17 @@ class RequirementController extends Controller
         $requirements = $query->paginate($itemsPerPage, ['*'], 'p', $page);
     
         return response()->json($requirements);
+    }
+
+    public function show($id)
+    {
+        $requirement = Requirement::find($id);
+
+        if (!$requirement) {
+            return response()->json(['message' => 'Requirement not found'], 404);
+        }
+
+        return response()->json($requirement);
     }
     
 
