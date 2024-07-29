@@ -1,26 +1,27 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import { toast } from "react-toastify";
-import "./AddRequirement.css";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const AddRequirement = () => {
     const [lookingFor, setLookingFor] = useState("Any");
     const [roomType, setRoomType] = useState("Single");
-    const [pgInterested, setPgInterested] = useState("");
     const [highlights, setHighlights] = useState("");
     const [location, setLocation] = useState("");
     const [approxRent, setApproxRent] = useState("");
     const [post, setPost] = useState("");
-    const [requirements, setRequirements] = useState([]); // Ensure this is initialized as an array
+    const [occupancy, setOccupancy] = useState("");
+    const [numberOfPeople, setNumberOfPeople] = useState("");
+    const [requirements, setRequirements] = useState([]);
+    const [houseImage, setHouseImage] = useState(null); // Add state for image
+    const [imagePreview, setImagePreview] = useState(null); // Add state for image preview
+    const fileInputRef = useRef(); // Create a ref for file input
 
     useEffect(() => {
         const fetchRequirements = async () => {
             try {
-                const response = await axios.get(
-                    "http://127.0.0.1:8000/api/requirements"
-                );
+                const response = await axios.get("http://127.0.0.1:8000/api/roommates");
                 if (Array.isArray(response.data)) {
-                    // Ensure response data is an array
                     setRequirements(response.data);
                 } else {
                     console.error("Unexpected response format:", response.data);
@@ -50,84 +51,106 @@ const AddRequirement = () => {
             showToast("Room type is required");
             return false;
         }
-
         if (!approxRent || isNaN(approxRent)) {
             showToast("Valid approx rent amount is required");
             return false;
         }
-
-        if (!pgInterested) {
-            showToast("PG interested field is required");
-            return false;
-        }
-
         if (!highlights) {
             showToast("Highlights are required");
             return false;
         }
-
         if (!post) {
             showToast("Post is required");
+            return false;
+        }
+        if (!occupancy) {
+            showToast("Occupancy is required");
+            return false;
+        }
+        if (!numberOfPeople || isNaN(numberOfPeople)) {
+            showToast("Valid number of people is required");
+            return false;
+        }
+        if (!houseImage) {
+            showToast("House image is required");
             return false;
         }
 
         return true;
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        if (!validateInputs()) return;
-
-        const newRequirement = {
-            location,
-            looking_for: "Room",
-            looking_for_gender: lookingFor,
-            approx_rent: approxRent,
-            room_type: roomType,
-            highlights,
-            pg_interested: pgInterested,
-            post,
-            listing_type: "roommates", // Default value
-        };
-
-        try {
-            await axios.post(
-                "http://127.0.0.1:8000/api/requirements",
-                newRequirement
-            );
-            setRequirements((prevRequirements) => [
-                ...prevRequirements,
-                newRequirement,
-            ]); // Use prevRequirements to avoid stale state
-            // Reset form fields
-            setLocation("");
-            setApproxRent("");
-            setPost("");
-            setLookingFor("Any");
-            setRoomType("Single");
-            setHighlights("");
-            setPgInterested("");
-            showToast("Requirement added successfully!", "success");
-        } catch (error) {
-            console.error("Error adding requirement:", error);
-            showToast("Failed to add requirement");
+    const handleChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setHouseImage(file);
+            setImagePreview(URL.createObjectURL(file));
         }
     };
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!validateInputs()) return;
+    
+        const formData = new FormData();
+        formData.append("location", location);
+        formData.append("looking_for", "Room");
+        formData.append("looking_for_gender", lookingFor);
+        formData.append("approx_rent", approxRent);
+        formData.append("room_type", roomType);
+        formData.append("highlights", highlights);
+        formData.append("post", post);
+        formData.append("listing_type", "roommates");
+        formData.append("occupancy", occupancy);
+        formData.append("number_of_people", numberOfPeople);
+        formData.append("house_image", houseImage);
+      console.log(formData);
+        try {
+            const response = await axios.post("http://127.0.0.1:8000/api/roommates", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data"
+                }
+            });
+            console.log("Response:", response.data); // Log response data
+            setRequirements((prevRequirements) => [
+                ...prevRequirements,
+                {
+                    location,
+                    looking_for: "Room",
+                    looking_for_gender: lookingFor,
+                    approx_rent: approxRent,
+                    room_type: roomType,
+                    highlights,
+                    post,
+                    listing_type: "roommates",
+                    occupancy,
+                    number_of_people: numberOfPeople,
+                    house_image: URL.createObjectURL(houseImage)
+                },
+            ]);
+            handleCancel(); // Reset the form
+            showToast("Requirement added successfully!", "success");
+        } catch (error) {
+            console.error("Error adding requirement:", error);
+            showToast(`Failed to add requirement: ${error.message}`); // Log detailed error
+        }
+    };
+    
+
     const handleCancel = () => {
-        // Reset form fields
         setLocation("");
         setApproxRent("");
         setPost("");
         setLookingFor("Any");
         setRoomType("Single");
         setHighlights("");
-        setPgInterested("");
+        setOccupancy("");
+        setNumberOfPeople("");
+        setHouseImage(null);
+        setImagePreview(null); // Clear image preview
     };
 
     return (
-        <div className="max-w-6xl mx-auto p-16 bg-white shadow-md rounded-md mt-4 relative">
+        <div className="max-w-6xl mx-auto p-8 bg-white shadow-md rounded-md mt-4 relative">
             <div className="absolute top-4 right-4">
                 <button
                     onClick={handleCancel}
@@ -156,29 +179,25 @@ const AddRequirement = () => {
                     So that other users can contact you
                 </p>
             </div>
-            <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="flex gap-32 mt-12">
+            <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">
-                            Add Your Location
-                        </label>
+                        <label className="block text-sm font-medium text-gray-700">Add Your Location</label>
                         <input
                             type="text"
                             value={location}
                             onChange={(e) => setLocation(e.target.value)}
-                            className="locationInput mt-1 block px-2 py-3 border w-96 border-gray-300 rounded-md shadow-sm sm:text-sm"
+                            className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
                         />
                     </div>
-                    <fieldset className="border p-3 px-10">
-                        <legend className="text-base font-medium text-gray-900">
-                            Looking Gender For
-                        </legend>
+                    <fieldset className="border p-4 rounded-md">
+                        <legend className="text-base font-medium text-gray-900">Looking Gender For</legend>
                         <div className="mt-2 space-x-4">
                             {["Male", "Female", "Any"].map((option) => (
                                 <button
                                     type="button"
                                     key={option}
-                                    className={`px-8 py-3 border rounded-md text-sm font-medium ${
+                                    className={`px-4 py-2 border rounded-md text-sm font-medium ${
                                         lookingFor === option
                                             ? "bg-blue-500 text-white"
                                             : "hover:bg-gray-100"
@@ -191,30 +210,24 @@ const AddRequirement = () => {
                         </div>
                     </fieldset>
                 </div>
-                <div className="flex gap-32 mt-16">
-                    <div className="mt-6 space-y-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">
-                                Approx Rent
-                            </label>
-                            <input
-                                type="text"
-                                value={approxRent}
-                                onChange={(e) => setApproxRent(e.target.value)}
-                                className="locationInput mt-1 block px-2 py-3 border w-96 border-gray-300 rounded-md shadow-sm sm:text-sm"
-                            />
-                        </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-16">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Approx Rent</label>
+                        <input
+                            type="text"
+                            value={approxRent}
+                            onChange={(e) => setApproxRent(e.target.value)}
+                            className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                        />
                     </div>
-                    <fieldset className="border p-3 px-10">
-                        <legend className="text-base font-medium text-gray-900">
-                            Room Type
-                        </legend>
+                    <fieldset className="border p-4 rounded-md">
+                        <legend className="text-base font-medium text-gray-900">Room Type</legend>
                         <div className="mt-2 space-x-4">
-                            {["Single", "Shared", "Any"].map((option) => (
+                            {["Single", "Double", "Triple"].map((option) => (
                                 <button
                                     type="button"
                                     key={option}
-                                    className={`px-8 py-3 border rounded-md text-sm font-medium ${
+                                    className={`px-4 py-2 border rounded-md text-sm font-medium ${
                                         roomType === option
                                             ? "bg-blue-500 text-white"
                                             : "hover:bg-gray-100"
@@ -227,78 +240,77 @@ const AddRequirement = () => {
                         </div>
                     </fieldset>
                 </div>
-                <div className="mt-10">
-                    <h2 className="text-lg font-medium text-gray-900 mt-16">
-                        Choose Highlights for Your Property
-                    </h2>
-                    <div className="mt-6 space-y-2 flex items-center justify-around">
-                        {[
-                            "Working full time",
-                            "College student",
-                            "25+ age",
-                            "Working night shift",
-                            "Pure vegetarian",
-                        ].map((option) => (
-                            <button
-                                type="button"
-                                key={option}
-                                className={`mr-2 leading-tight rounded-lg bg-gray-100 px-7 py-2 hover:bg-gray-200 ${
-                                    highlights === option
-                                        ? "bg-blue-500 text-white"
-                                        : "hover:bg-gray-100"
-                                }`}
-                                onClick={() => setHighlights(option)}
-                            >
-                                {option}
-                            </button>
-                        ))}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-16">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Highlights</label>
+                        <input
+                            type="text"
+                            value={highlights}
+                            onChange={(e) => setHighlights(e.target.value)}
+                            className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Post Description</label>
+                        <textarea
+                            value={post}
+                            onChange={(e) => setPost(e.target.value)}
+                            className="mt-1 block w-full h-24 px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                        />
                     </div>
                 </div>
-                <div className="mt-12 space-y-4">
-                    <div className="flex gap-16">
-                        <fieldset className="border w-1/2 py-3">
-                            <legend className="text-base font-medium text-gray-900">
-                                Are You Interested in PG Too?
-                            </legend>
-                            <div className="mt-2 space-x-4">
-                                {["Yes", "No"].map((option) => (
-                                    <button
-                                        type="button"
-                                        key={option}
-                                        className={`px-8 py-3 border rounded-md text-sm font-medium ${
-                                            pgInterested === option
-                                                ? "bg-blue-500 text-white"
-                                                : "hover:bg-gray-100"
-                                        }`}
-                                        onClick={() => setPgInterested(option)}
-                                    >
-                                        {option}
-                                    </button>
-                                ))}
-                            </div>
-                        </fieldset>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-16">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Occupancy</label>
+                        <input
+                            type="text"
+                            value={occupancy}
+                            onChange={(e) => setOccupancy(e.target.value)}
+                            className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Number of People</label>
+                        <input
+                            type="text"
+                            value={numberOfPeople}
+                            onChange={(e) => setNumberOfPeople(e.target.value)}
+                            className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                        />
                     </div>
                 </div>
                 <div className="mt-8">
-                    <label className="block text-sm font-medium text-gray-700">
-                        Write More About Your Requirement
-                    </label>
-                    <textarea
-                        value={post}
-                        onChange={(e) => setPost(e.target.value)}
-                        rows="4"
-                        className="locationInput mt-1 block w-full border border-gray-300 rounded-md shadow-sm sm:text-sm px-2 py-2"
-                    ></textarea>
+                    <label className="block text-sm font-medium text-gray-700">House Image</label>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleChange}
+                        ref={fileInputRef}
+                        className="mt-1 block w-full text-sm"
+                    />
+                    {imagePreview && (
+                        <div className="mt-2">
+                            <img src={imagePreview} alt="Preview" className="max-w-xs h-auto rounded-md" />
+                        </div>
+                    )}
                 </div>
-                <div className="flex justify-end">
+                <div className="mt-8 flex justify-end space-x-4">
+                    <button
+                        type="button"
+                        onClick={handleCancel}
+                        className="px-4 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    >
+                        Cancel
+                    </button>
                     <button
                         type="submit"
-                        className="mt-4 w-full bg-blue-500 text-white rounded-md py-2 px-4 hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
+                        className="px-4 py-2 border border-blue-500 rounded-md bg-blue-500 text-white hover:bg-blue-600"
                     >
                         Submit
                     </button>
                 </div>
             </form>
+            <ToastContainer />
         </div>
     );
 };

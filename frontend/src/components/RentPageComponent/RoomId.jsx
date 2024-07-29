@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useParams,Link } from "react-router-dom";
 import HomeNavBar from "../Header";
 import {
     FaMapMarkerAlt,
@@ -13,6 +13,7 @@ import {
     FaPhone,
     FaComments,
 } from "react-icons/fa";
+import { motion } from "framer-motion";
 
 const RoomDetailPage = () => {
     const { id } = useParams();
@@ -41,10 +42,20 @@ const RoomDetailPage = () => {
     return (
         <div>
             <HomeNavBar />
-            <div className="container mx-auto p-6 bg-white rounded-lg shadow-lg">
+            <motion.div 
+                initial={{ opacity: 0 }} 
+                animate={{ opacity: 1 }} 
+                transition={{ duration: 1 }}
+                className="container mx-auto p-6 bg-white rounded-lg shadow-lg"
+            >
                 <div className="flex flex-col lg:flex-row gap-6">
                     {/* Image Section */}
-                    <div className="flex-none w-full lg:w-1/3 mb-6 lg:mb-0">
+                    <motion.div 
+                        initial={{ x: -100 }} 
+                        animate={{ x: 0 }} 
+                        transition={{ duration: 0.5 }}
+                        className="flex-none w-full lg:w-1/3 mb-6 lg:mb-0"
+                    >
                         {room.photo ? (
                             <img
                                 src={`http://127.0.0.1:8000/storage/${room.photo}`} // Adjust this based on your actual image path
@@ -67,18 +78,26 @@ const RoomDetailPage = () => {
                                 href={`tel:${room.contact}`}
                                 className="bg-blue-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-600"
                             >
+                                <Link to="/PlanPage">
                                 <FaPhone className="text-lg" />
                                 Call
+                                </Link>
                             </a>
-                            <button className="bg-green-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-green-600">
+                           <Link to="/PlanPage"><button className="bg-green-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-green-600">
                                 <FaComments className="text-lg" />
                                 Chat
                             </button>
+                            </Link>
                         </div>
-                    </div>
+                    </motion.div>
 
                     {/* Details Section */}
-                    <div className="flex-1">
+                    <motion.div 
+                        initial={{ x: 100 }} 
+                        animate={{ x: 0 }} 
+                        transition={{ duration: 0.5 }}
+                        className="flex-1"
+                    >
                         <h1 className="text-4xl font-extrabold mb-4 text-gray-800">
                             {room.title}
                         </h1>
@@ -133,7 +152,12 @@ const RoomDetailPage = () => {
                         </div>
 
                         {/* Highlighted Features Section */}
-                        <div className="mt-6 p-4 bg-gray-100 rounded-lg shadow-md">
+                        <motion.div 
+                            initial={{ y: 50 }} 
+                            animate={{ y: 0 }} 
+                            transition={{ duration: 0.5 }}
+                            className="mt-6 p-4 bg-gray-100 rounded-lg shadow-md"
+                        >
                             <h3 className="text-2xl font-semibold mb-4 text-gray-800">
                                 Highlighted Features
                             </h3>
@@ -157,10 +181,15 @@ const RoomDetailPage = () => {
                                     No highlighted features available.
                                 </p>
                             )}
-                        </div>
+                        </motion.div>
 
                         {/* Amenities Section */}
-                        <div className="mt-6 p-4 bg-gray-100 rounded-lg shadow-md">
+                        <motion.div 
+                            initial={{ y: 50 }} 
+                            animate={{ y: 0 }} 
+                            transition={{ duration: 0.5, delay: 0.1 }}
+                            className="mt-6 p-4 bg-gray-100 rounded-lg shadow-md"
+                        >
                             <h3 className="text-2xl font-semibold mb-4 text-gray-800">
                                 Amenities
                             </h3>
@@ -182,18 +211,23 @@ const RoomDetailPage = () => {
                                     No amenities available.
                                 </p>
                             )}
-                        </div>
+                        </motion.div>
 
                         {/* Description Section */}
-                        <div className="mt-6">
+                        <motion.div 
+                            initial={{ y: 50 }} 
+                            animate={{ y: 0 }} 
+                            transition={{ duration: 0.5, delay: 0.2 }}
+                            className="mt-6"
+                        >
                             <p className="text-gray-700 text-lg">
                                 <strong>Description:</strong>{" "}
                                 {room.description}
                             </p>
-                        </div>
-                    </div>
+                        </motion.div>
+                    </motion.div>
                 </div>
-            </div>
+            </motion.div>
         </div>
     );
 };

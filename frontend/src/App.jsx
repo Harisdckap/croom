@@ -12,12 +12,13 @@ import NeedRoomForm from "./components/RentPageComponent/Add_Room_Form";
 import NeedRoomate from "./components/RentPageComponent/Add_Roomate_Form";
 import ListingDetailPage from "./components/RentPageComponent/ListingId";
 import PostRequirementPage from "./components/PostRequirementPage";
-import RoomPage from "./components/RentPageComponent/RoomsId";
+import RoomPage from "./components/RentPageComponent/Rooms";
 import RoomDetailPage from "./components/RentPageComponent/RoomId";
 import AllRoommatesPage from "./components/RentPageComponent/Roomates";
 import RoommatesDetailPage from "./components/RentPageComponent/RoomatesId";
 import Profile from "./components/Profile";
 import PgForm from "./components/RentPageComponent/Add_Pg_Form";
+import PlansPage from "./components/RentPageComponent/Plan";
 
 function App() {
     return (
@@ -43,9 +44,10 @@ function App() {
                 />
                 <Route path="/AllRoomsPage" element={<RoomPage />} />
                 <Route path="/AllRoommates" element={<AllRoommatesPage />} />
-                <Route path="/roomates/:id" element={<RoommatesDetailPage />} />
+                <Route path="/roommate/:id" element={<RoommatesDetailPage />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/PgForm" element={<PgForm />} />
+                <Route path="/PlanPage" element={<PlansPage />} />
             </Routes>
         </Router>
     );

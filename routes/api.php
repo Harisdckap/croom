@@ -4,7 +4,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\OTPController;
 use App\Http\Controllers\Auth\LoginController;
-// use App\Http\Controllers\OTPVerificationController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\ListingController;
 use App\Http\Controllers\Auth\ResetPasswordController;
@@ -28,35 +27,36 @@ Route::get('/password/reset/', [ForgotPasswordController::class, 'showResetForm'
 
 
 Route::get('/listings', [ListingController::class, 'index']);
-Route::get('/listings/{id}', [ListingController::class, 'show']);
 Route::post('/listings', [ListingController::class, 'store']);
+Route::get('/listings/{id}', [ListingController::class, 'show']);
 Route::put('/listings/{id}', [ListingController::class, 'update']);
 Route::delete('/listings/{id}', [ListingController::class, 'destroy']);
 
-Route::post('/listings', [ListingController::class, 'store']);
+Route::get('/combined-listings', [PropertyController::class, 'index']);
+
 Route::get('/properties', [PropertyController::class, 'index']);
 Route::get('/properties/{id}', [PropertyController::class, 'show']);
 Route::post('/upload', [ImageController::class, 'upload']);
 
-// use App\Http\Controllers\RoomController;
-// Route::get('/rooms', [RoomController::class, 'index']);
-// Route::get('/rooms/{id}', [RoomController::class, 'show']);
-use App\Http\Controllers\RoomListingController;
 
+
+use App\Http\Controllers\RoomListingController;
 Route::get('/rooms', [RoomListingController::class, 'index']);
 Route::get('/rooms/{id}', [RoomListingController::class, 'show']);
 
 
-use App\Http\Controllers\RequirementController;
+// Roomate api routes
+use App\Http\Controllers\RoommateController;
+
+Route::post('/roommates', [RoommateController::class,'store']);
+Route::get('/roommates', [RoommateController::class,'index']);
+Route::get('/roommates/{id}', [RoommateController::class, 'show']);
 
 
-Route::post('/requirements', [RequirementController::class, 'store']);
-Route::get('/requirements', [RequirementController::class, 'index']);
-Route::get('/requirements/{id}', [RequirementController::class, 'show']);
-
-
+// profile api
 use App\Http\Controllers\ProfileController;
 
-Route::post('/profile', [ProfileController::class, 'update']);
-
-
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'index']);
+    Route::post('/profile', [ProfileController::class, 'store']);
+});

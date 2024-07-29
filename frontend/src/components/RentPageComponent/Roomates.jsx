@@ -3,11 +3,11 @@ import axios from 'axios';
 import Navbar from './Navbar';
 import HomeNavBar from '../Header';
 import { useNavigate } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faArrowRight, faEye } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 
-const AllRoommatesPage = () => {
-  const [listings, setListings] = useState([]);
+const RoommatesPage = () => {
+  const [roommates, setRoommates] = useState([]);
   const [page, setPage] = useState(1);
   const [address, setAddress] = useState('');
   const [totalPages, setTotalPages] = useState(0);
@@ -16,17 +16,17 @@ const AllRoommatesPage = () => {
   const itemsPerPage = 6; // Define how many items per page
 
   useEffect(() => {
-    const fetchListings = async () => {
+    const fetchRoommates = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/api/requirements?address=${address}&p=${page}`);
-        setListings(response.data.data);
+        const response = await axios.get(`http://127.0.0.1:8000/api/roommates?address=${address}&p=${page}`);
+        setRoommates(response.data.data);
         setTotalPages(response.data.last_page);
       } catch (error) {
-        console.error('Error fetching listings:', error);
+        console.error('Error fetching roommates:', error);
       }
     };
 
-    fetchListings();
+    fetchRoommates();
   }, [address, page]);
 
   const handleSearchChange = (e) => {
@@ -46,7 +46,7 @@ const AllRoommatesPage = () => {
   };
 
   const handleViewClick = (id) => {
-    navigate(`/roomates/${id}`);
+    navigate(`/roommate/${id}`);
   };
 
   return (
@@ -61,19 +61,30 @@ const AllRoommatesPage = () => {
       <h1 className="text-4xl font-bold mb-8 text-center">All Roommates</h1>
 
       <div className="container mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8 p-4">
-        {listings.length > 0 ? (
-          listings.map(listing => (
-            <div key={listing.id} className="border rounded-lg p-4 shadow-lg bg-white hover:shadow-xl transition-shadow duration-300">
-              <h2 className="text-xl font-semibold mb-2">{listing.title}</h2>
-              <p className="text-gray-700 mb-2">Location: {listing.location}</p>
-              <p className="text-gray-700 mb-2">Approx Rent: ${listing.approx_rent}</p>
-              <p className="text-gray-700 mb-2">Looking For: {listing.looking_for}</p>
-              <p className="text-gray-700 mb-2">Looking_Gender_For: {listing.looking_for_gender}</p>
-              <p className="text-gray-700 mb-2">Highlights: {listing.highlights}</p>
-
+        {roommates.length > 0 ? (
+          roommates.map(roommate => (
+            <div key={roommate.id} className="border rounded-lg p-4 shadow-lg bg-white hover:shadow-xl transition-shadow duration-300">
+              <div className="mb-6">
+                {roommate.house_image ? (
+                  <img
+                    src={`http://127.0.0.1:8000/storage/${roommate.house_image}`} // Adjusted the image path
+                    alt="Roommate Photo"
+                    className="w-full h-60 object-cover rounded-lg shadow-lg"
+                    onError={(e) =>
+                      (e.target.src = '/path/to/fallback-image.jpg')
+                    } // Fallback image URL
+                  />
+                ) : (
+                  <p className="text-gray-500 text-center">No photo available.</p>
+                )}
+              </div>
+              <h2 className="text-xl font-semibold mb-2">{roommate.name}</h2>
+              <p className="text-gray-700 mb-2">Location: {roommate.location}</p>
+              <p className="text-gray-700 mb-2">Budget: ${roommate.budget}</p>
+              <p className="text-gray-700 mb-2">Looking for: {roommate.looking_for}</p>
               <div className="mt-4 flex justify-end">
                 <button
-                  onClick={() => handleViewClick(listing.id)}
+                  onClick={() => handleViewClick(roommate.id)}
                   className="flex items-center px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 focus:ring-2 focus:ring-blue-600"
                 >
                   <FontAwesomeIcon icon={faEye} className="mr-2" />
@@ -83,11 +94,11 @@ const AllRoommatesPage = () => {
             </div>
           ))
         ) : (
-          <p className="text-gray-500 text-center">No listings found.</p>
+          <p className="text-gray-500 text-center">No roommates found.</p>
         )}
       </div>
 
-      {listings.length >= itemsPerPage && (
+      {totalPages > 1 && (
         <div className="flex justify-between items-center mt-8 px-4">
           <button
             onClick={() => handlePageChange(page - 1)}
@@ -110,4 +121,4 @@ const AllRoommatesPage = () => {
   );
 };
 
-export default AllRoommatesPage;
+export default RoommatesPage;

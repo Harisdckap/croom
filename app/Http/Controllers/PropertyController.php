@@ -2,37 +2,32 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Roommate;
 use App\Models\Listing;
+use Illuminate\Http\Request;
 
 class PropertyController extends Controller
 {
     public function index(Request $request)
     {
-        $address = $request->query('address');
-        $page = $request->query('p', 1); // Default to page 1 if not provided
-        $perPage = 10; // Number of listings per page
+        $address = $request->input('address');
+        $page = $request->input('p', 1);
+        $itemsPerPage = 6;
 
-        $query = Listing::query();
+        $roommates = Roommate::where('location', 'LIKE', "%{$address}%")->get();
+        $listings = Listing::where('location', 'LIKE', "%{$address}%")->get();
 
-        if ($address) {
-            $query->where('location', 'LIKE', "%$address%");
-        }
+        $combinedListings = $roommates->concat($listings)->sortByDesc('created_at')->values();
+        
+        $totalItems = $combinedListings->count();
+        $paginatedListings = $combinedListings->slice(($page - 1) * $itemsPerPage, $itemsPerPage)->values();
+        $totalPages = ceil($totalItems / $itemsPerPage);
 
-        $listings = $query->paginate($perPage, ['*'], 'page', $page);
-
-        return response()->json($listings);
-    }
-
-    public function show($id)
-{
-    $property = Listing::find($id);
-
-    if ($property) {
-        return response()->json($property);
-    } else {
-        return response()->json(['message' => 'Property not found'], 404);
+        return response()->json([
+            'data' => $paginatedListings,
+            'current_page' => $page,
+            'last_page' => $totalPages,
+            'total' => $totalItems,
+        ]);
     }
 }
-}
-

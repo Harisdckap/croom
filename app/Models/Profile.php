@@ -15,11 +15,9 @@ class Profile extends Model
         'last_name',
         'sex',
         'date_of_birth',
-        'profile_image',
-        'cover_image',
+        'profile_image'
     ];
 
-    // Define the relationship with the User model
     public function user()
     {
         return $this->belongsTo(User::class);
