@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Navbar from './Navbar';
 import HomeNavBar from '../Header';
+// import Add_PG  from './Add_PG';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faArrowRight, faEye } from '@fortawesome/free-solid-svg-icons';
@@ -52,10 +53,10 @@ const ListingsPage = () => {
   return (
     <div>
       <HomeNavBar />
-      <Navbar 
-        search={search} 
-        onSearchChange={handleSearchChange} 
-        onSearchSubmit={handleSearchSubmit} 
+      <Navbar
+        search={search}
+        onSearchChange={handleSearchChange}
+        onSearchSubmit={handleSearchSubmit}
       />
 
       <h1 className="text-4xl font-bold mb-8 text-center">All Listings</h1>

@@ -17,8 +17,8 @@ const Navbar = ({ search, onSearchChange, onSearchSubmit }) => {
           <img src={roomatesImg} alt="roommates icon" className="h-6 w-6" />
           <a href="/roommates" className="text-gray-700 hover:text-blue-600 font-medium">Roommates</a>
           <img src={pgImg} alt="pg icon" className="h-6 w-6" />
-          <a href="/pg" className="text-gray-700 hover:text-blue-600 font-medium">PG</a>
-          
+          <a href="/PGCard" className="text-gray-700 hover:text-blue-600 font-medium">PG</a>
+
         </div>
 
         {/* Search Bar */}

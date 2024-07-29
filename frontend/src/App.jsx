@@ -10,10 +10,12 @@ import ListingPage from './components/RentPageComponent/AllExploreRooms'
 // import PrivateRoute from './components/PrivateRoute';
 import NeedRoomForm from './components/RentPageComponent/AddRoomForm';
 import NeedRoomate from './components/RentPageComponent/NeedRoomateForm';
-import ListingDetailPage from './components/RentPageComponent/ListingDetailPage'; 
+import ListingDetailPage from './components/RentPageComponent/ListingDetailPage';
 import PostRequirementPage  from './components/PostRequirementPage';
 import RoomPage from './components/RentPageComponent/AllRoomsPage';
 import RoomDetailPage from './components/RentPageComponent/RoomDetailPage';
+import Add_PG from './components/RentPageComponent/Add_PG';
+import PGCard from './components/RentPageComponent/PGCard';
 
 function App() {
     return (
@@ -27,12 +29,13 @@ function App() {
                 <Route path="/password/reset" element={<ResetPasswordPage />} />
                 <Route path="/AllExploreRooms" element={<ListingPage />} />
                 <Route path="/listing/:id" element={<ListingDetailPage/>} />
-                <Route path="/room/:id" element={<RoomDetailPage/>} /> 
+                <Route path="/room/:id" element={<RoomDetailPage/>} />
                 <Route path="/NeedRoomForm" element={<NeedRoomForm />} />
                 <Route path="/NeedRoomateForm" element={<NeedRoomate />} />
                 <Route path="/PostRequirementPage" element={<PostRequirementPage />} />
-                 <Route path="/AllRoomsPage" element={<RoomPage />} />
-              
+                <Route path="/AllRoomsPage" element={<RoomPage />} />
+                <Route path='/Add_PG' element={<Add_PG />} />
+                <Route path= '/pg' element={<PGCard />}/>
             </Routes>
         </Router>
     );

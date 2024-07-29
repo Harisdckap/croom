@@ -11,6 +11,7 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\OTPVerificationController;
 use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\ImageController;
+use App\Http\Controllers\PgController;
 
 
 
@@ -45,3 +46,5 @@ use App\Http\Controllers\RoomListingController;
 
 Route::get('/rooms', [RoomListingController::class, 'index']);
 Route::get('/rooms/{id}', [RoomListingController::class, 'show']);
+Route::post('/add-pg', [PgController::class, 'store']);
+Route::get('/pgs', [PgController::class, 'index']);
