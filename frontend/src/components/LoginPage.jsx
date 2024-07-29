@@ -4,7 +4,6 @@ import { login } from '../js/api/auth';
 import apartmentIMG from '../assets/log3.png';
 import logo from '../assets/logo.png';
 
-
 function LoginPage() {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
@@ -40,12 +39,12 @@ function LoginPage() {
 
         } catch (error) {
             console.error('Login error:', error);
-            setErrorMessage('Login failed. Please check your credentials and try again.');
+            setErrorMessage('Login failed. Please check your credentials');
         }
     };
 
     return (
-        <div className=' min-h-screen flex flex-col bg-gray-100'   style={{ backgroundColor: 'rgb(31, 41, 59)' }}>
+        <div className='min-h-screen flex flex-col bg-gray-100' style={{ backgroundColor: 'rgb(31, 41, 59)' }}>
             {/* Navbar with Logo */}
             <nav className="bg-gray-100 px-3 py-4">
                 <div className="flex items-center">
@@ -55,70 +54,71 @@ function LoginPage() {
 
             {/* Main Content */}
             <div className='mt-12 w-full flex items-center justify-center'>
-            <div className="bg-gray-100 rounded-md flex">
-                {/* Image Section */}
-                <div className='hidden md:flex md:w-1/2 items-center justify-center'>
-                    <img src={apartmentIMG} className='max-h-96' alt='Apartment' />
-                </div>
+                <div className="bg-gray-100 rounded-md flex">
+                    {/* Image Section */}
+                    <div className='hidden md:flex md:w-1/2 items-center justify-center'>
+                        <img src={apartmentIMG} className='max-h-96' alt='Apartment' />
+                    </div>
 
-                {/* Form Section */}
-                <div className='flex items-center mt-2 mb-2 p-2 justify-between'>
-                    <div>
-                        <h1 className='text-center text-2xl font-bold mb-4'>Login to your account</h1>
-                        <p className='text-center text-gray-500 mb-4'>Welcome back! Select a method to login:</p>
-                        <div className='flex justify-center gap-3 mb-4'>
-                            <button className='btn btn-outline-primary flex items-center px-4 py-2 border border-blue-500 text-blue-500 rounded hover:bg-blue-100'>
-                                Facebook
-                            </button>
-                            <button className='btn btn-outline-danger flex items-center px-4 py-2 border border-red-500 text-red-500 rounded hover:bg-red-100'>
-                                Google
-                            </button>
-                        </div>
-                        <form onSubmit={handleSubmit} autoComplete="off">
-                            <div className='mb-3'>
-                                <label htmlFor='email' className='block text-gray-700'>Email:</label>
-                                <input
-                                    type='email'
-                                    className={`mt-1 block w-full p-2 border ${errorMessage ? 'border-red-500' : 'border-gray-300'} rounded-md`}
-                                    id='email'
-                                    name='email'
-                                    value={formData.email}
-                                    onChange={handleChange}
-                                    required
-                                />
-                                {errorMessage && <div className='text-red-500 text-sm'>{errorMessage}</div>}
+                    {/* Form Section */}
+                    <div className='flex items-center mt-2 mb-2 p-2 justify-between'>
+                        <div>
+                            <h1 className='text-center text-2xl font-bold mb-4'>Login to your account</h1>
+                            <p className='text-center text-gray-500 mb-4'>Welcome back! Select a method to login:</p>
+                            <div className='flex justify-center gap-3 mb-4'>
+                                <button className='btn btn-outline-primary flex items-center px-4 py-2 border border-blue-500 text-blue-500 rounded hover:bg-blue-100'>
+                                    Facebook
+                                </button>
+                                <button className='btn btn-outline-danger flex items-center px-4 py-2 border border-red-500 text-red-500 rounded hover:bg-red-100'>
+                                    Google
+                                </button>
                             </div>
-                            <div className='mb-3'>
-                                <label htmlFor='password' className='block text-gray-700'>Password:</label>
-                                <input
-                                    type='password'
-                                    className={`mt-1 block w-full p-2 border ${errorMessage ? 'border-red-500' : 'border-gray-300'} rounded-md`}
-                                    id='password'
-                                    name='password'
-                                    value={formData.password}
-                                    onChange={handleChange}
-                                    required
-                                />
-                                {errorMessage && <div className='text-red-500 text-sm'>{errorMessage}</div>}
-                            </div>
-                            <div className='mb-3 flex items-center'>
-                                <input type='checkbox' className='h-4 w-4 text-blue-600' id='rememberMe' />
-                                <label className='ml-2 block text-gray-700' htmlFor='rememberMe'>Remember me</label>
-                            </div>
-                            <div className='mb-3 flex justify-between items-center'>
-                                <div>
-                                    {/* Use Link component for navigation */}
-                                    <Link to='/forgot-Password' className='text-blue-500 hover:underline'>Forgot password?</Link>
+                            {errorMessage && (
+                                <div className='m-0 p-0 fixed  text-center text-red-500'>
+                                    {errorMessage}
                                 </div>
-                            </div>
-                            <button type='submit' className='w-full py-2 px-4 bg-blue-500 text-white font-semibold rounded-md shadow hover:bg-blue-700 focus:outline-none'>Login</button>
-                        </form>
-                        <p className='mt-4 text-center'>
-                            Don't have an account? <Link to='/register' className='text-blue-500 hover:underline'>Create account</Link>
-                        </p>
+                            )}
+                            <form onSubmit={handleSubmit} autoComplete="off">
+                                <div className='mb-3'>
+                                    <label htmlFor='email' className='block mt-12 text-gray-700'>Email:</label>
+                                    <input
+                                        type='email'
+                                        className={`mt-1 block w-96 p-2 border ${errorMessage ? 'border-red-500' : 'border-gray-300'} rounded-md`}
+                                        id='email'
+                                        name='email'
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+                                <div className='mb-3'>
+                                    <label htmlFor='password' className='block text-gray-700'>Password:</label>
+                                    <input
+                                        type='password'
+                                        className={`mt-1 block w-96 p-2 border ${errorMessage ? 'border-red-500' : 'border-gray-300'} rounded-md`}
+                                        id='password'
+                                        name='password'
+                                        value={formData.password}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+                                <div className='mb-3 flex items-center'>
+                                    <input type='checkbox' className='h-4 w-4 text-blue-600' id='rememberMe' />
+                                    <label className='ml-2 block text-gray-700' htmlFor='rememberMe'>Remember me</label>
+                                </div>
+                                <div className='mb-3 flex justify-between items-center'>
+                                    <div>
+                                        {/* Use Link component for navigation */}
+                                        <Link to='/forgot-password' className='text-blue-500 hover:underline'>Forgot password?</Link>
+                                    </div>
+                                </div>
+                                <button type='submit' className='w-full py-2 px-4 bg-blue-500 text-white font-semibold rounded-md shadow hover:bg-blue-700 focus:outline-none'>Login</button>
+                            </form>
+                            <p className='mt-4 text-center'>
+                                Don't have an account? <Link to='/register' className='text-blue-500 hover:underline'>Create account</Link>
+                            </p>
+                        </div>
                     </div>
                 </div>
-            </div>
             </div>
         </div>
     );
