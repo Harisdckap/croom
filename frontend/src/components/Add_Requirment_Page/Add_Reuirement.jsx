@@ -73,7 +73,7 @@ export const Add_Reuirement = () => {
   return (
     <div className="max-w-6xl mx-auto p-16 bg-white shadow-md rounded-md">
       <div className="text-center">
-        <h1 className="text-3xl font-bold">Add your requirement</h1>
+        <h1 className="text-3xl font-bold">Add your </h1>
         <p className="text-gray-500 mt-2">so that other users can contact you</p>
       </div>
       <div className="space-y-4">

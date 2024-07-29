@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-// import "../Add_RoommateForm/Rommate.css";
 
 export const Add_PG = () => {
   const [pgType, setPgType] = useState('Both');
-  const [mobileNum, setmobileNum] = useState('');
+  const [mobileNum, setMobileNum] = useState('');
   const [pgName, setPgName] = useState('');
   const [ownerName, setOwnerName] = useState('');
   const [pgAddress, setPgAddress] = useState('');
@@ -32,7 +31,6 @@ export const Add_PG = () => {
   };
 
   const validateInputs = () => {
-    
     if (!pgName) {
       showToastMessage("PG name is required");
       return false;
@@ -43,7 +41,6 @@ export const Add_PG = () => {
       return false;
     }
 
-    
     if (!ownerName) {
       showToastMessage("Owner name is required");
       return false;
@@ -54,12 +51,7 @@ export const Add_PG = () => {
       return false;
     }
 
-    // if (!pgRent || isNaN(pgRent)) {
-    //   showToastMessage("Valid rent amount is required");
-    //   return false;
-    // }
-
-    if (!singleOccupancy ) {
+    if (!singleOccupancy) {
       showToastMessage("Valid single occupancy amount is required");
       return false;
     }
@@ -99,11 +91,6 @@ export const Add_PG = () => {
       return false;
     }
 
-    // if (pgFiles.length < 2) {
-    //   showToastMessage("Please upload at least 3 photos of your room");
-    //   return false;
-    // }
-
     return true;
   };
 
@@ -112,45 +99,51 @@ export const Add_PG = () => {
       toast.success("Form submitted successfully", { position: "top-center" });
     }
   };
-  const handleCancel = () => {
-    // Reset form fields
-    setLocation("");
-    setApproxRent("");
-    setPost("");
-    setLookingFor("Any");
-    setRoomType("Single");
-    setHighlights("");
-    setPgInterested("");
-};
 
+  const handleCancel = () => {
+    setPgType('Both');
+    setMobileNum('');
+    setPgName('');
+    setOwnerName('');
+    setPgAddress('');
+    setSingleOccupancy('');
+    setDoubleOccupancy('');
+    setTripleOccupancy('');
+    setSecurityDeposit('');
+    setNoticePeriod('');
+    setMaintenanceCharge('');
+    setElectricityCharges('');
+    setPgPostContent('');
+    setPgFiles([]);
+  };
 
   return (
     <div className="max-w-6xl mx-auto p-16 bg-white rounded-md">
-            <div className="absolute top-4 right-4">
-                <button
-                    onClick={handleCancel}
-                    className="text-gray-500 hover:text-gray-700 focus:outline-none"
-                    aria-label="Close"
-                >
-                    <svg
-                        className="w-6 h-6"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M6 18L18 6M6 6l12 12"
-                        ></path>
-                    </svg>
-                </button>
-            </div>
+      <div className="absolute top-4 right-4">
+        <button
+          onClick={handleCancel}
+          className="text-gray-500 hover:text-gray-700 focus:outline-none"
+          aria-label="Close"
+        >
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M6 18L18 6M6 6l12 12"
+            ></path>
+          </svg>
+        </button>
+      </div>
       <div className="text-center">
         <h1 className="text-3xl font-bold">Add your PG</h1>
-        <p className="text-gray-500 mt-2">We`ve over thousand tenants for you!</p>
+        <p className="text-gray-500 mt-2">We've over thousand tenants for you!</p>
       </div>
       <div className="space-y-4">
         <div className="flex gap-20 mt-12">
@@ -167,7 +160,7 @@ export const Add_PG = () => {
             <label className="block text-sm font-medium text-gray-700">Mobile Number</label>
             <input
               value={mobileNum}
-              onChange={(e) => setmobileNum(e.target.value)}
+              onChange={(e) => setMobileNum(e.target.value)}
               type="number"
               className="mt-1 block px-2 py-3 border w-72 border-gray-300 rounded-md shadow-sm sm:text-sm"
             />
@@ -244,51 +237,6 @@ export const Add_PG = () => {
               </div>
             </div>
           </fieldset>
-        </div>
-
-        <div className="flex gap-24">
-          <div className="mt-12">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Security Deposit</label>
-              <input
-                value={securityDeposit}
-                onChange={(e) => setSecurityDeposit(e.target.value)}
-                type="text"
-                className="mt-1 block px-2 py-3 border w-96 border-gray-300 rounded-md shadow-sm sm:text-sm"
-              />
-            </div>
-
-            <div className="mt-10">
-              <label className="block text-sm font-medium text-gray-700">Notice Period</label>
-              <input
-                value={noticePeriod}
-                onChange={(e) => setNoticePeriod(e.target.value)}
-                type="text"
-                className="mt-1 block px-2 py-3 border w-96 border-gray-300 rounded-md shadow-sm sm:text-sm"
-              />
-            </div>
-          </div>
-          <div className="mt-12">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Maintenance Charge (if any)</label>
-              <input
-                value={maintenanceCharge}
-                onChange={(e) => setMaintenanceCharge(e.target.value)}
-                type="text"
-                className="mt-1 block px-2 py-3 border w-96 border-gray-300 rounded-md shadow-sm sm:text-sm"
-              />
-            </div>
-
-            <div className="mt-10">
-              <label className="block text-sm font-medium text-gray-700">Electricity Charges</label>
-              <input
-                value={electricityCharges}
-                onChange={(e) => setElectricityCharges(e.target.value)}
-                type="text"
-                className="mt-1 block px-2 py-3 border w-96 border-gray-300 rounded-md shadow-sm sm:text-sm"
-              />
-            </div>
-          </div>
         </div>
       </div>
       <label className="text-sm text-gray-600 mt-12 block font-medium">Upload 3 Photos of your room</label>
