@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { verifyOtp } from "../js/api/auth";
 import img from '../assets/otp.png';
 import logo from "../assets/logo.png";
+import OtpInput from 'react-otp-input';
 
 const OTPPage = () => {
     const [otp, setOtp] = useState("");
@@ -48,18 +49,35 @@ const OTPPage = () => {
                             <p className="text-center text-gray-600 mb-4">Please check your email for the OTP and enter it below:</p>
 
                             <form onSubmit={handleSubmit}>
-                                <div className="mb-4">
-                                    <label htmlFor="otp" className="block text-gray-700">OTP</label>
-                                    <input
-                                        type="text"
-                                        className={`mt-1 block w-full px-3 py-2 border ${error ? 'border-red-500' : 'border-gray-300'} rounded-md`}
-                                        id="otp"
+                                <div className="mb-4 ml-16" >
+                                    <label htmlFor="otp" className="block text-gray-700 mb-2">OTP</label>
+                                    <OtpInput
                                         value={otp}
-                                        onChange={(e) => setOtp(e.target.value)}
-                                    />
-                                    {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
+                                        onChange={setOtp}
+                                        numInputs={4}
+                                        renderSeparator={<span className="ml-2 mr-2">-</span>}
+                                        renderInput={(props) => <input {...props}
+                                       
+                                         />}
+                                         inputStyle={{
+                                            width: '3rem',
+                                            height: '3rem',
+                                            fontSize: '1rem',
+                                            borderRadius: '0.375rem',
+                                            border: '1px solid #cbd5e0',
+                                            color: '#1a202c',
+                                            backgroundColor: '#edf2f7',
+                                           
+                                        }}
+                                        focusStyle={{
+                                            border: '1px solid #3182ce',
+                                            outline: 'none',
+                                            boxShadow: '0 0 0 1px #3182ce'
+                                        }}
+                                        />
+                             
                                 </div>
-
+                                {error && <div className="text-red-500 ml-24 text-sm mt-14 fixed">{error}</div>}
                                 <div className="flex justify-center">
                                     <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700">
                                         Verify OTP

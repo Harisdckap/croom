@@ -74,3 +74,6 @@ npm i
 
 <!-- created -->
 <!-- Merge-Branch -->
+
+
+<!-- OTP PAGE npm i react-otp-input -->
