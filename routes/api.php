@@ -60,3 +60,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [ProfileController::class, 'index']);
     Route::post('/profile', [ProfileController::class, 'store']);
 });
+
+
+use App\Http\Controllers\PgListingController;
+
+Route::get('/pg_listing', [PgListingController::class, 'index']);
+Route::get('/api/pg_listing/{id}', [PgListingController::class, 'show']);
+Route::post('/pg-listing', [PgListingController::class, 'store']);
