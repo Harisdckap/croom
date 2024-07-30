@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Header from "./Header";
 import Footer from "./Footer";
 // import Image from "../assets/roomsearch.png";
+import ExploreButton from "./RentPageComponent/ExploreButton";
 
 const Home = () => {
   return (
@@ -18,9 +19,7 @@ const Home = () => {
           <div className="text-center">
             <h1 className="text-5xl font-extrabold mb-4 text-blue-600">Welcome to Room Sharing</h1>
             <p className="text-lg mb-6 text-gray-700">Find your perfect room or share your space</p>
-            <Link to="/AllExploreRooms" className="bg-blue-500 text-white px-8 py-3 rounded-full text-lg font-semibold shadow-md hover:bg-blue-600 transition duration-300">
-              Explore Rooms
-            </Link>
+             <ExploreButton/>
 
           </div>
         </section>
