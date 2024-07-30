@@ -20,7 +20,7 @@ const Navbar = ({ search, onSearchChange, onSearchSubmit, gender, onGenderChange
             <UsersIcon className="h-6 w-6 mr-1" />
             Roommates
           </a>
-          <a href="/pg" className="flex items-center text-gray-700 hover:text-blue-600 font-medium">
+          <a href="/PGListingPage" className="flex items-center text-gray-700 hover:text-blue-600 font-medium">
             <BuildingOfficeIcon className="h-6 w-6 mr-1" />
             PG
           </a>

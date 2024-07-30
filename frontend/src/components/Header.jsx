@@ -58,9 +58,6 @@ const Header = () => {
           <Link to="/PostRequirementPage" className="text-blue-500 hover:underline ml-4 border-2 border-blue-500 px-4 py-2 rounded">
             Add Listing
           </Link>
-          <Link to="/Add_PG" className="text-blue-500 hover:underline ml-4 border-2 border-blue-500 px-4 py-2 rounded">
-            Add PG
-          </Link>
         </div>
       </div>
     </nav>

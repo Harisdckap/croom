@@ -5,29 +5,41 @@ const PGCard = () => {
     const [pgs, setPgs] = useState([]);
 
     useEffect(() => {
-        axios.get('http://localhost:8000/api/pgs')
+        axios.get('http://localhost:8000/api/pg')
             .then(response => {
                 setPgs(response.data);
             })
             .catch(error => {
-                console.error('There was an error fetching the PGs!', error);
+                console.error('There was an error fetching the PG!', error);
             });
     }, []);
 
+    const formatBase64 = (imagePath) => {
+        return `data:image/jpeg;base64,${imagePath}`;
+    };
+
     return (
         <div className="container mx-auto p-8">
-            <h1 className="text-2xl font-bold mb-4">PG Card</h1>
+            <h1 className="text-2xl font-bold mb-4">PG Listings</h1>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                 {pgs.map(pg => (
                     <div key={pg.id} className="bg-white shadow-md rounded-md overflow-hidden">
-                        {pg.image && (
-                            <img src={`data:image/jpeg;base64,${btoa(new Uint8Array(pg.image).reduce((data, byte) => data + String.fromCharCode(byte), ''))}`} alt={pg.name} className="w-full h-48 object-cover" />
+                        {pg.pg_files && pg.pg_files.length > 0 && (
+                            <img
+                                src={formatBase64(pg.pg_files[0])} 
+                                alt={pg.pg_name}
+                                className="w-full h-48 object-cover"
+                            />
                         )}
                         <div className="p-4">
-                            <h2 className="text-xl font-bold">{pg.name}</h2>
-                            <p className="text-gray-600">{pg.location}</p>
-                            <p className="text-gray-800 font-semibold">Rent: ${pg.rent}</p>
-                            <p className="text-gray-600">Available Rooms: {pg.available_rooms}</p>
+                            <h2 className="text-xl font-bold">{pg.pg_name}</h2>
+                            <p className="text-gray-600">{pg.pg_address}</p>
+                            <p className="text-gray-800 font-semibold">Single Rent: ${pg.single_occupancy}</p>
+                            <p className="text-gray-800 font-semibold">Double Rent: ${pg.double_occupancy}</p>
+                            <p className="text-gray-800 font-semibold">Triple Rent: ${pg.triple_occupancy}</p>
+                            <p className="text-gray-600">PG Type: {pg.pg_type}</p>
+                            <p className="text-gray-600">Contact: {pg.mobile_num}</p>
+                            <p className="text-gray-600 mt-2">{pg.pg_post_content}</p>
                         </div>
                     </div>
                 ))}

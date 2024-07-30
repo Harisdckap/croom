@@ -42,7 +42,7 @@ const ListingDetailPage = () => {
     return (
         <div>
             <HomeNavBar />
-            <motion.div 
+            <motion.div
                 className="container mx-auto p-6 bg-white shadow-lg"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -50,7 +50,7 @@ const ListingDetailPage = () => {
             >
                 <div className="flex flex-col lg:flex-row gap-6">
                     {/* Image Section */}
-                    <motion.div 
+                    <motion.div
                         className="flex-none w-full lg:w-1/3 mb-6 lg:mb-0"
                         initial={{ x: -100, opacity: 0 }}
                         animate={{ x: 0, opacity: 1 }}
@@ -90,7 +90,7 @@ const ListingDetailPage = () => {
                     </motion.div>
 
                     {/* Details Section */}
-                    <motion.div 
+                    <motion.div
                         className="flex-1"
                         initial={{ x: 100, opacity: 0 }}
                         animate={{ x: 0, opacity: 1 }}

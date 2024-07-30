@@ -18,6 +18,8 @@ import AllRoommatesPage from "./components/RentPageComponent/Roomates";
 import RoommatesDetailPage from "./components/RentPageComponent/RoomatesId";
 import Profile from "./components/Profile";
 import PgForm from "./components/RentPageComponent/Add_Pg_Form";
+import PGCard from "./components/RentPageComponent/PGCard";
+import PGListingPage from "./components/RentPageComponent/PGListingPage";
 import PlansPage from "./components/RentPageComponent/Plan";
 
 function App() {
@@ -38,16 +40,16 @@ function App() {
                 <Route path="/room/:id" element={<RoomDetailPage />} />
                 <Route path="/NeedRoomForm" element={<NeedRoomForm />} />
                 <Route path="/NeedRoomateForm" element={<NeedRoomate />} />
-                <Route
-                    path="/PostRequirementPage"
-                    element={<PostRequirementPage />}
+                <Route path="/PostRequirementPage"element={<PostRequirementPage />}
                 />
                 <Route path="/AllRoomsPage" element={<RoomPage />} />
                 <Route path="/AllRoommates" element={<AllRoommatesPage />} />
                 <Route path="/roommate/:id" element={<RoommatesDetailPage />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/PgForm" element={<PgForm />} />
+                <Route path="/PgCard" element={<PGCard/>} />
                 <Route path="/PlanPage" element={<PlansPage />} />
+                <Route path="/PGListingPage" element={<PGListingPage/>} />
             </Routes>
         </Router>
     );
