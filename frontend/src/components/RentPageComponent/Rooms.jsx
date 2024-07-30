@@ -78,6 +78,14 @@ const RoomsPage = () => {
               className="border rounded-lg p-4 shadow-lg bg-white hover:shadow-xl transition-shadow duration-300"
               whileHover={{ scale: 1.05 }}
             >
+              {room.photo && (
+                <img
+                  src={`http://127.0.0.1:8000/storage/${room.photo}`}
+                  alt="Room Photo"
+                  className="w-full h-40 object-cover rounded-t-lg mb-4"
+                  onError={(e) => (e.target.src = '/path/to/fallback-image.jpg')} // Fallback image URL
+                />
+              )}
               <h2 className="text-xl font-semibold mb-2">{room.title}</h2>
               <p className="text-gray-700 mb-2">Location: {room.location}</p>
               <p className="text-gray-700 mb-2">Price: ${room.price}</p>

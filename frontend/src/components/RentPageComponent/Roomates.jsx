@@ -12,13 +12,21 @@ const RoommatesPage = () => {
   const [address, setAddress] = useState('');
   const [totalPages, setTotalPages] = useState(0);
   const [search, setSearch] = useState('');
+  const [gender, setGender] = useState('all');
   const navigate = useNavigate();
-  const itemsPerPage = 6; // Define how many items per page
+  const itemsPerPage = 6;
 
   useEffect(() => {
     const fetchRoommates = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/api/roommates?address=${address}&p=${page}`);
+        const response = await axios.get(`http://127.0.0.1:8000/api/roommates`, {
+          params: {
+            address: address,
+            p: page,
+            gender: gender, // Pass the gender filter to the API
+            itemsPerPage: itemsPerPage,
+          }
+        });
         setRoommates(response.data.data);
         setTotalPages(response.data.last_page);
       } catch (error) {
@@ -27,7 +35,7 @@ const RoommatesPage = () => {
     };
 
     fetchRoommates();
-  }, [address, page]);
+  }, [address, page, gender]); // Add gender to dependency array
 
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
@@ -37,6 +45,11 @@ const RoommatesPage = () => {
     e.preventDefault();
     setAddress(search);
     setPage(1); // Reset to page 1 on new search
+  };
+
+  const handleGenderChange = (e) => {
+    setGender(e.target.value);
+    setPage(1); // Reset to the first page when gender changes
   };
 
   const handlePageChange = (newPage) => {
@@ -50,12 +63,14 @@ const RoommatesPage = () => {
   };
 
   return (
-    <div>
+    <div >
       <HomeNavBar />
       <Navbar 
         search={search} 
         onSearchChange={handleSearchChange} 
         onSearchSubmit={handleSearchSubmit} 
+        gender={gender} 
+        onGenderChange={handleGenderChange}
       />
 
       <h1 className="text-4xl font-bold mb-8 text-center">All Roommates</h1>
@@ -67,12 +82,10 @@ const RoommatesPage = () => {
               <div className="mb-6">
                 {roommate.house_image ? (
                   <img
-                    src={`http://127.0.0.1:8000/storage/${roommate.house_image}`} // Adjusted the image path
+                    src={`http://127.0.0.1:8000/storage/${roommate.house_image}`}
                     alt="Roommate Photo"
                     className="w-full h-60 object-cover rounded-lg shadow-lg"
-                    onError={(e) =>
-                      (e.target.src = '/path/to/fallback-image.jpg')
-                    } // Fallback image URL
+                    onError={(e) => (e.target.src = '/path/to/fallback-image.jpg')}
                   />
                 ) : (
                   <p className="text-gray-500 text-center">No photo available.</p>
@@ -80,7 +93,8 @@ const RoommatesPage = () => {
               </div>
               <h2 className="text-xl font-semibold mb-2">{roommate.name}</h2>
               <p className="text-gray-700 mb-2">Location: {roommate.location}</p>
-              <p className="text-gray-700 mb-2">Budget: ${roommate.budget}</p>
+              <p className="text-gray-700 mb-2">Budget: ${roommate.approx_rent}</p>
+              <p className="text-gray-700 mb-2">Looking for Gender: {roommate.looking_for_gender}</p>
               <p className="text-gray-700 mb-2">Looking for: {roommate.looking_for}</p>
               <div className="mt-4 flex justify-end">
                 <button

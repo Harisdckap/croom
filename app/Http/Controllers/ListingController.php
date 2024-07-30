@@ -10,7 +10,7 @@ class ListingController extends Controller
 {
     public function store(Request $request)
     {
-     
+
 
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
@@ -25,7 +25,7 @@ class ListingController extends Controller
             'amenities' => 'nullable|json',
             'description' => 'nullable|string',
             'listing_type' => 'required|string|max:255',
-            'looking_for_gender' => 'nullable|string|max:255', 
+            'looking_for_gender' => 'nullable|string|max:255',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 

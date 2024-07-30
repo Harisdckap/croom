@@ -18,7 +18,7 @@ import AllRoommatesPage from "./components/RentPageComponent/Roomates";
 import RoommatesDetailPage from "./components/RentPageComponent/RoomatesId";
 import Profile from "./components/Profile";
 import PgForm from "./components/RentPageComponent/Add_Pg_Form";
-import PlansPage from "./components/RentPageComponent/Plan";
+import PlansPage from "./components/RentPageComponent/PlanPage";
 
 function App() {
     return (

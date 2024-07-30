@@ -11,7 +11,7 @@ class RoommateController extends Controller
     {
         $address = $request->query('address');
         $page = $request->query('p', 1); // Default to page 1 if not provided
-        $perPage = 10; // Number of listings per page
+        $perPage = 6; // Number of listings per page
 
         $query = Roommate::query();
 
