@@ -20,6 +20,7 @@ import RoomDetailPage from "./components/RentPageComponent/RoomId";
 // import PgForm from "./components/RentPageComponent/Add_Pg_Form";
 // import PlansPage from "./components/RentPageComponent/PlanPage";
 import PropertyPage from "./components/RentPageComponent/property";
+import PropertyDetail from "./components/RentPageComponent/PropertyDetail";
 
 
 
@@ -46,6 +47,8 @@ function App() {
                     element={<PostRequirementPage />}
                 />
                 <Route path="/property" element={<PropertyPage/>}/>
+                <Route path="/property/:id/:location" element={<PropertyDetail />} />
+
 
                 {/* <Route path="/AllRoomsPage" element={<RoomPage />} />
                 <Route path="/AllRoommates" element={<AllRoommatesPage />} />

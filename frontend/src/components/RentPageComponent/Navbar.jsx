@@ -22,7 +22,7 @@ const Navbar = ({ search, onSearchChange, onSearchSubmit, gender, onGenderChange
             <div className="container mx-auto px-4 py-4 flex items-center justify-between">
                 <div className="flex items-center space-x-6">
                     <NavLink
-                        to="?address=Chennai,&p=0&t=a"
+                        to="?address=Chennai&p=0&t=a"
                         onClick={() => handleTypeClick('a')}
                         className={({ isActive }) =>
                             `flex items-center font-medium ${
@@ -34,7 +34,7 @@ const Navbar = ({ search, onSearchChange, onSearchSubmit, gender, onGenderChange
                         All Listings
                     </NavLink>
                     <NavLink
-                        to="?address=Chennai,&p=0&t=r"
+                        to="?address=Chennai&p=0&t=r"
                         onClick={() => handleTypeClick('r')}
                         className={({ isActive }) =>
                             `flex items-center font-medium ${
@@ -46,7 +46,7 @@ const Navbar = ({ search, onSearchChange, onSearchSubmit, gender, onGenderChange
                         Rooms
                     </NavLink>
                     <NavLink
-                        to="?address=Chennai,&p=0&t=rm"
+                        to="?address=Chennai&p=0&t=rm"
                         onClick={() => handleTypeClick('rm')}
                         className={({ isActive }) =>
                             `flex items-center font-medium ${
@@ -58,7 +58,7 @@ const Navbar = ({ search, onSearchChange, onSearchSubmit, gender, onGenderChange
                         Roommates
                     </NavLink>
                     <NavLink
-                        to="?address=Chennai,&p=0&t=pg"
+                        to="?address=Chennai&p=0&t=pg"
                         onClick={() => handleTypeClick('pg')}
                         className={({ isActive }) =>
                             `flex items-center font-medium ${

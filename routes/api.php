@@ -35,7 +35,7 @@ Route::delete('/listings/{id}', [ListingController::class, 'destroy']);
 Route::get('/combined-listings', [PropertyController::class, 'index']);
 
 Route::get('/properties', [PropertyController::class, 'index']);
-Route::get('/properties/{id}', [PropertyController::class, 'show']);
+Route::get('/property/{id}/{location}', [PropertyController::class, 'show']);
 Route::post('/upload', [ImageController::class, 'upload']);
 
 
