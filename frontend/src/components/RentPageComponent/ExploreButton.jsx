@@ -2,9 +2,9 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const ExploreButton = () => {
-    const address = "Chennai"; // Set your address
-    const page = 0; // Page number
-    const type = "a"; // Type 'a' for all
+    const address = "Chennai"; 
+    const page = 0;
+    const type = "a"; 
 
     // Construct the URL with query parameters
     const url = `/property?address=${encodeURIComponent(address)}&p=${page}&t=${type}`;

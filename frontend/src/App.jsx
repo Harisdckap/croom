@@ -6,22 +6,13 @@ import RegisterPage from "./components/RegisterPage";
 import OTPPage from "./components/OTPPage";
 import ForgetPasswordPage from "./components/ForgotPasswordPage";
 import ResetPasswordPage from "./components/ResetPasswordPage";
-import ListingPage from "./components/RentPageComponent/Listing";
-// import PrivateRoute from './components/PrivateRoute';
 import NeedRoomForm from "./components/RentPageComponent/Add_Room_Form";
 import NeedRoomate from "./components/RentPageComponent/Add_Roomate_Form";
-import ListingDetailPage from "./components/RentPageComponent/ListingId";
+import Add_PG from "./components/RentPageComponent/Add_Pg_Form";
 import PostRequirementPage from "./components/PostRequirementPage";
-// import RoomPage from "./components/RentPageComponent/Rooms";
-import RoomDetailPage from "./components/RentPageComponent/RoomId";
-// import AllRoommatesPage from "./components/RentPageComponent/Roomates";
-// import RoommatesDetailPage from "./components/RentPageComponent/RoomatesId";
-// import Profile from "./components/Profile";
-// import PgForm from "./components/RentPageComponent/Add_Pg_Form";
-// import PlansPage from "./components/RentPageComponent/PlanPage";
 import PropertyPage from "./components/RentPageComponent/property";
 import PropertyDetail from "./components/RentPageComponent/PropertyDetail";
-
+import PlanPage from "./components/RentPageComponent/PlanPage";
 
 
 function App() {
@@ -37,25 +28,20 @@ function App() {
                     element={<ForgetPasswordPage />}
                 />
                 <Route path="/password/reset" element={<ResetPasswordPage />} />
-                <Route path="/AllExploreRooms" element={<ListingPage />} />
-                <Route path="/listing/:id" element={<ListingDetailPage />} />
-                <Route path="/room/:id" element={<RoomDetailPage />} />
                 <Route path="/NeedRoomForm" element={<NeedRoomForm />} />
                 <Route path="/NeedRoomateForm" element={<NeedRoomate />} />
+                <Route path="/PgForm" element={<Add_PG />} />
+                
                 <Route
                     path="/PostRequirementPage"
                     element={<PostRequirementPage />}
                 />
-                <Route path="/property" element={<PropertyPage/>}/>
-                <Route path="/property/:id/:location" element={<PropertyDetail />} />
-
-
-                {/* <Route path="/AllRoomsPage" element={<RoomPage />} />
-                <Route path="/AllRoommates" element={<AllRoommatesPage />} />
-                <Route path="/roommate/:id" element={<RoommatesDetailPage />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/PgForm" element={<PgForm />} />
-                <Route path="/PlanPage" element={<PlansPage />} /> */}
+                <Route path="/property" element={<PropertyPage />} />
+                <Route
+                    path="/property/:id/:location"
+                    element={<PropertyDetail />}
+                />
+                <Route path="/PlanPage" element={<PlanPage />} />
             </Routes>
         </Router>
     );
