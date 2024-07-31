@@ -10,7 +10,7 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\OTPVerificationController;
 use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\ImageController;
-use App\Http\Controllers\PgListingController;
+
 
 
 
@@ -62,10 +62,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/profile', [ProfileController::class, 'store']);
 });
 
-//PG api
-
-Route::get('/api/pg_listing', [PgListingController::class, 'index']);
-Route::get('/api/pg_listing/{id}', [PgListingController::class, 'show']);
-Route::post('/pg-listing', [PgListingController::class, 'store']);
-
-// Route::get('/api/pg_listings', [PGController::class, 'index']);
+use App\Http\Controllers\PgListingController;
+Route::get('/pg_listings', [PgListingController::class, 'index']);
+Route::get('/pg_listings/{id}', [PgListingController::class, 'show']);
+Route::post('/pg_listings', [PgListingController::class, 'store']);

@@ -20,9 +20,8 @@ class RoomListingController extends Controller
         }
 
         // Filter listings specifically for rooms if applicable
-        $query->where('listing_type', 'room'); // Assuming you have a type field to specify room
-
-        $listings = $query->paginate(10, ['*'], 'page', $page);
+        $query->where('listing_type', 'room'); 
+        $listings = $query->paginate(6, ['*'], 'page', $page);
 
         return response()->json($listings);
     }

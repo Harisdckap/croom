@@ -6,49 +6,56 @@ use Illuminate\Http\Request;
 use App\Models\PgListing;
 use Illuminate\Support\Facades\Log;
 
-
 class PgListingController extends Controller
 {
+    public function index()
+    {
+        $pgListings = PgListing::paginate(10);
+        return response()->json($pgListings);
+    }
+
+    public function show($id)
+    {
+        $pgListing = PgListing::findOrFail($id);
+        return response()->json($pgListing);
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'pg_type' => 'required|string|max:255',
-            'mobile_num' => 'required|string|max:255',
-            'pg_name' => 'required|string|max:255',
-            'pg_address' => 'required|string',
-            'single_occupancy' => 'required|numeric',
-            'double_occupancy' => 'required|numeric',
-            'triple_occupancy' => 'required|numeric',
-            'pg_post_content' => 'required|string',
-            'pg_files' => 'nullable|array',
-            'pg_files.*' => 'nullable|file|mimes:jpg,jpeg,png,webp|max:2048',
+            'pgType' => 'required|string|max:255',
+            'mobileNum' => 'required|string|max:255',
+            'pgName' => 'required|string|max:255',
+            'pgAddress' => 'required|string',
+            'occupancyType' => 'required|string|max:255',
+            'occupancyAmount' => 'required|integer',
+            'pgPostContent' => 'required|string',
+            'pgFiles' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
         $pgListing = new PgListing();
-        $pgListing->pg_type = $validated['pg_type'];
-        $pgListing->mobile_num = $validated['mobile_num'];
-        $pgListing->pg_name = $validated['pg_name'];
-        $pgListing->pg_address = $validated['pg_address'];
-        $pgListing->single_occupancy = $validated['single_occupancy'];
-        $pgListing->double_occupancy = $validated['double_occupancy'];
-        $pgListing->triple_occupancy = $validated['triple_occupancy'];
-        $pgListing->pg_post_content = $validated['pg_post_content'];
+        $pgListing->pg_type = $validated['pgType'];
+        $pgListing->mobile_num = $validated['mobileNum'];
+        $pgListing->pg_name = $validated['pgName'];
+        $pgListing->pg_address = $validated['pgAddress'];
+        $pgListing->occupancy_type = $validated['occupancyType'];
+        $pgListing->occupancy_amount = $validated['occupancyAmount'];
+        $pgListing->pg_post_content = $validated['pgPostContent'];
 
-        if ($request->hasFile('pg_files')) {
-            $pgFiles = [];
-            foreach ($request->file('pg_files') as $file) {
-                $path = $file->store('pg_files');
-                $pgFiles[] = $path;
-            }
-            $pgListing->pg_files = json_encode($pgFiles);
+        if ($request->hasFile('pgFiles')) {
+            $file = $request->file('pgFiles');
+            $path = $file->store('pg_files', 'public');
+            $pgListing->pg_files = json_encode([$path]);
+        } else {
+            $pgListing->pg_files = null;
         }
 
         try {
             $pgListing->save();
-            return response()->json(['message' => 'PG Listing added successfully'], 201);
+            return response()->json(['message' => 'PG Listing added successfully', 'data' => $pgListing], 201);
         } catch (\Exception $e) {
             Log::error('Failed to save PG Listing: ' . $e->getMessage());
-            return response()->json(['message' => 'Failed to add PG Listing'], 500);
+            return response()->json(['message' => 'Failed to add PG Listing', 'error' => $e->getMessage()], 500);
         }
     }
 }

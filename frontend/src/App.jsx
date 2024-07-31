@@ -20,7 +20,9 @@ import Profile from "./components/Profile";
 import PgForm from "./components/RentPageComponent/Add_Pg_Form";
 import PGCard from "./components/RentPageComponent/PGCard";
 import PGListingPage from "./components/RentPageComponent/PGListingPage";
-import PlansPage from "./components/RentPageComponent/Plan";
+// import PGDetailPage from "./components/RentPageComponent/PGDetailPage";
+import PlansPage from "./components/RentPageComponent/PlanPage";
+import UploadAndDisplayImage from "./components/Image";
 
 function App() {
     return (
@@ -47,9 +49,11 @@ function App() {
                 <Route path="/roommate/:id" element={<RoommatesDetailPage />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/PgForm" element={<PgForm />} />
-                <Route path="/PgCard" element={<PGCard/>} />
+                <Route path="/PGCard" element={<PGCard/>} />
                 <Route path="/PlanPage" element={<PlansPage />} />
                 <Route path="/PGListingPage" element={<PGListingPage/>} />
+                {/* <Route path="/PGDetailPage" element={<PGDetailPage/>}/> */}
+                <Route path="/image" element={<UploadAndDisplayImage />} />
             </Routes>
         </Router>
     );

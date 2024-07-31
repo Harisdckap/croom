@@ -1,5 +1,4 @@
 <?php
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -19,11 +18,11 @@ class CreatePgListingsTable extends Migration
             $table->string('mobile_num');
             $table->string('pg_name');
             $table->text('pg_address');
-            $table->decimal('single_occupancy', 8, 2);
-            $table->decimal('double_occupancy', 8, 2);
-            $table->decimal('triple_occupancy', 8, 2);
-            $table->text('pg_post_content');
+            $table->string('occupancy_type');
+            $table->integer('occupancy_amount');
+            $table->string('listing_type')->default('pg');
             $table->json('pg_files')->nullable();
+            $table->text('pg_post_content');
             $table->timestamps();
         });
     }

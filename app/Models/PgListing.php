@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,15 +13,11 @@ class PgListing extends Model
         'mobile_num',
         'pg_name',
         'pg_address',
-        'single_occupancy',
-        'double_occupancy',
-        'triple_occupancy',
-        'pg_post_content',
+        'occupancy_type',
+        'occupancy_amount',
+        'listing_type',
         'pg_files',
+        'pg_post_content',
     ];
 
-    protected $casts = [
-        'pg_files' => 'array',
-    ];
 }
-

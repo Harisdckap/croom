@@ -1,148 +1,283 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
 import axios from 'axios';
-import Navbar from './Navbar';
-import HomeNavBar from '../Header';
-import { useNavigate } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faArrowRight, faEye } from '@fortawesome/free-solid-svg-icons';
-import { motion } from 'framer-motion';
+import 'react-toastify/dist/ReactToastify.css';
 
-const PGListingPage = () => {
-  const [pgListings, setPgListings] = useState([]);
-  const [page, setPage] = useState(1);
-  const [address, setAddress] = useState('');
-  const [totalPages, setTotalPages] = useState(0);
-  const [search, setSearch] = useState('');
-  const navigate = useNavigate();
-  const itemsPerPage = 6;
-  useEffect(() => {
-    const fetchPgListings = async () => {
-      console.log('Fetching PG listings...');
-      try {
-        const response = await axios.get('http://127.0.0.1:8000/api/pg_listings', {
-          params: {
-            address: address,
-            page: page,
-            per_page: itemsPerPage
-          }
-        });
-        console.log('API response:', response.data);
-        setPgListings(response.data.data || []);
-        setTotalPages(response.data.last_page || 0);
-      } catch (error) {
-        console.error('Error fetching PG listings:', error);
-      }
-    };
+const Add_PG = () => {
+  const [pgType, setPgType] = useState('Both');
+  const [mobileNum, setMobileNum] = useState('');
+  const [pgName, setPgName] = useState('');
+  const [pgAddress, setPgAddress] = useState('');
+  const [occupancyType, setOccupancyType] = useState('');
+  const [occupancyAmount, setOccupancyAmount] = useState('');
+  const [pgFiles, setPgFiles] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [pgPostContent, setPgPostContent] = useState('');
 
-    fetchPgListings();
-  }, [address, page]);
-
-
-  const handleSearchChange = (e) => {
-    setSearch(e.target.value);
+  const handleFileClick = () => {
+    document.getElementById('fileInput').click();
   };
 
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    setAddress(search);
-    setPage(1);
-  };
-
-  const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= totalPages) {
-      setPage(newPage);
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setPgFiles(file);
+      setImagePreview(URL.createObjectURL(file));
     }
   };
 
-  const handleViewClick = (id) => {
-    navigate(`/pg_listing/${id}`);
+  const showToastMessage = (message, type = 'error') => {
+    toast[type](message, { position: "top-center" });
+  };
+
+  const validateInputs = () => {
+    if (!pgName) {
+      showToastMessage("PG name is required");
+      return false;
+    }
+
+    if (!mobileNum || isNaN(mobileNum) || mobileNum.length < 10) {
+      showToastMessage("Valid Mobile Number is required");
+      return false;
+    }
+
+    if (!pgAddress) {
+      showToastMessage("PG address is required");
+      return false;
+    }
+
+    if (!occupancyType || !occupancyAmount || isNaN(occupancyAmount)) {
+      showToastMessage("Please select an occupancy type and provide a valid amount");
+      return false;
+    }
+
+    if (!pgFiles) {
+      showToastMessage("Please upload at least 1 photo of your room");
+      return false;
+    }
+
+    if (!pgPostContent) {
+      showToastMessage("PG post content is required");
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validateInputs()) return;
+
+    const formData = new FormData();
+    formData.append('pgType', pgType);
+    formData.append('mobileNum', mobileNum);
+    formData.append('pgName', pgName);
+    formData.append('pgAddress', pgAddress);
+    formData.append('occupancyType', occupancyType);
+    formData.append('occupancyAmount', occupancyAmount);
+    formData.append('pgFiles', pgFiles);
+    formData.append('pgPostContent', pgPostContent);
+
+    try {
+      const response = await axios.post('http://127.0.0.1:8000/api/pg_listings', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      showToastMessage("Form submitted successfully", 'success');
+      console.log(response.data);
+      handleCancel();
+    } catch (error) {
+    //   showToastMessage("Error submitting form");
+      console.error('Error submitting form:', error);
+    }
+  };
+
+  const handleCancel = () => {
+    setPgType('Both');
+    setMobileNum('');
+    setPgName('');
+    setPgAddress('');
+    setOccupancyType('');
+    setOccupancyAmount('');
+    setPgFiles(null);
+    setImagePreview(null);
+    setPgPostContent('');
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-    >
-      <HomeNavBar />
-      <Navbar
-        search={search}
-        onSearchChange={handleSearchChange}
-        onSearchSubmit={handleSearchSubmit}
-      />
-
-      <h1 className="text-4xl font-bold mb-8 text-center">All PG Listings</h1>
-
-      <motion.div
-        className="container mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8 p-4"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ staggerChildren: 0.2 }}
+    <div className="max-w-6xl mx-auto p-8 bg-white rounded-lg shadow-md relative">
+      <button
+        onClick={handleCancel}
+        className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 focus:outline-none"
+        aria-label="Close"
       >
-        {pgListings.length > 0 ? (
-          pgListings.map(pg => (
-            <motion.div
-              key={pg.id}
-              className="border rounded-lg p-4 shadow-lg bg-white hover:shadow-xl transition-shadow duration-300"
-              whileHover={{ scale: 1.05 }}
-            >
-              <div className="mb-6">
-                {pg.pg_files && pg.pg_files.length > 0 ? (
-                  <img
-                    src={`http://127.0.0.1:8000/storage/${pg.pg_files[0]}`}
-                    alt="PG Photo"
-                    className="w-full h-60 object-cover rounded-lg shadow-lg"
-                    onError={(e) =>
-                      (e.target.src = '')
-                    }
-                  />
-                ) : (
-                  <p className="text-gray-500 text-center">No photo available.</p>
-                )}
+        <svg
+          className="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M6 18L18 6M6 6l12 12"
+          ></path>
+        </svg>
+      </button>
+      <div className="text-center">
+        <h1 className="text-3xl font-bold">Add your PG</h1>
+        <p className="text-gray-500 mt-2">We are over a thousand tenants for you!</p>
+      </div>
+      <form className="space-y-6 mt-8" onSubmit={handleSubmit}>
+        <div className="grid md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Mobile Number</label>
+            <input
+              value={mobileNum}
+              onChange={(e) => setMobileNum(e.target.value)}
+              type="tel"
+              className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm w-full"
+              placeholder="Enter mobile number"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">PG Name</label>
+            <input
+              value={pgName}
+              onChange={(e) => setPgName(e.target.value)}
+              type="text"
+              className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm w-full"
+              placeholder="Enter PG name"
+            />
+          </div>
+        </div>
+        <div className="mt-6">
+          <label className="block text-sm font-medium text-gray-700">PG Address</label>
+          <input
+            value={pgAddress}
+            onChange={(e) => setPgAddress(e.target.value)}
+            type="text"
+            className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm w-full"
+            placeholder="Enter PG address"
+          />
+        </div>
+        <fieldset className="border p-4 rounded-md">
+          <legend className="text-base font-medium text-gray-900">PG Type</legend>
+          <div className="flex gap-4 mt-2">
+            {['Boys', 'Girls', 'Both'].map((option) => (
+              <button
+                key={option}
+                type="button"
+                className={`px-4 py-2 border rounded-md text-sm font-medium ${
+                  pgType === option ? 'bg-indigo-500 text-white' : 'hover:bg-gray-100'
+                }`}
+                onClick={() => setPgType(option)}
+              >
+                {option}
+              </button>
+            ))}
+          </div>
+        </fieldset>
+        <fieldset className="border p-4 rounded-md">
+          <legend className="text-base font-medium text-gray-900">Occupancy</legend>
+          <div className="flex gap-4 mt-2">
+            {['Single', 'Double', 'Triple'].map((option) => (
+              <div key={option} className="flex items-center">
+                <input
+                  id={`occupancy-${option}`}
+                  name="occupancy"
+                  type="radio"
+                  value={option}
+                  checked={occupancyType === option}
+                  onChange={(e) => setOccupancyType(e.target.value)}
+                  className="h-4 w-4 text-indigo-600 border-gray-300"
+                />
+                <label htmlFor={`occupancy-${option}`} className="ml-2 block text-sm font-medium text-gray-700">
+                  {option}
+                </label>
               </div>
-              <h2 className="text-xl font-semibold mb-2">{pg.pg_name}</h2>
-              <p className="text-gray-700 mb-2">Address: {pg.pg_address}</p>
-              <p className="text-gray-700 mb-2">Single Occupancy Price: ${pg.single_occupancy}</p>
-              <p className="text-gray-700 mb-2">Double Occupancy Price: ${pg.double_occupancy}</p>
-              <p className="text-gray-700 mb-2">Triple Occupancy Price: ${pg.triple_occupancy}</p>
-              <p className="text-gray-700 mb-2">Post Content: {pg.pg_post_content}</p>
-              <div className="mt-4 flex justify-end">
+            ))}
+          </div>
+          <div className="mt-4">
+            <label className="block text-sm font-medium text-gray-700">{`Amount for ${occupancyType} Occupancy`}</label>
+            <input
+              value={occupancyAmount}
+              onChange={(e) => setOccupancyAmount(e.target.value)}
+              type="number"
+              className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm w-full"
+              disabled={!occupancyType}
+              placeholder="Enter amount"
+            />
+          </div>
+        </fieldset>
+        <div className="mt-6">
+          <label className="block text-sm font-medium text-gray-700">PG Post Content</label>
+          <textarea
+            value={pgPostContent}
+            onChange={(e) => setPgPostContent(e.target.value)}
+            placeholder="Enter PG details here"
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+          />
+        </div>
+        <div className="mt-6">
+          <label className="block text-sm font-medium text-gray-700">Upload Photos</label>
+          <div
+            className="mt-2 p-4 border-2 border-dashed border-gray-300 rounded-md text-center cursor-pointer"
+            onClick={handleFileClick}
+          >
+            <input
+              id="fileInput"
+              accept="image/png, image/jpg, image/webp, image/jpeg"
+              type="file"
+              onChange={handleFileChange}
+              style={{ display: 'none' }}
+            />
+            {imagePreview ? (
+              <div>
+                <img
+                  alt="Selected"
+                  src={imagePreview}
+                  className="mx-auto mb-4"
+                  style={{ maxHeight: '200px' }}
+                />
                 <button
-                  onClick={() => handleViewClick(pg.id)}
-                  className="flex items-center px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 focus:ring-2 focus:ring-blue-600"
+                  type="button"
+                  onClick={() => {
+                    setPgFiles(null);
+                    setImagePreview(null);
+                  }}
+                  className="text-red-500 hover:underline"
                 >
-                  <FontAwesomeIcon icon={faEye} className="mr-2" />
-                  View
+                  Remove
                 </button>
               </div>
-            </motion.div>
-          ))
-        ) : (
-          <p className="text-gray-500 text-center">No PG listings found.</p>
-        )}
-      </motion.div>
-
-      {totalPages > 1 && (
-        <div className="flex justify-between items-center mt-8 px-4">
+            ) : (
+              <p>Click to upload or drag and drop</p>
+            )}
+          </div>
+        </div>
+        <div className="flex justify-end space-x-4 mt-6">
           <button
-            onClick={() => handlePageChange(page - 1)}
-            disabled={page === 1}
-            className={`p-2 bg-gray-300 text-gray-700 font-semibold rounded-lg shadow-sm hover:bg-gray-400 ${page === 1 ? 'cursor-not-allowed opacity-50' : ''}`}
+            type="button"
+            onClick={handleCancel}
+            className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-100"
           >
-            <FontAwesomeIcon icon={faArrowLeft} />
+            Cancel
           </button>
-          <span className="text-gray-700">Page {page} of {totalPages}</span>
           <button
-            onClick={() => handlePageChange(page + 1)}
-            disabled={page === totalPages}
-            className={`p-2 bg-gray-300 text-gray-700 font-semibold rounded-lg shadow-sm hover:bg-gray-400 ${page === totalPages ? 'cursor-not-allowed opacity-50' : ''}`}
+            type="submit"
+            className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
           >
-            <FontAwesomeIcon icon={faArrowRight} />
+            Submit
           </button>
         </div>
-      )}
-    </motion.div>
+      </form>
+      <ToastContainer />
+    </div>
   );
 };
 
-export default PGListingPage;
+export default Add_PG;

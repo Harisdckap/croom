@@ -5,18 +5,14 @@ const PGCard = () => {
     const [pgs, setPgs] = useState([]);
 
     useEffect(() => {
-        axios.get('http://localhost:8000/api/pg')
+        axios.get('http://localhost:8000/api/pg_listings')
             .then(response => {
-                setPgs(response.data);
+                setPgs(response.data.data); 
             })
             .catch(error => {
                 console.error('There was an error fetching the PG!', error);
             });
     }, []);
-
-    const formatBase64 = (imagePath) => {
-        return `data:image/jpeg;base64,${imagePath}`;
-    };
 
     return (
         <div className="container mx-auto p-8">
@@ -26,7 +22,7 @@ const PGCard = () => {
                     <div key={pg.id} className="bg-white shadow-md rounded-md overflow-hidden">
                         {pg.pg_files && pg.pg_files.length > 0 && (
                             <img
-                                src={formatBase64(pg.pg_files[0])} 
+                                src={`http://localhost:8000/storage/${pg.pg_files[0]}`}
                                 alt={pg.pg_name}
                                 className="w-full h-48 object-cover"
                             />
@@ -34,9 +30,7 @@ const PGCard = () => {
                         <div className="p-4">
                             <h2 className="text-xl font-bold">{pg.pg_name}</h2>
                             <p className="text-gray-600">{pg.pg_address}</p>
-                            <p className="text-gray-800 font-semibold">Single Rent: ${pg.single_occupancy}</p>
-                            <p className="text-gray-800 font-semibold">Double Rent: ${pg.double_occupancy}</p>
-                            <p className="text-gray-800 font-semibold">Triple Rent: ${pg.triple_occupancy}</p>
+                            <p className="text-gray-800 font-semibold">Occupancy: {pg.occupancy}</p>
                             <p className="text-gray-600">PG Type: {pg.pg_type}</p>
                             <p className="text-gray-600">Contact: {pg.mobile_num}</p>
                             <p className="text-gray-600 mt-2">{pg.pg_post_content}</p>

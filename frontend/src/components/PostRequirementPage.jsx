@@ -1,56 +1,86 @@
-import React from 'react'
-import { Link } from "react-router-dom";
-import HouseImg from '../assets/houseAdd.png'
-import PgImg from '../assets/pg.png'
-import RoommateImg from '../assets/roomate.png'
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
+import HouseImg from "../assets/houseAdd.png";
+import PgImg from "../assets/pg.png";
+import RoommateImg from "../assets/roomate.png";
+import "../components/RentPageComponent/AddRequirement.css";
 
 export const List_page = () => {
-  return (
-    <div className='container '>
-      <div className='flex justify-between items-center  mt-5 '>
-        <div></div>
-      <p className='font-bold text-white'>C-Room</p>
-      <button className=' w-8 h-8 border border-white rounded-full text-white'>X</button>
-      </div>
-     
-      <div className='text-center mt-16 text-white' >
-        <h1 className='text-3xl'>Post Your Requirment</h1>
-        <p  className='mt-6 font-thin leading-7'>Find your perfect roommate or room effortlessly.Just post ypur <br />
-         requirment and let the matching begin!</p>
-      </div>
-     
-      <div className='flex items-center justify-center gap-12 mt-12 rounded'>
-        <Link to="/NeedRoomForm">
-        <div className='w-80 h-80 bg-white p-8 rounded'>
-          <h1 className='font-bold text-xl'>Add Room</h1>
-          <figure class=" h-36 md:w-30 md:h-30 shrink-1 md:shrink-0 mt-10  ml-auto">
-          <img src={HouseImg} className='w-full h-full object-cover rounded' alt="" srcset="" />
-            </figure>
+    const navigate = useNavigate();
+
+    const handleChange = () => {
+        navigate(-1);
+    };
+
+    return (
+        <div className="container ">
+            <div
+                className="flex justify-between items-center  mt-5 "
+               
+            >
+                <div></div>
+                <p className="font-bold text-white">C-Room</p>
+                <button className="w-8 h-8 border border-white rounded-full text-white"    onClick={handleChange} >
+                    X
+                </button>
+            </div>
+
+            <div className="text-center mt-16 text-white">
+                <h1 className="text-3xl">Post Your Requirment</h1>
+                <p className="mt-6 font-thin leading-7">
+                    Find your perfect roommate or room effortlessly.Just post
+                    ypur <br />
+                    requirment and let the matching begin!
+                </p>
+            </div>
+
+            <div className="flex items-center justify-center gap-12 mt-12 rounded">
+                <Link to="/NeedRoomForm">
+                    <div className="w-80 h-80 bg-white p-8 rounded">
+                        <h1 className="font-bold text-xl">Add Room</h1>
+                        <figure class=" h-36 md:w-30 md:h-30 shrink-1 md:shrink-0 mt-10  ml-auto">
+                            <img
+                                src={HouseImg}
+                                className="w-full h-full object-cover rounded"
+                                alt=""
+                                srcset=""
+                            />
+                        </figure>
+                    </div>
+                </Link>
+                <Link to="/NeedRoomateForm">
+                    <div className="w-80 h-80 bg-white p-8 rounded">
+                        <h1 className="font-bold text-xl">
+                            Roomate for your Room
+                        </h1>
+
+                        <figure class=" md:h-36 hrink-1 md:shrink-0 mt-10 ml-auto">
+                            <img
+                                src={RoommateImg}
+                                className="w-full h-full object-cover rounded"
+                                alt=""
+                                srcset=""
+                            />
+                        </figure>
+                    </div>
+                </Link>
+
+                <Link to="/PgForm">
+                    <div className="w-80 h-80 bg-white p-8 rounded">
+                        <h1 className="font-bold text-xl">Add Pg</h1>
+                        <figure class="md:h-36 hrink-1 md:shrink-0 mt-10 ml-auto">
+                            <img
+                                src={PgImg}
+                                className="w-full h-full object-cover rounded"
+                                alt=""
+                                srcset=""
+                            />
+                        </figure>
+                    </div>
+                </Link>
+            </div>
         </div>
-        </Link>
-        <Link to="/NeedRoomateForm">
-        <div className='w-80 h-80 bg-white p-8 rounded'>
-        <h1 className='font-bold text-xl'>Roomate for your Room</h1>
+    );
+};
 
-        <figure class=" md:h-36 hrink-1 md:shrink-0 mt-10 ml-auto">
-        <img src={RoommateImg} className='w-full h-full object-cover rounded' alt="" srcset="" />
-            </figure>
-        </div>
-        </Link>
-
-        <Link to="/PgForm">
-        <div className='w-80 h-80 bg-white p-8 rounded'>
-        <h1 className='font-bold text-xl'>Add Pg</h1>
-        <figure class="md:h-36 hrink-1 md:shrink-0 mt-10 ml-auto">
-         <img src={PgImg} className='w-full h-full object-cover rounded' alt="" srcset="" />
-            </figure>
-        </div>
-        </Link>
-      </div>
-
-    </div>
-  )
-}
-
-
-export default List_page
+export default List_page;
