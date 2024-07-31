@@ -63,10 +63,11 @@ const OTPPage = () => {
                                             width: '3rem',
                                             height: '3rem',
                                             fontSize: '1rem',
-                                            borderRadius: '0.375rem',
+                                            borderRadius: "100px",
                                             border: '1px solid #cbd5e0',
                                             color: '#1a202c',
                                             backgroundColor: '#edf2f7',
+                                            
                                            
                                         }}
                                         focusStyle={{

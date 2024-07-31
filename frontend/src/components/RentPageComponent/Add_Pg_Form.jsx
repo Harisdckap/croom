@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -118,28 +119,17 @@ export const Add_PG = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-16 bg-white rounded-md">
+    <div className="max-w-6xl mx-auto p-16 bg-white rounded-md relative">
       <div className="absolute top-4 right-4">
-        <button
+       <Link to = "/PostRequirementPage"> <button
           onClick={handleCancel}
-          className="text-gray-500 hover:text-gray-700 focus:outline-none"
+          className="text-gray-900 text-center text-lg w-8 h-8 border border-gray-900 rounded-full absolute right-4"
           aria-label="Close"
+     
         >
-          <svg
-            className="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M6 18L18 6M6 6l12 12"
-            ></path>
-          </svg>
+         X
         </button>
+        </Link>
       </div>
       <div className="text-center">
         <h1 className="text-3xl font-bold">Add your PG</h1>
@@ -276,14 +266,16 @@ export const Add_PG = () => {
         </div>
         <p className="mt-8 text-sm text-gray-500"><input type="checkbox" /> I confirm that the information given in this form is true</p>
         <div className="mt-6">
-          <button
-            onClick={handleSubmit}
-            type="submit"
-            className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white color hover:bg-indigo-700 focus:outline-none bgHover"
-          >
-            Submit
-          </button>
-          <ToastContainer />
+        <div className="text-center">
+                    <button
+                      onClick={()=>handleSubmit()}
+                       type="submit"
+                        className=" w-52 p-4 h-10 py-2 mt-2 px-4 border border-transparent rounded-3xl shadow-sm text-sm font-medium text-center text-white color hover:bg-indigo-700 focus:outline-none bgHover"
+                        >
+                        Submit
+                    </button>
+                    <ToastContainer />
+                </div>
         </div>
       </div>
     </div>

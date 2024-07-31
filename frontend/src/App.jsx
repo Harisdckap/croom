@@ -45,7 +45,8 @@ function App() {
                 <Route path="/AllRoommates" element={<AllRoommatesPage />} />
                 <Route path="/roomates/:id" element={<RoommatesDetailPage />} />
                 <Route path="/profile" element={<Profile />} />
-                <Route path="/PgForm" element={<PgForm />} />
+                <Route path="/PgForm" element={<PgForm />} />``
+                
             </Routes>
         </Router>
     );
