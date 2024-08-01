@@ -5,6 +5,8 @@ import './index.css'
 // import { Add_PG } from './components/Add_PG/Add_PG'
 // import { Add_Reuirement } from './components/Add_Requirment_Page/Add_Reuirement'
 import App from './App'
+// import '@fortawesome/fontawesome-free/css/all.min.css';
+
 
 
 

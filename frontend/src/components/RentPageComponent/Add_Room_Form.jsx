@@ -1,20 +1,30 @@
-import React, { useState, useEffect } from "react";
+
+
+// export default AddRoomForm;
+import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import "./AddRequirement.css";
 import { Link } from "react-router-dom";
+import "../RentPageComponent/Roomate.css";
 
-const AddRequirement = () => {
-    const [lookingFor, setLookingFor] = useState("Any");
-    const [roomType, setRoomType] = useState("Single");
-    const [selectedHighlights, setSelectedHighlights] = useState([]);
-    const [location, setLocation] = useState("");
-    const [approxRent, setApproxRent] = useState("");
-    const [post, setPost] = useState("");
-    const [requirements, setRequirements] = useState([]);
-    const [occupancy, setOccupancy] = useState("");
-    const [numPeople, setNumPeople] = useState("");
+const AddRoomForm = () => {
+    const [formData, setFormData] = useState({
+        title: "",
+        location: "",
+        price: "",
+        rooms: "",
+        facilities: "",
+        contact: "",
+        looking_for_gender: "any",
+        looking_for: "Roommate",
+        occupancy: "any",
+        photo: null,
+        highlighted_features: [],
+        amenities: [],
+        description: "",
+        listing_type: "room",
+    });
 
     const highlightProperty = [
         "Working full time",
@@ -78,6 +88,8 @@ const AddRequirement = () => {
             showToast("Occupancy is required");
             return false;
         }
+
+
         return true;
     };
 
@@ -100,13 +112,33 @@ const AddRequirement = () => {
         };
 
         try {
-            await axios.post("http://127.0.0.1:8000/api/requirements", newRequirement);
-            setRequirements((prevRequirements) => [
-                ...prevRequirements,
-                newRequirement,
-            ]);
-            handleCancel();
-            showToast("Requirement added successfully!", "success");
+            const response = await axios.post(
+                "http://127.0.0.1:8000/api/listings",
+                uploadData,
+                {
+                    headers: { "Content-Type": "multipart/form-data" },
+                }
+            );
+            console.log("Room added successfully:", response.data);
+            setFormData({
+                title: "",
+                location: "",
+                price: "",
+                rooms: "",
+                facilities: "",
+                contact: "",
+                looking_for_gender: "Any",
+                looking_for: "male",
+                occupancy: "any",
+                photo: null,
+                highlighted_features: [],
+                amenities: [],
+                description: "",
+                listing_type: "room",
+            });
+            setImagePreview(null);
+            if (fileInputRef.current) fileInputRef.current.value = "";
+            showToast("Room added successfully", "success");
         } catch (error) {
             console.error("Error adding requirement:", error);
             showToast("Failed to add requirement");
@@ -142,8 +174,8 @@ const AddRequirement = () => {
     };
 
     return (
-        <div className="max-w-6xl mx-auto p-16 bg-white shadow-md rounded-md mt-4 relative">
-            <div className="absolute top-4 right-4">
+        <div className="max-w-6xl mx-auto p-8 bg-white rounded-md shadow-md mt-4">
+                  <div className="absolute top-6 right-[3.5rem]">
                 <Link to="/PostRequirementPage">
                     <button
                         onClick={handleCancel}
@@ -255,67 +287,188 @@ const AddRequirement = () => {
                         />
                     </div>
                 </div>
-                <div className="mt-10">
-                    <h2 className="text-lg font-medium text-gray-900 mt-16">
-                        Choose Highlights for Your Property
-                    </h2>
-                    <div className="mt-6 space-y-2 flex items-center justify-around">
-                        {highlightProperty.map((option) => (
+
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                        Looking For Gender
+                    </label>
+                    <div className="mt-2 flex space-x-4">
+                        <button
+                            type="button"
+                            onClick={() =>
+                                setFormData((prevState) => ({
+                                    ...prevState,
+                                    looking_for_gender: "any",
+                                }))
+                            }
+                            className={`px-4 py-2 border ${
+                                formData.looking_for_gender === "any"
+                                    ? "bg-gray-800 text-white"
+                                    : "bg-white text-gray-800"
+                            } border-gray-800 rounded-md`}
+                        >
+                            Any
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() =>
+                                setFormData((prevState) => ({
+                                    ...prevState,
+                                    looking_for_gender: "male",
+                                }))
+                            }
+                            className={`px-4 py-2 border ${
+                                formData.looking_for_gender === "male"
+                                    ? "bg-gray-800 text-white"
+                                    : "bg-white text-gray-800"
+                            } border-gray-800 rounded-md`}
+                        >
+                            Male
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() =>
+                                setFormData((prevState) => ({
+                                    ...prevState,
+                                    looking_for_gender: "female",
+                                }))
+                            }
+                            className={`px-4 py-2 border ${
+                                formData.looking_for_gender === "female"
+                                    ? "bg-gray-800 text-white"
+                                    : "bg-white text-gray-800"
+                            } border-gray-800 rounded-md`}
+                        >
+                            Female
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                        Occupancy
+                    </label>
+                    <div className="mt-2 flex space-x-4">
+                        <button
+                            type="button"
+                            onClick={() =>
+                                setFormData((prevState) => ({
+                                    ...prevState,
+                                    occupancy: "any",
+                                }))
+                            }
+                            className={`px-4 py-2 border ${
+                                formData.occupancy === "any"
+                                    ? "bg-gray-800 text-white"
+                                    : "bg-white text-gray-800"
+                            } border-gray-800 rounded-md`}
+                        >
+                            Any
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() =>
+                                setFormData((prevState) => ({
+                                    ...prevState,
+                                    occupancy: "single",
+                                }))
+                            }
+                            className={`px-4 py-2 border ${
+                                formData.occupancy === "single"
+                                    ? "bg-gray-800 text-white"
+                                    : "bg-white text-gray-800"
+                            } border-gray-800 rounded-md`}
+                        >
+                            Single
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() =>
+                                setFormData((prevState) => ({
+                                    ...prevState,
+                                    occupancy: "shared",
+                                }))
+                            }
+                            className={`px-4 py-2 border ${
+                                formData.occupancy === "shared"
+                                    ? "bg-gray-800 text-white"
+                                    : "bg-white text-gray-800"
+                            } border-gray-800 rounded-md`}
+                        >
+                            Shared
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                        Photo
+                    </label>
+                    <input
+                        name="photo"
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={handleChange}
+                        className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100"
+                    />
+                    {imagePreview && (
+                        <img
+                            src={imagePreview}
+                            alt="Preview"
+                            className="mt-2 h-32 w-32 object-cover rounded-md"
+                        />
+                    )}
+                </div>
+
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                        Highlighted Features
+                    </label>
+                    <div className="mt-2 grid grid-cols-2 gap-2">
+                        {allHighlightedFeatures.map((feature) => (
                             <button
                                 type="button"
-                                key={option}
-                                className={`mr-2 leading-tight rounded-lg bg-gray-100 px-7 py-2 hover:bg-gray-200 ${
-                                    selectedHighlights.includes(option)
+                                key={feature}
+                                className={`py-2 px-4 border rounded-md text-sm font-medium ${
+                                    formData.highlighted_features.includes(
+                                        feature
+                                    )
                                         ? "color"
                                         : "hover:bg-gray-100"
                                 }`}
-                                onClick={() => handleHighlightClick(option)}
+                                onClick={() => handleFeatureClick(feature)}
                             >
-                                {option}
+                                {feature}
                             </button>
                         ))}
                     </div>
                 </div>
-                <label className="text-sm text-gray-600 mt-12 block font-medium">
-                    Upload 3 Photos of your room
-                </label>
-                <div className="grid place-items-center mt-2 border-2 border-dashed">
-                    <div
-                        role="button"
-                        tabIndex="0"
-                        className="w-full h-full"
-                        onClick={handleFileClick}
-                    >
-                        <input
-                            id="fileInput"
-                            accept="image/png, image/jpg, image/webp, image/jpeg"
-                            multiple
-                            type="file"
-                            autoComplete="off"
-                            onChange={handleFileChange}
-                            style={{ display: 'none' }}
-                        />
-                        <div className="w-full h-full grid place-content-center p-3">
-                            <label
-                                htmlFor="fileInput"
-                                className="text-sm text-gray-600"
+
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                        Amenities
+                    </label>
+                    <div className="mt-2 grid grid-cols-2 gap-2">
+                        {allAmenities.map((amenity) => (
+                            <button
+                                type="button"
+                                key={amenity}
+                                className={`py-2 px-4 border rounded-md text-sm font-medium ${
+                                    formData.amenities.includes(amenity)
+                                        ? "color"
+                                        : "hover:bg-gray-100"
+                                }`}
+                                onClick={() => handleAmenityClick(amenity)}
                             >
-                                <div className="bg-gray-100 upload-fonts w-full rounded-lg text-gray-600 flex flex-col items-center py-4 px-3 gap-0 mt-1 cursor-pointer md:text-xs md:gap-2 md:px-8 md:py-5">
-                                    <img
-                                        src="https://www.flatmate.in/upload-outline.svg"
-                                        alt="upload-icon"
-                                        className="w-5"
-                                    />
-                                    <p>Click or Drag Images To Upload</p>
-                                    <p>(JPG, PNG, JPEG)</p>
-                                </div>
-                            </label>
-                        </div>
+                                {amenity}
+                            </button>
+                        ))}
                     </div>
                 </div>
-                <div className="">
-                    <label className="block mt-10 text-sm font-medium text-gray-700">
-                        Write More About Your Requirement
+
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                        Description
                     </label>
                     <textarea
                         value={post}
@@ -327,7 +480,7 @@ const AddRequirement = () => {
                 <div className="text-center ">
                     <button
                         type="submit"
-                        className="w-52 p-4 h-10 relative text py-2 mt-2 px-4 border border-transparent rounded-3xl shadow-sm text-sm font-medium text-center text-white color hover:bg-indigo-700 focus:outline-none bgHover"
+                        className="px-8 py-2 color text-white font-medium rounded-md hover:bg-blue-600"
                     >
                         Submit
                     </button>
@@ -336,6 +489,9 @@ const AddRequirement = () => {
             </form>
         </div>
     );
+
+
+    
 };
 
 export default AddRequirement;

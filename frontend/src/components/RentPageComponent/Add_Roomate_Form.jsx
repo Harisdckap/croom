@@ -1,32 +1,29 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import { toast, ToastContainer } from "react-toastify";
-import "./AddRequirement.css";
+import { ToastContainer, toast } from "react-toastify";
+import "../RentPageComponent/Roomate.css";
+import "react-toastify/dist/ReactToastify.css";
 import { Link } from "react-router-dom";
+
 
 const AddRequirement = () => {
     const [lookingFor, setLookingFor] = useState("Any");
     const [roomType, setRoomType] = useState("Single");
-    const [selectedHighlights, setSelectedHighlights] = useState([]);
+    const [highlights, setHighlights] = useState("");
     const [location, setLocation] = useState("");
     const [approxRent, setApproxRent] = useState("");
     const [post, setPost] = useState("");
+    const [occupancy, setOccupancy] = useState("");
+    const [numberOfPeople, setNumberOfPeople] = useState("");
     const [requirements, setRequirements] = useState([]);
-    const [Occupency,setOccupency] = useState("")
-    const [numPepole,setnumPepole] = useState("")
-
-    const highlightProperty = [
-        "Working full time",
-        "College student",
-        "25+ age",
-        "Working night shift",
-        "Pure vegetarian",
-    ];
+    const [houseImage, setHouseImage] = useState(null); // Add state for image
+    const [imagePreview, setImagePreview] = useState(null); // Add state for image preview
+    const fileInputRef = useRef(); // Create a ref for file input
 
     useEffect(() => {
         const fetchRequirements = async () => {
             try {
-                const response = await axios.get("http://127.0.0.1:8000/api/requirements");
+                const response = await axios.get("http://127.0.0.1:8000/api/roommates");
                 if (Array.isArray(response.data)) {
                     setRequirements(response.data);
                 } else {
@@ -57,69 +54,90 @@ const AddRequirement = () => {
             showToast("Room type is required");
             return false;
         }
-        if (!approxRent) {
+        if (!approxRent || isNaN(approxRent)) {
             showToast("Valid approx rent amount is required");
             return false;
         }
-        if (!pgInterested) {
-            showToast("PG interested field is required");
-            return false;
-        }
-        if (selectedHighlights.length === 0) {
-            showToast("At least one highlight is required");
+        if (!highlights) {
+            showToast("Highlights are required");
             return false;
         }
         if (!post) {
             showToast("Post is required");
             return false;
         }
-        if (!numPepole) {
-            showToast("Number of pepole is required");
+        if (!occupancy) {
+            showToast("Occupancy is required");
             return false;
         }
-        if (!Occupency) {
-            showToast("Occupency is required");
+        if (!numberOfPeople || isNaN(numberOfPeople)) {
+            showToast("Valid number of people is required");
             return false;
         }
+        if (!houseImage) {
+            showToast("House image is required");
+            return false;
+        }
+
         return true;
+    };
+
+    const handleChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setHouseImage(file);
+            setImagePreview(URL.createObjectURL(file));
+        }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         if (!validateInputs()) return;
-
-        const newRequirement = {
-            location,
-            looking_for: "Room",
-            looking_for_gender: lookingFor,
-            approx_rent: approxRent,
-            room_type: roomType,
-            highlights: selectedHighlights.join(", "),
-            pg_interested: pgInterested,
-            post,
-            listing_type: "roommates",
-        };
-
+    
+        const formData = new FormData();
+        formData.append("location", location);
+        formData.append("looking_for", "Room");
+        formData.append("looking_for_gender", lookingFor);
+        formData.append("approx_rent", approxRent);
+        formData.append("room_type", roomType);
+        formData.append("highlights", highlights);
+        formData.append("post", post);
+        formData.append("listing_type", "roommates");
+        formData.append("occupancy", occupancy);
+        formData.append("number_of_people", numberOfPeople);
+        formData.append("house_image", houseImage);
+      console.log(formData);
         try {
-            await axios.post("http://127.0.0.1:8000/api/requirements", newRequirement);
+            const response = await axios.post("http://127.0.0.1:8000/api/roommates", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data"
+                }
+            });
+            console.log("Response:", response.data); // Log response data
             setRequirements((prevRequirements) => [
                 ...prevRequirements,
-                newRequirement,
+                {
+                    location,
+                    looking_for: "Room",
+                    looking_for_gender: lookingFor,
+                    approx_rent: approxRent,
+                    room_type: roomType,
+                    highlights,
+                    post,
+                    listing_type: "roommates",
+                    occupancy,
+                    number_of_people: numberOfPeople,
+                    house_image: URL.createObjectURL(houseImage)
+                },
             ]);
-            setLocation("");
-            setApproxRent("");
-            setPost("");
-            setLookingFor("Any");
-            setRoomType("Single");
-            setSelectedHighlights([]);
-            setPgInterested("");
+            handleCancel(); // Reset the form
             showToast("Requirement added successfully!", "success");
         } catch (error) {
             console.error("Error adding requirement:", error);
-            showToast("Failed to add requirement");
+            showToast(`Failed to add requirement: ${error.message}`); // Log detailed error
         }
     };
+    
 
     const handleCancel = () => {
         setLocation("");
@@ -127,8 +145,11 @@ const AddRequirement = () => {
         setPost("");
         setLookingFor("Any");
         setRoomType("Single");
-        setSelectedHighlights([]);
-        setPgInterested("");
+        setHighlights("");
+        setOccupancy("");
+        setNumberOfPeople("");
+        setHouseImage(null);
+        setImagePreview(null); // Clear image preview
     };
 
     const handleHighlightClick = (highlight) => {
@@ -149,9 +170,8 @@ const AddRequirement = () => {
     };
 
     return (
-        <div className="max-w-6xl mx-auto p-16 bg-white shadow-md rounded-md mt-4 relative">
-            <div className="absolute top-4 right-4">
-               <Link to= "/PostRequirementPage" >
+        <div className="max-w-6xl mx-auto p-8 bg-white shadow-md rounded-md mt-4 relative">
+             <Link to= "/PostRequirementPage" >
                     <button
                         onClick={handleCancel}
                         className="text-gray-900 text-center text-lg w-8 h-8 border border-gray-900 rounded-full absolute right-4"
@@ -160,36 +180,31 @@ const AddRequirement = () => {
                         X
                     </button>
                 </Link> 
-            </div>
             <div className="text-center">
                 <h1 className="text-3xl font-bold">Roommate For Your Room</h1>
                 <p className="text-gray-500 mt-2">
                     So that other users can contact you
                 </p>
             </div>
-            <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="flex gap-32 mt-12">
+            <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">
-                            Add Your Location
-                        </label>
+                        <label className="block text-sm font-medium text-gray-700">Add Your Location</label>
                         <input
                             type="text"
                             value={location}
                             onChange={(e) => setLocation(e.target.value)}
-                            className="locationInput mt-1 block px-2 py-3 border w-96 border-gray-300 rounded-md shadow-sm sm:text-sm"
+                            className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
                         />
                     </div>
-                    <fieldset className="border p-3 px-10">
-                        <legend className="text-base font-medium text-gray-900">
-                            Looking Gender For
-                        </legend>
+                    <fieldset className="border p-4 rounded-md">
+                        <legend className="text-base font-medium text-gray-900">Looking Gender For</legend>
                         <div className="mt-2 space-x-4">
                             {["Male", "Female", "Any"].map((option) => (
                                 <button
                                     type="button"
                                     key={option}
-                                    className={`px-8 py-3 border rounded-md text-sm font-medium ${
+                                    className={`px-4 py-2 border rounded-md text-sm font-medium ${
                                         lookingFor === option
                                             ? "color"
                                             : "hover:bg-gray-100"
@@ -202,30 +217,24 @@ const AddRequirement = () => {
                         </div>
                     </fieldset>
                 </div>
-                <div className="flex gap-32 mt-16">
-                    <div className="mt-6 space-y-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">
-                                Approx Rent
-                            </label>
-                            <input
-                                type="number"
-                                value={approxRent}
-                                onChange={(e) => setApproxRent(e.target.value)}
-                                className="locationInput mt-1 block px-2 py-3 border w-96 border-gray-300 rounded-md shadow-sm sm:text-sm"
-                            />
-                        </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-16">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Approx Rent</label>
+                        <input
+                            type="text"
+                            value={approxRent}
+                            onChange={(e) => setApproxRent(e.target.value)}
+                            className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                        />
                     </div>
-                    <fieldset className="border p-3 px-10">
-                        <legend className="text-base font-medium text-gray-900">
-                            Room Type
-                        </legend>
+                    <fieldset className="border p-4 rounded-md">
+                        <legend className="text-base font-medium text-gray-900">Room Type</legend>
                         <div className="mt-2 space-x-4">
-                            {["Single", "Shared", "Any"].map((option) => (
+                            {["Single", "Double", "Triple"].map((option) => (
                                 <button
                                     type="button"
                                     key={option}
-                                    className={`px-8 py-3 border rounded-md text-sm font-medium ${
+                                    className={`px-4 py-2 border rounded-md text-sm font-medium ${
                                         roomType === option
                                             ? "color"
                                             : "hover:bg-gray-100"
@@ -238,113 +247,83 @@ const AddRequirement = () => {
                         </div>
                     </fieldset>
                 </div>
-                <div className="flex gap-32 ">
-                    <div className="mt-11">
-                        <label className="block text-sm font-medium text-gray-700">
-                         Occupency
-                        </label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-16">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Highlights</label>
                         <input
                             type="text"
-                            value={Occupency}
-                            onChange={(e) => setOccupency(e.target.value)}
-                            className="locationInput mt-1 block px-2 py-3 border w-96 border-gray-300 rounded-md shadow-sm sm:text-sm"
+                            value={highlights}
+                            onChange={(e) => setHighlights(e.target.value)}
+                            className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
                         />
                     </div>
-                    <div className="mt-11">
-                        <label className="block text-sm font-medium text-gray-700">
-                        Number of pepole
-                        </label>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Post Description</label>
+                        <textarea
+                            value={post}
+                            onChange={(e) => setPost(e.target.value)}
+                            className="mt-1 block w-full h-24 px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                        />
+                    </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-16">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Occupancy</label>
                         <input
                             type="text"
-                            value={numPepole}
-                            onChange={(e) => setnumPepole(e.target.value)}
-                            className="locationInput mt-1 block px-2 py-3 border w-96 border-gray-300 rounded-md shadow-sm sm:text-sm"
+                            value={occupancy}
+                            onChange={(e) => setOccupancy(e.target.value)}
+                            className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
                         />
                     </div>
-                    
-                </div>
-                <div className="mt-10">
-                    <h2 className="text-lg font-medium text-gray-900 mt-16">
-                        Choose Highlights for Your Property
-                    </h2>
-                    <div className="mt-6 space-y-2 flex items-center justify-around">
-                        {highlightProperty.map((option) => (
-                            <button
-                                type="button"
-                                key={option}
-                                className={`mr-2 leading-tight rounded-lg bg-gray-100 px-7 py-2 hover:bg-gray-200 ${
-                                    selectedHighlights.includes(option)
-                                        ? "color"
-                                        : "hover:bg-gray-100"
-                                }`}
-                                onClick={() => handleHighlightClick(option)}
-                            >
-                                {option}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-                <label className="text-sm text-gray-600 mt-12 block font-medium">
-                    Upload 3 Photos of your room
-                </label>
-                <div className="grid place-items-center mt-2 border-2 border-dashed">
-                    <div
-                        role="button"
-                        tabIndex="0"
-                        className="w-full h-full"
-                        onClick={handleFileClick}
-                    >
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Number of People</label>
                         <input
-                            id="fileInput"
-                            accept="image/png, image/jpg, image/webp, image/jpeg"
-                            multiple
-                            type="file"
-                            autoComplete="off"
-                            onChange={handleFileChange}
-                            style={{ display: 'none' }}
+                            type="text"
+                            value={numberOfPeople}
+                            onChange={(e) => setNumberOfPeople(e.target.value)}
+                            className="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
                         />
-                        <div className="w-full h-full grid place-content-center p-3">
-                            <label
-                                htmlFor="fileInput"
-                                className="text-sm text-gray-600"
-                            >
-                                <div className="bg-gray-100 upload-fonts w-full rounded-lg text-gray-600 flex flex-col items-center py-4 px-3 gap-0 mt-1 cursor-pointer md:text-xs md:gap-2 md:px-8 md:py-5">
-                                    <img
-                                        src="https://www.flatmate.in/upload-outline.svg"
-                                        alt="upload-icon"
-                                        className="w-5"
-                                    />
-                                    <p>Click or Drag Images To Upload</p>
-                                    <p>(JPG, PNG, JPEG)</p>
-                                </div>
-                            </label>
+                    </div>
+                </div>
+                <div className="mt-8">
+                    <label className="block text-sm font-medium text-gray-700">House Image</label>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleChange}
+                        ref={fileInputRef}
+                        className="mt-1 block w-full text-sm"
+                    />
+                    {imagePreview && (
+                        <div className="mt-2">
+                            <img src={imagePreview} alt="Preview" className="max-w-xs h-auto rounded-md" />
                         </div>
-                    </div>
+                    )}
                 </div>
-                <div className="">
-                    <label className="block mt-10 text-sm font-medium text-gray-700">
-                        Write More About Your Requirement
-                    </label>
-                    <textarea
-                        value={post}
-                        onChange={(e) => setPost(e.target.value)}
-                        rows="4"
-                        className="locationInput mt-2 block w-full border border-gray-300 rounded-md shadow-sm sm:text-sm px-2 py-2"
-                    ></textarea>
-                </div>
-                <div className="text-center ">
+                <div className="mt-8 flex justify-end space-x-4">
+                    <button
+                        type="button"
+                        onClick={handleCancel}
+                        className="px-4 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    >
+                        Cancel
+                    </button>
                     <button
                         type="submit"
-                        className="w-52 p-4 h-10 relative text py-2 mt-2 px-4 border border-transparent rounded-3xl shadow-sm text-sm font-medium text-center text-white color hover:bg-indigo-700 focus:outline-none bgHover"
+                        className="px-4 py-2 border color rounded-md bg--500 text-white hover:bg-blue-900"
                     >
                         Submit
                     </button>
                 </div>
                 <ToastContainer />
             </form>
-           
+            <ToastContainer />
         </div>
     );
 };
 
 export default AddRequirement;
+
+
+
