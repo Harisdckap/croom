@@ -13,15 +13,12 @@ class PgListing extends Model
         'pg_type',
         'mobile_num',
         'pg_name',
-        'pg_address',
-        'single_occupancy',
-        'double_occupancy',
-        'triple_occupancy',
+        'location',
+        'occupancy_type',
+        'occupancy_amount',
+        'listing_type',
+        'image',
         'pg_post_content',
-        'pg_files',
     ];
 
-    protected $casts = [
-        'pg_files' => 'array',
-    ];
 }

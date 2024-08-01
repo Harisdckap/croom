@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
+import "../RentPageComponent/Roomate.css";
 import "react-toastify/dist/ReactToastify.css";
+import { Link } from "react-router-dom";
+
 
 const AddRequirement = () => {
     const [lookingFor, setLookingFor] = useState("Any");
@@ -151,28 +154,15 @@ const AddRequirement = () => {
 
     return (
         <div className="max-w-6xl mx-auto p-8 bg-white shadow-md rounded-md mt-4 relative">
-            <div className="absolute top-4 right-4">
-                <button
-                    onClick={handleCancel}
-                    className="text-gray-500 hover:text-gray-700 focus:outline-none"
-                    aria-label="Close"
-                >
-                    <svg
-                        className="w-6 h-6"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
+             <Link to= "/PostRequirementPage" >
+                    <button
+                        onClick={handleCancel}
+                        className="text-gray-900 text-center text-lg w-8 h-8 border border-gray-900 rounded-full absolute right-4"
+                        aria-label="Close"
                     >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M6 18L18 6M6 6l12 12"
-                        ></path>
-                    </svg>
-                </button>
-            </div>
+                        X
+                    </button>
+                </Link> 
             <div className="text-center">
                 <h1 className="text-3xl font-bold">Roommate For Your Room</h1>
                 <p className="text-gray-500 mt-2">
@@ -199,7 +189,7 @@ const AddRequirement = () => {
                                     key={option}
                                     className={`px-4 py-2 border rounded-md text-sm font-medium ${
                                         lookingFor === option
-                                            ? "bg-blue-500 text-white"
+                                            ? "color"
                                             : "hover:bg-gray-100"
                                     }`}
                                     onClick={() => setLookingFor(option)}
@@ -229,7 +219,7 @@ const AddRequirement = () => {
                                     key={option}
                                     className={`px-4 py-2 border rounded-md text-sm font-medium ${
                                         roomType === option
-                                            ? "bg-blue-500 text-white"
+                                            ? "color"
                                             : "hover:bg-gray-100"
                                     }`}
                                     onClick={() => setRoomType(option)}
@@ -304,7 +294,7 @@ const AddRequirement = () => {
                     </button>
                     <button
                         type="submit"
-                        className="px-4 py-2 border border-blue-500 rounded-md bg-blue-500 text-white hover:bg-blue-600"
+                        className="px-4 py-2 border color rounded-md bg--500 text-white hover:bg-blue-900"
                     >
                         Submit
                     </button>
@@ -316,3 +306,6 @@ const AddRequirement = () => {
 };
 
 export default AddRequirement;
+
+
+

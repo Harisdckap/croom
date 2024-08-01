@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import {
     MagnifyingGlassIcon,
     HomeIcon,
@@ -8,16 +8,24 @@ import {
 } from "@heroicons/react/24/outline";
 import { FaGenderless, FaMars, FaVenus } from "react-icons/fa";
 
-const Navbar = ({ search, onSearchChange, onSearchSubmit, gender, onGenderChange }) => {
+const Navbar = ({ search, onSearchChange, onSearchSubmit, gender, onGenderChange, setListingType }) => {
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const currentType = queryParams.get('t') || 'a'; // Default to 'a' (all types)
+
+    const handleTypeClick = (type) => {
+        setListingType(type);
+    };
+
     return (
-        <nav className="bg-white shadow-lg fixed w-full z-10">
-            <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+            <div className="container bg-white mx-auto flex items-center justify-between pt-16 mt-2 pb-2 px-4">
                 <div className="flex items-center space-x-6">
                     <NavLink
-                        to="/AllExploreRooms"
+                        to="?address=Chennai&p=0&t=a"
+                        onClick={() => handleTypeClick('a')}
                         className={({ isActive }) =>
                             `flex items-center font-medium ${
-                                isActive ? "text-blue-600" : "text-gray-700 hover:text-blue-600"
+                                currentType === 'a' ? "text-blue-600" : "text-gray-700 hover:text-blue-600"
                             }`
                         }
                     >
@@ -25,10 +33,11 @@ const Navbar = ({ search, onSearchChange, onSearchSubmit, gender, onGenderChange
                         All Listings
                     </NavLink>
                     <NavLink
-                        to="/AllRoomsPage"
+                        to="?address=Chennai&p=0&t=r"
+                        onClick={() => handleTypeClick('r')}
                         className={({ isActive }) =>
                             `flex items-center font-medium ${
-                                isActive ? "text-blue-600" : "text-gray-700 hover:text-blue-600"
+                                currentType === 'r' ? "text-blue-600" : "text-gray-700 hover:text-blue-600"
                             }`
                         }
                     >
@@ -36,10 +45,11 @@ const Navbar = ({ search, onSearchChange, onSearchSubmit, gender, onGenderChange
                         Rooms
                     </NavLink>
                     <NavLink
-                        to="/Allroommates"
+                        to="?address=Chennai&p=0&t=rm"
+                        onClick={() => handleTypeClick('rm')}
                         className={({ isActive }) =>
                             `flex items-center font-medium ${
-                                isActive ? "text-blue-600" : "text-gray-700 hover:text-blue-600"
+                                currentType === 'rm' ? "text-blue-600" : "text-gray-700 hover:text-blue-600"
                             }`
                         }
                     >
@@ -47,10 +57,11 @@ const Navbar = ({ search, onSearchChange, onSearchSubmit, gender, onGenderChange
                         Roommates
                     </NavLink>
                     <NavLink
-                        to="/pg"
+                        to="?address=Chennai&p=0&t=pg"
+                        onClick={() => handleTypeClick('pg')}
                         className={({ isActive }) =>
                             `flex items-center font-medium ${
-                                isActive ? "text-blue-600" : "text-gray-700 hover:text-blue-600"
+                                currentType === 'pg' ? "text-blue-600" : "text-gray-700 hover:text-blue-600"
                             }`
                         }
                     >
@@ -59,7 +70,13 @@ const Navbar = ({ search, onSearchChange, onSearchSubmit, gender, onGenderChange
                     </NavLink>
                 </div>
 
-                <form onSubmit={onSearchSubmit} className="flex items-center space-x-4">
+                <form
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        onSearchSubmit(search);
+                    }}
+                    className="flex items-center space-x-4"
+                >
                     <div className="relative w-full">
                         <input
                             type="text"
@@ -89,7 +106,6 @@ const Navbar = ({ search, onSearchChange, onSearchSubmit, gender, onGenderChange
                     </div>
                 </form>
             </div>
-        </nav>
     );
 };
 

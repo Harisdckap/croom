@@ -15,11 +15,13 @@ const Header = () => {
   }, []);
 
   return (
-    <nav className="sticky top-0 z-10 bg-white text-gray-900 p-4 border-b-2">
+    <nav className="fixed top-0 z-[9999] w-full bg-white text-gray-900 p-2 border-b-2">
       <div className="container mx-auto flex items-center justify-between">
+        
         <div className="flex items-center space-x-10">
-          <img src={logo} alt="Logo" className="w-30 h-10" />
-
+          <Link to="/">
+          <img src={logo} alt="Logo" className="w-34 h-12" />
+          </Link>
         </div>
         <div className="flex items-center space-x-4">
           <div className="flex items-center cursor-pointer">
@@ -44,9 +46,9 @@ const Header = () => {
                 )}
               </>
             ) : (
-              <div className="flex space-x-4">
+              <div className="flex space-x-1">
                 <Link to="/register" className="text-blue-500 hover:underline">
-                  Register
+                  Register /
                 </Link>
                 <Link to="/login" className="text-blue-500 hover:underline">
                   Login
