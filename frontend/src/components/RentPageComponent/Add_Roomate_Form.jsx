@@ -12,6 +12,8 @@ const AddRequirement = () => {
     const [approxRent, setApproxRent] = useState("");
     const [post, setPost] = useState("");
     const [requirements, setRequirements] = useState([]);
+    const [Occupency,setOccupency] = useState("")
+    const [numPepole,setnumPepole] = useState("")
 
     const highlightProperty = [
         "Working full time",
@@ -55,7 +57,7 @@ const AddRequirement = () => {
             showToast("Room type is required");
             return false;
         }
-        if (!approxRent || isNaN(approxRent)) {
+        if (!approxRent) {
             showToast("Valid approx rent amount is required");
             return false;
         }
@@ -69,6 +71,14 @@ const AddRequirement = () => {
         }
         if (!post) {
             showToast("Post is required");
+            return false;
+        }
+        if (!numPepole) {
+            showToast("Number of pepole is required");
+            return false;
+        }
+        if (!Occupency) {
+            showToast("Occupency is required");
             return false;
         }
         return true;
@@ -228,6 +238,31 @@ const AddRequirement = () => {
                         </div>
                     </fieldset>
                 </div>
+                <div className="flex gap-32 ">
+                    <div className="mt-11">
+                        <label className="block text-sm font-medium text-gray-700">
+                         Occupency
+                        </label>
+                        <input
+                            type="text"
+                            value={Occupency}
+                            onChange={(e) => setOccupency(e.target.value)}
+                            className="locationInput mt-1 block px-2 py-3 border w-96 border-gray-300 rounded-md shadow-sm sm:text-sm"
+                        />
+                    </div>
+                    <div className="mt-11">
+                        <label className="block text-sm font-medium text-gray-700">
+                        Number of pepole
+                        </label>
+                        <input
+                            type="text"
+                            value={numPepole}
+                            onChange={(e) => setnumPepole(e.target.value)}
+                            className="locationInput mt-1 block px-2 py-3 border w-96 border-gray-300 rounded-md shadow-sm sm:text-sm"
+                        />
+                    </div>
+                    
+                </div>
                 <div className="mt-10">
                     <h2 className="text-lg font-medium text-gray-900 mt-16">
                         Choose Highlights for Your Property
@@ -305,8 +340,9 @@ const AddRequirement = () => {
                         Submit
                     </button>
                 </div>
+                <ToastContainer />
             </form>
-            <ToastContainer />
+           
         </div>
     );
 };

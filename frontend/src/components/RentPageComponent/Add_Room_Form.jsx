@@ -1,100 +1,45 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import "./AddRequirement.css";
 import { Link } from "react-router-dom";
 
-const AddRoomForm = () => {
-    const [formData, setFormData] = useState({
-        title: "",
-        location: "",
-        price: "",
-        rooms: "",
-        facilities: "",
-        contact: "",
-        looking_for: "any",
-        occupancy: "any",
-        photo: null,
-        highlighted_features: [],
-        amenities: [],
-        description: "",
-        listing_type: "room",
-    });
+const AddRequirement = () => {
+    const [lookingFor, setLookingFor] = useState("Any");
+    const [roomType, setRoomType] = useState("Single");
+    const [selectedHighlights, setSelectedHighlights] = useState([]);
+    const [location, setLocation] = useState("");
+    const [approxRent, setApproxRent] = useState("");
+    const [post, setPost] = useState("");
+    const [requirements, setRequirements] = useState([]);
+    const [occupancy, setOccupancy] = useState("");
+    const [numPeople, setNumPeople] = useState("");
 
-    const [imagePreview, setImagePreview] = useState(null);
-    const fileInputRef = useRef(null);
-    const [LookingFor, setLookingFor] = useState('Any');
-
-    const allHighlightedFeatures = [
-        "Attached washroom",
-        "Balcony",
-        "Air conditioning",
-        "Swimming pool",
-        "Gym",
-        "Parking",
-    ];
-    const allAmenities = [
-        "WiFi",
-        "Air Conditioning",
-        "Heating",
-        "Hot Water",
-        "Refrigerator",
-        "Microwave",
+    const highlightProperty = [
+        "Working full time",
+        "College student",
+        "25+ age",
+        "Working night shift",
+        "Pure vegetarian",
     ];
 
     useEffect(() => {
-        return () => {
-            if (imagePreview) URL.revokeObjectURL(imagePreview);
-        };
-    }, [imagePreview]);
-
-    const handleChange = (e) => {
-        const { name, value, files } = e.target;
-
-        if (name === "photo") {
-            const file = files[0];
-            const validTypes = [
-                "image/jpeg",
-                "image/png",
-                "image/jpg",
-                "image/gif",
-                "image/svg+xml",
-            ];
-
-            if (file && validTypes.includes(file.type)) {
-                if (imagePreview) URL.revokeObjectURL(imagePreview);
-                setImagePreview(URL.createObjectURL(file));
-                setFormData((prevState) => ({ ...prevState, photo: file }));
-            } else {
-                showToast(
-                    "Please upload a valid image (JPEG, PNG, JPG, GIF, SVG)."
-                );
+        const fetchRequirements = async () => {
+            try {
+                const response = await axios.get("http://127.0.0.1:8000/api/requirements");
+                if (Array.isArray(response.data)) {
+                    setRequirements(response.data);
+                } else {
+                    console.error("Unexpected response format:", response.data);
+                }
+            } catch (error) {
+                console.error("Error fetching requirements:", error);
             }
-        } else {
-            setFormData((prevState) => ({ ...prevState, [name]: value }));
-        }
-    };
+        };
 
-    const handleFeatureClick = (feature) => {
-        setFormData((prevState) => {
-            const highlighted_features =
-                prevState.highlighted_features.includes(feature)
-                    ? prevState.highlighted_features.filter(
-                          (f) => f !== feature
-                      )
-                    : [...prevState.highlighted_features, feature];
-            return { ...prevState, highlighted_features };
-        });
-    };
-
-    const handleAmenityClick = (amenity) => {
-        setFormData((prevState) => {
-            const amenities = prevState.amenities.includes(amenity)
-                ? prevState.amenities.filter((a) => a !== amenity)
-                : [...prevState.amenities, amenity];
-            return { ...prevState, amenities };
-        });
-    };
+        fetchRequirements();
+    }, []);
 
     const showToast = (message, type = "error") => {
         if (type === "success") {
@@ -105,35 +50,34 @@ const AddRoomForm = () => {
     };
 
     const validateInputs = () => {
-        if (!formData.title) {
-            showToast("Title is required");
-            return false;
-        }
-        if (!formData.location) {
+        if (!location.trim()) {
             showToast("Location is required");
             return false;
         }
-
-        if (!formData.price || isNaN(formData.price)) {
-            showToast("Valid rent amount is required");
+        if (!roomType.trim()) {
+            showToast("Room type is required");
             return false;
         }
-
-        if (!formData.rooms) {
-            showToast("Number of rooms is required");
+        if (!approxRent.trim() || isNaN(approxRent) || approxRent <= 0) {
+            showToast("Valid approx rent amount is required");
             return false;
         }
-
-        if (!formData.facilities) {
-            showToast("Facilities are required");
+        if (selectedHighlights.length === 0) {
+            showToast("At least one highlight is required");
             return false;
         }
-
-        if (!formData.contact) {
-            showToast("Contact is required");
+        if (!post.trim()) {
+            showToast("Post is required");
             return false;
         }
-
+        if (!numPeople.trim() || isNaN(numPeople) || numPeople <= 0) {
+            showToast("Valid number of people is required");
+            return false;
+        }
+        if (!occupancy.trim()) {
+            showToast("Occupancy is required");
+            return false;
+        }
         return true;
     };
 
@@ -142,233 +86,205 @@ const AddRoomForm = () => {
 
         if (!validateInputs()) return;
 
-        const uploadData = new FormData();
-        Object.keys(formData).forEach((key) => {
-            if (key !== "photo") {
-                const value = Array.isArray(formData[key])
-                    ? JSON.stringify(formData[key])
-                    : formData[key];
-                uploadData.append(key, value);
-            }
-        });
-
-        if (formData.photo) {
-            uploadData.append("photo", formData.photo);
-        }
+        const newRequirement = {
+            location,
+            looking_for: "Room",
+            looking_for_gender: lookingFor,
+            approx_rent: approxRent,
+            room_type: roomType,
+            highlights: selectedHighlights.join(", "),
+            post,
+            listing_type: "roommates",
+            occupancy,
+            num_people: numPeople
+        };
 
         try {
-            const response = await axios.post(
-                "http://127.0.0.1:8000/api/listings",
-                uploadData,
-                {
-                    headers: { "Content-Type": "multipart/form-data" },
-                }
-            );
-            console.log("Room added successfully:", response.data);
-            setFormData({
-                title: "",
-                location: "",
-                price: "",
-                rooms: "",
-                facilities: "",
-                contact: "",
-                looking_for: "any",
-                occupancy: "any",
-                photo: null,
-                highlighted_features: [],
-                amenities: [],
-                description: "",
-                listing_type: "room",
-            });
-            setImagePreview(null);
-            if (fileInputRef.current) fileInputRef.current.value = "";
-            showToast("Room added successfully", "success");
+            await axios.post("http://127.0.0.1:8000/api/requirements", newRequirement);
+            setRequirements((prevRequirements) => [
+                ...prevRequirements,
+                newRequirement,
+            ]);
+            handleCancel();
+            showToast("Requirement added successfully!", "success");
         } catch (error) {
-            console.error(
-                "There was an error adding the room:",
-                error.response?.data || error.message
-            );
-            showToast("There was an error adding the room.");
+            console.error("Error adding requirement:", error);
+            showToast("Failed to add requirement");
         }
     };
 
     const handleCancel = () => {
-        setFormData({
-            title: "",
-            location: "",
-            price: "",
-            rooms: "",
-            facilities: "",
-            contact: "",
-            looking_for: "any",
-            occupancy: "any",
-            photo: null,
-            highlighted_features: [],
-            amenities: [],
-            description: "",
-            listing_type: "room",
-        });
-        if (fileInputRef.current) fileInputRef.current.value = "";
+        setLocation("");
+        setApproxRent("");
+        setPost("");
+        setLookingFor("Any");
+        setRoomType("Single");
+        setSelectedHighlights([]);
+        setOccupancy("");
+        setNumPeople("");
+    };
+
+    const handleHighlightClick = (highlight) => {
+        setSelectedHighlights((prevHighlights) =>
+            prevHighlights.includes(highlight)
+                ? prevHighlights.filter((item) => item !== highlight)
+                : [...prevHighlights, highlight]
+        );
+    };
+
+    const handleFileClick = () => {
+        document.getElementById('fileInput').click();
+    };
+
+    const handleFileChange = (event) => {
+        const files = event.target.files;
+        console.log(files);
     };
 
     return (
-        <div className="max-w-6xl mx-auto p-8 bg-white rounded-md shadow-md mt-4 relative">
+        <div className="max-w-6xl mx-auto p-16 bg-white shadow-md rounded-md mt-4 relative">
             <div className="absolute top-4 right-4">
                 <Link to="/PostRequirementPage">
                     <button
                         onClick={handleCancel}
-                        className="text-gray-900 text-center text-lg w-8 h-8 border border-gray-900 rounded-full"
+                        className="text-gray-900 text-center text-lg w-8 h-8 border border-gray-900 rounded-full absolute right-4"
                         aria-label="Close"
                     >
                         X
                     </button>
-                </Link>
+                </Link> 
             </div>
-            <div className="text-center mb-8">
-                <h1 className="text-3xl font-bold text-gray-800">Add Room</h1>
+            <div className="text-center">
+                <h1 className="text-3xl font-bold">Roommate For Your Room</h1>
+                <p className="text-gray-500 mt-2">
+                    So that other users can contact you
+                </p>
             </div>
-            <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="flex gap-32 mt-12">
                     <div>
                         <label className="block text-sm font-medium text-gray-700">
-                            Title
+                            Add Your Location
                         </label>
                         <input
-                            name="title"
-                            value={formData.title}
-                            onChange={handleChange}
-                            placeholder="Title"
-                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                            type="text"
+                            value={location}
+                            onChange={(e) => setLocation(e.target.value)}
+                            className="locationInput mt-1 block px-2 py-3 border w-96 border-gray-300 rounded-md shadow-sm sm:text-sm"
                         />
                     </div>
-                    <div>
+                    <fieldset className="border p-3 px-10">
+                        <legend className="text-base font-medium text-gray-900">
+                            Looking Gender For
+                        </legend>
+                        <div className="mt-2 space-x-4">
+                            {["Male", "Female", "Any"].map((option) => (
+                                <button
+                                    type="button"
+                                    key={option}
+                                    className={`px-8 py-3 border rounded-md text-sm font-medium ${
+                                        lookingFor === option
+                                            ? "color"
+                                            : "hover:bg-gray-100"
+                                    }`}
+                                    onClick={() => setLookingFor(option)}
+                                >
+                                    {option}
+                                </button>
+                            ))}
+                        </div>
+                    </fieldset>
+                </div>
+                <div className="flex gap-32 mt-16">
+                    <div className="mt-6 space-y-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700">
+                                Approx Rent
+                            </label>
+                            <input
+                                type="number"
+                                value={approxRent}
+                                onChange={(e) => setApproxRent(e.target.value)}
+                                className="locationInput mt-1 block px-2 py-3 border w-96 border-gray-300 rounded-md shadow-sm sm:text-sm"
+                            />
+                        </div>
+                    </div>
+                    <fieldset className="border p-3 px-10">
+                        <legend className="text-base font-medium text-gray-900">
+                            Room Type
+                        </legend>
+                        <div className="mt-2 space-x-4">
+                            {["Single", "Shared", "Any"].map((option) => (
+                                <button
+                                    type="button"
+                                    key={option}
+                                    className={`px-8 py-3 border rounded-md text-sm font-medium ${
+                                        roomType === option
+                                            ? "color"
+                                            : "hover:bg-gray-100"
+                                    }`}
+                                    onClick={() => setRoomType(option)}
+                                >
+                                    {option}
+                                </button>
+                            ))}
+                        </div>
+                    </fieldset>
+                </div>
+                <div className="flex gap-32">
+                    <div className="mt-11">
                         <label className="block text-sm font-medium text-gray-700">
-                            Location
+                            Occupancy
                         </label>
                         <input
-                            name="location"
-                            value={formData.location}
-                            onChange={handleChange}
-                            placeholder="Location"
-                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                            type="text"
+                            value={occupancy}
+                            onChange={(e) => setOccupancy(e.target.value)}
+                            className="locationInput mt-1 block px-2 py-3 border w-96 border-gray-300 rounded-md shadow-sm sm:text-sm"
                         />
                     </div>
-                    <div>
+                    <div className="mt-11">
                         <label className="block text-sm font-medium text-gray-700">
-                            Price
+                            Number of People
                         </label>
                         <input
-                            name="price"
                             type="number"
-                            value={formData.price}
-                            onChange={handleChange}
-                            placeholder="Price"
-                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">
-                            Rooms
-                        </label>
-                        <input
-                            name="rooms"
-                            type="number"
-                            value={formData.rooms}
-                            onChange={handleChange}
-                            placeholder="Number of rooms"
-                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">
-                            Facilities
-                        </label>
-                        <input
-                            name="facilities"
-                            value={formData.facilities}
-                            onChange={handleChange}
-                            placeholder="Facilities"
-                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">
-                            Contact
-                        </label>
-                        <input
-                            name="contact"
-                            value={formData.contact}
-                            onChange={handleChange}
-                            placeholder="Contact"
-                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                            value={numPeople}
+                            onChange={(e) => setNumPeople(e.target.value)}
+                            className="locationInput mt-1 block px-2 py-3 border w-96 border-gray-300 rounded-md shadow-sm sm:text-sm"
                         />
                     </div>
                 </div>
-
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <div>
-                        <fieldset className="border p-3 px-10 mt-2 rounded-md shadow-sm">
-                            <legend className="block text-sm font-medium text-gray-700">
-                                Looking For Gender
-                            </legend>
-                            <div className="mt-2 space-x-4">
-                                {["Male", "Female", "Any"].map((option) => (
-                                    <button
-                                        type="button"
-                                        key={option}
-                                        className={`px-8 py-3 border rounded-md text-sm font-medium ${
-                                            LookingFor === option
-                                                ? "color"
-                                                : "hover:bg-gray-100"
-                                        }`}
-                                        onClick={() => setLookingFor(option)}
-                                    >
-                                        {option}
-                                    </button>
-                                ))}
-                            </div>
-                        </fieldset>
-                    </div>
-
-                    <div>
-                        <fieldset className="border p-3 px-10 mt-2 rounded-md shadow-sm">
-                            <legend className="block text-sm font-medium text-gray-700">
-                                Occupancy
-                            </legend>
-                            <div className="mt-2 space-x-4">
-                                {["Single", "Shared", "Any"].map((option) => (
-                                    <button
-                                        key={option}
-                                        className={`px-8 py-3 border rounded-md text-sm font-medium ${
-                                            formData.occupancy ===
-                                            option.toLowerCase()
-                                                ? "color"
-                                                : "hover:bg-gray-100"
-                                        }`}
-                                        onClick={() =>
-                                            setFormData((prevState) => ({
-                                                ...prevState,
-                                                occupancy: option.toLowerCase(),
-                                            }))
-                                        }
-                                    >
-                                        {option}
-                                    </button>
-                                ))}
-                            </div>
-                        </fieldset>
+                <div className="mt-10">
+                    <h2 className="text-lg font-medium text-gray-900 mt-16">
+                        Choose Highlights for Your Property
+                    </h2>
+                    <div className="mt-6 space-y-2 flex items-center justify-around">
+                        {highlightProperty.map((option) => (
+                            <button
+                                type="button"
+                                key={option}
+                                className={`mr-2 leading-tight rounded-lg bg-gray-100 px-7 py-2 hover:bg-gray-200 ${
+                                    selectedHighlights.includes(option)
+                                        ? "color"
+                                        : "hover:bg-gray-100"
+                                }`}
+                                onClick={() => handleHighlightClick(option)}
+                            >
+                                {option}
+                            </button>
+                        ))}
                     </div>
                 </div>
-
                 <label className="text-sm text-gray-600 mt-12 block font-medium">
-                    Upload Photos of your room
+                    Upload 3 Photos of your room
                 </label>
                 <div className="grid place-items-center mt-2 border-2 border-dashed">
                     <div
                         role="button"
                         tabIndex="0"
                         className="w-full h-full"
-                        onClick={() => fileInputRef.current.click()}
+                        onClick={handleFileClick}
                     >
                         <input
                             id="fileInput"
@@ -376,9 +292,7 @@ const AddRoomForm = () => {
                             multiple
                             type="file"
                             autoComplete="off"
-                            onChange={handleChange}
-                            name="photo"
-                            ref={fileInputRef}
+                            onChange={handleFileChange}
                             style={{ display: 'none' }}
                         />
                         <div className="w-full h-full grid place-content-center p-3">
@@ -399,79 +313,29 @@ const AddRoomForm = () => {
                         </div>
                     </div>
                 </div>
-
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                        Highlighted Features
-                    </label>
-                    <div className="mt-2 grid grid-cols-2 gap-2">
-                        {allHighlightedFeatures.map((feature) => (
-                            <button
-                                type="button"
-                                key={feature}
-                                className={`py-2 px-4 border rounded-md text-sm font-medium ${
-                                    formData.highlighted_features.includes(
-                                        feature
-                                    )
-                                        ? "color"
-                                        : "hover:bg-gray-100"
-                                }`}
-                                onClick={() => handleFeatureClick(feature)}
-                            >
-                                {feature}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                        Amenities
-                    </label>
-                    <div className="mt-2 grid grid-cols-2 gap-2">
-                        {allAmenities.map((amenity) => (
-                            <button
-                                type="button"
-                                key={amenity}
-                                className={`py-2 px-4 border rounded-md text-sm font-medium ${
-                                    formData.amenities.includes(amenity)
-                                        ? "color"
-                                        : "hover:bg-gray-100"
-                                }`}
-                                onClick={() => handleAmenityClick(amenity)}
-                            >
-                                {amenity}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                        Description
+                <div className="">
+                    <label className="block mt-10 text-sm font-medium text-gray-700">
+                        Write More About Your Requirement
                     </label>
                     <textarea
-                        name="description"
-                        value={formData.description}
-                        onChange={handleChange}
-                        placeholder="Description"
+                        value={post}
+                        onChange={(e) => setPost(e.target.value)}
                         rows="4"
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
-                    />
+                        className="locationInput mt-2 block w-full border border-gray-300 rounded-md shadow-sm sm:text-sm px-2 py-2"
+                    ></textarea>
                 </div>
-
-                <div className="text-center">
+                <div className="text-center ">
                     <button
                         type="submit"
-                        className="w-52 p-4 h-10 py-2 mt-2 px-4 border color border-transparent rounded-3xl shadow-sm text-sm font-medium text-center text-white"
+                        className="w-52 p-4 h-10 relative text py-2 mt-2 px-4 border border-transparent rounded-3xl shadow-sm text-sm font-medium text-center text-white color hover:bg-indigo-700 focus:outline-none bgHover"
                     >
                         Submit
                     </button>
                 </div>
+                <ToastContainer />
             </form>
-            <ToastContainer />
         </div>
     );
 };
 
-export default AddRoomForm;
+export default AddRequirement;
