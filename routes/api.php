@@ -15,7 +15,6 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PgListingController;
 
 
-
 // routes/api
 
 Route::post('/register', [RegisterController::class, 'register']);
@@ -37,8 +36,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/profile', [ProfileController::class, 'store']);
 });
 
-
-use App\Http\Controllers\PgListingController;
 
 Route::get('/pg_listing', [PgListingController::class, 'index']);
 Route::get('/api/pg_listing/{id}', [PgListingController::class, 'show']);
