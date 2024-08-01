@@ -30,7 +30,7 @@ class PgListingController extends Controller
             'occupancyType' => 'required|string|max:255',
             'occupancyAmount' => 'required|integer',
             'pgPostContent' => 'required|string',
-            'pgFiles' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
         $pgListing = new PgListing();
@@ -42,8 +42,8 @@ class PgListingController extends Controller
         $pgListing->occupancy_amount = $validated['occupancyAmount'];
         $pgListing->pg_post_content = $validated['pgPostContent'];
 
-        if ($request->hasFile('pgFiles')) {
-            $file = $request->file('pgFiles');
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
             $path = $file->store('image', 'public');
             $pgListing->image = $path;
         } else {

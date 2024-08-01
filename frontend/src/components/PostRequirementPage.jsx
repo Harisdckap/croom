@@ -1,28 +1,25 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import HouseImg from "../assets/houseAdd.png";
 import PgImg from "../assets/pg.png";
 import RoommateImg from "../assets/roomate.png";
 import "../components/RentPageComponent/AddRequirement.css";
 
 export const List_page = () => {
-    const navigate = useNavigate();
-
-    const handleChange = () => {
-        navigate(-1);
-    };
+    // const navigate = useNavigate();
 
     return (
         <div className="container ">
             <div
                 className="flex justify-between items-center  mt-5 "
-               
             >
                 <div></div>
                 <p className="font-bold text-white">C-Room</p>
-                <button className="w-8 h-8 border border-white rounded-full text-white"    onClick={handleChange} >
+                <Link to="/">
+                <button className="w-8 h-8 border border-white rounded-full text-white" >
                     X
                 </button>
+                </Link>
             </div>
 
             <div className="text-center mt-16 text-white">

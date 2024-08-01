@@ -23,7 +23,7 @@ const PropertyPage = () => {
         address: searchParams.get('address') || '',
         t: searchParams.get('t') || 'a',
         p: searchParams.get('p') || 1,
-        gender: gender, // Pass the gender filter to the API
+        gender: gender,
       };
       const response = await axios.get('http://127.0.0.1:8000/api/properties', { params });
       setListings(response.data.data);
@@ -46,7 +46,7 @@ const PropertyPage = () => {
       address: search,
       t: searchParams.get('t') || 'a',
       p: 1,
-      gender: gender, // Pass the gender filter to the query parameters
+      gender: gender,
     });
   };
 
@@ -55,22 +55,115 @@ const PropertyPage = () => {
       address: searchParams.get('address') || '',
       t: type,
       p: 1,
-      gender: gender, // Ensure gender is preserved
+      gender: gender,
     });
   };
 
-  const handleViewClick = (id, location) => {
-    // Trim whitespace and newlines from the location string
+  const handleViewClick = (id, location, listingType) => {
     const trimmedLocation = location.trim();
-  
-    console.log('ID:', id);
-    console.log('Encoded ID:', btoa(id));
-    console.log('Location:', trimmedLocation);
-    console.log('Encoded Location:', encodeURIComponent(trimmedLocation));
-  
-    navigate(`/property/${btoa(id)}/${encodeURIComponent(trimmedLocation)}`);
+    navigate(`/property/${btoa(id)}/${encodeURIComponent(trimmedLocation)}/${listingType}`);
   };
-
+  
+  const renderListing = (listing) => {
+    switch (listing.listing_type) {
+      case 'room':
+        return (
+          <div key={listing.id} className="border rounded-lg p-4 bg-white">
+            <div className="mb-4">
+              {listing.photo ? (
+                <img
+                  src={`http://127.0.0.1:8000/storage/${listing.photo}`}
+                  alt="Property Photo"
+                  className="w-full h-48 object-cover rounded-lg"
+                  onError={(e) => (e.target.src = '/path/to/fallback-image.jpg')}
+                />
+              ) : (
+                <p className="text-gray-500 text-center">No photo available.</p>
+              )}
+            </div>
+            <h2 className="text-xl font-semibold mb-2">{listing.title}</h2>
+            <p className="text-gray-700 mb-2">Location: {listing.location}</p>
+            <p className="text-gray-700 mb-2">Price: ${listing.price}</p>
+            <p className="text-gray-700 mb-2">Rooms: {listing.rooms}</p>
+            <p className="text-gray-700 mb-2">Facilities: {listing.facilities}</p>
+            <div className="mt-4 flex justify-end">
+              <button
+                onClick={() => handleViewClick(listing.id, listing.location, listing.listing_type)}
+                className="flex items-center px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg focus:ring-2 focus:ring-blue-600"
+              >
+                <FontAwesomeIcon icon={faEye} className="mr-2" />
+                View
+              </button>
+            </div>
+          </div>
+        );
+      case 'pg':
+        return (
+          <div key={listing.id} className="border rounded-lg p-4 bg-white">
+            <div className="mb-4">
+              {listing.image ? (
+                <img
+                  src={`http://127.0.0.1:8000/storage/${listing.image}`}
+                  alt="Property Photo"
+                  className="w-full h-48 object-cover rounded-lg"
+                  onError={(e) => (e.target.src = '/path/to/fallback-image.jpg')}
+                />
+              ) : (
+                <p className="text-gray-500 text-center">No photo available.</p>
+              )}
+            </div>
+            <h2 className="text-xl font-semibold mb-2">{listing.pg_name}</h2>
+            <p className="text-gray-700 mb-2">Location: {listing.location}</p>
+            <p className="text-gray-700 mb-2">Price: ${listing.occupancy_amount}</p>
+            <p className="text-gray-700 mb-2">Type: {listing.pg_type}</p>
+            <p className="text-gray-700 mb-2">Occupancy: {listing.occupancy_type}</p>
+            <div className="mt-4 flex justify-end">
+              <button
+                onClick={() => handleViewClick(listing.id, listing.location, listing.listing_type)}
+                className="flex items-center px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg focus:ring-2 focus:ring-blue-600"
+              >
+                <FontAwesomeIcon icon={faEye} className="mr-2" />
+                View
+              </button>
+            </div>
+          </div>
+        );
+      case 'roommates':
+        return (
+          <div key={listing.id} className="border rounded-lg p-4 bg-white">
+            <div className="mb-4">
+              {listing.house_image ? (
+                <img
+                  src={`http://127.0.0.1:8000/storage/${listing.house_image}`}
+                  alt="Property Photo"
+                  className="w-full h-48 object-cover rounded-lg"
+                  onError={(e) => (e.target.src = '/path/to/fallback-image.jpg')}
+                />
+              ) : (
+                <p className="text-gray-500 text-center">No photo available.</p>
+              )}
+            </div>
+            <h2 className="text-xl font-semibold mb-2">{listing.post}</h2>
+            <p className="text-gray-700 mb-2">Location: {listing.location}</p>
+            <p className="text-gray-700 mb-2">Approx Rent: ${listing.approx_rent}</p>
+            <p className="text-gray-700 mb-2">Number of People: {listing.number_of_people}</p>
+            <p className="text-gray-700 mb-2">Highlights: {listing.highlights}</p>
+            <div className="mt-4 flex justify-end">
+              <button
+                onClick={() => handleViewClick(listing.id, listing.location, listing.listing_type)}
+                className="flex items-center px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg focus:ring-2 focus:ring-blue-600"
+              >
+                <FontAwesomeIcon icon={faEye} className="mr-2" />
+                View
+              </button>
+            </div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+  
   return (
     <div>
       <HomeNavBar />
@@ -82,48 +175,9 @@ const PropertyPage = () => {
         onGenderChange={handleGenderChange}
       />
 
-      <h1 className="text-4xl font-bold mb-8 text-center">All Properties</h1>
-
-      <div className="container mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8 p-4">
+      <div className="container mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8 p-4 pt-8">
         {listings.length > 0 ? (
-          listings.map((listing) => (
-            <div key={listing.id} className="border rounded-lg p-4 bg-white">
-              <div className="mb-4">
-                {listing.image || listing.photo || listing.house_image ? (
-                  <img
-                    src={`http://127.0.0.1:8000/storage/${listing.image || listing.photo || listing.house_image}`} // Adjusted the image path
-                    alt="Property Photo"
-                    className="w-full h-48 object-cover rounded-lg"
-                    onError={(e) => (e.target.src = '/path/to/fallback-image.jpg')} // Fallback image URL
-                  />
-                ) : (
-                  <p className="text-gray-500 text-center">No photo available.</p>
-                )}
-              </div>
-              <h2 className="text-xl font-semibold mb-2">{listing.pg_name || listing.title || listing.post}</h2>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-gray-700 mb-2">Location: {listing.location}</p>
-                  <p className="text-gray-700 mb-2">Price: ${listing.occupancy_amount || listing.price || listing.approx_rent}</p>
-                </div>
-                <div>
-                  <p className="text-gray-700 mb-2">Type: {listing.pg_type}</p>
-                  <p className="text-gray-700 mb-2">Occupancy: {listing.occupancy_type}</p>
-                  <p className="text-gray-700 mb-2">Rooms: {listing.rooms || listing.number_of_people}</p>
-                  <p className="text-gray-700 mb-2">Facilities: {listing.facilities || listing.highlights}</p>
-                </div>
-              </div>
-              <div className="mt-4 flex justify-end">
-                <button
-                  onClick={() => handleViewClick(listing.id, listing.location)} // Pass location here
-                  className="flex items-center px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg focus:ring-2 focus:ring-blue-600"
-                >
-                  <FontAwesomeIcon icon={faEye} className="mr-2" />
-                  View
-                </button>
-              </div>
-            </div>
-          ))
+          listings.map((listing) => renderListing(listing))
         ) : (
           <p className="text-gray-500 text-center">No properties found.</p>
         )}

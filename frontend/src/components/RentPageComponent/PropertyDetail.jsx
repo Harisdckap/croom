@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams,Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import axios from "axios";
 import {
   FaMapMarkerAlt,
@@ -15,20 +15,21 @@ import { motion } from "framer-motion";
 import HomeNavBar from "../Header";
 
 const PropertyDetail = () => {
-  const { id, location } = useParams();
+  const { id, location, listingType } = useParams();
   const [property, setProperty] = useState(null);
 
   useEffect(() => {
     fetchProperty();
-  }, [id, location]);
+  }, [id, location, listingType]);
 
   const fetchProperty = async () => {
     try {
       const cleanLocation = location.trim();
       const encodedId = encodeURIComponent(id);
       const encodedLocation = encodeURIComponent(cleanLocation);
+      const encodedListingType = encodeURIComponent(listingType);
 
-      const response = await axios.get(`http://127.0.0.1:8000/api/property/${encodedId}/${encodedLocation}`);
+      const response = await axios.get(`http://127.0.0.1:8000/api/property/${encodedId}/${encodedLocation}/${encodedListingType}`);
       setProperty(response.data.data);
     } catch (error) {
       console.error('Error fetching property:', error);
@@ -39,11 +40,39 @@ const PropertyDetail = () => {
     return <p>Loading property details...</p>;
   }
 
+  const renderPropertyDetails = (type) => {
+    switch (type) {
+      case 'room':
+        return (
+          <>
+            <DetailItem icon={<FaBed />} label="Rooms" value={property.rooms} />
+            <DetailItem icon={<FaTag />} label="Facilities" value={property.facilities} />
+          </>
+        );
+      case 'roommate':
+        return (
+          <>
+            <DetailItem icon={<FaUser />} label="Looking For" value={property.looking_for_gender} />
+            <DetailItem icon={<FaStar />} label="Occupancy" value={property.occupancy} />
+          </>
+        );
+      case 'pg':
+        return (
+          <>
+            <DetailItem icon={<FaTag />} label="Facilities" value={property.facilities} />
+            <DetailItem icon={<FaStar />} label="Occupancy" value={property.occupancy} />
+          </>
+        );
+      default:
+        return <p>Details not available for this type.</p>;
+    }
+  };
+
   return (
     <div>
       <HomeNavBar />
       <motion.div
-        className="container mx-auto p-6 bg-white shadow-lg"
+        className="container mx-auto p-6 bg-white shadow-lg pt-28"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
@@ -61,9 +90,7 @@ const PropertyDetail = () => {
                 src={`http://127.0.0.1:8000/storage/${property.photo}`}
                 alt="Property Photo"
                 className="w-full h-60 object-cover rounded-lg shadow-lg"
-                onError={(e) =>
-                  (e.target.src = "/path/to/fallback-image.jpg")
-                }
+                onError={(e) => (e.target.src = "/path/to/fallback-image.jpg")}
               />
             ) : (
               <p className="text-gray-500 text-center">No photo available.</p>
@@ -71,28 +98,22 @@ const PropertyDetail = () => {
 
             {/* Buttons Section */}
             <div className="mt-6 flex gap-4">
-            
               <motion.a
-              
                 href={`tel:${property.contact}`}
                 className="bg-blue-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-600"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
               >
-           <Link to="/PlanPage">
                 <FaPhoneAlt className="text-lg" />
                 Call
-                </Link>
               </motion.a>
               <motion.button
                 className="bg-green-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-green-600"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
               >
-                  <Link to="/PlanPage">
                 <FaComments className="text-lg" />
                 Chat
-                </Link>
               </motion.button>
             </div>
           </motion.div>
@@ -107,34 +128,12 @@ const PropertyDetail = () => {
             <h1 className="text-4xl font-extrabold mb-4 text-gray-800">{property.title}</h1>
 
             <div className="space-y-4">
-              <div className="flex items-center text-lg text-gray-600">
-                <FaMapMarkerAlt className="mr-2 text-gray-500" />
-                <p><strong>Location:</strong> {property.location}</p>
-              </div>
-              <div className="flex items-center text-lg text-gray-600">
-                <FaDollarSign className="mr-2 text-gray-500" />
-                <p><strong>Price:</strong> ${property.price}</p>
-              </div>
-              <div className="flex items-center text-lg text-gray-600">
-                <FaBed className="mr-2 text-gray-500" />
-                <p><strong>Rooms:</strong> {property.rooms}</p>
-              </div>
-              <div className="flex items-center text-lg text-gray-600">
-                <FaTag className="mr-2 text-gray-500" />
-                <p><strong>Facilities:</strong> {property.facilities}</p>
-              </div>
-              <div className="flex items-center text-lg text-gray-600">
-                <FaPhoneAlt className="mr-2 text-gray-500" />
-                <p><strong>Contact:</strong> {property.contact}</p>
-              </div>
-              <div className="flex items-center text-lg text-gray-600">
-                <FaUser className="mr-2 text-gray-500" />
-                <p><strong>Looking For:</strong> {property.looking_for_gender}</p>
-              </div>
-              <div className="flex items-center text-lg text-gray-600">
-                <FaStar className="mr-2 text-gray-500" />
-                <p><strong>Occupancy:</strong> {property.occupancy}</p>
-              </div>
+              <DetailItem icon={<FaMapMarkerAlt />} label="Location" value={property.location} />
+              <DetailItem icon={<FaDollarSign />} label="Price" value={`$${property.price}`} />
+              <DetailItem icon={<FaPhoneAlt />} label="Contact" value={property.contact} />
+
+              {/* Render specific property details */}
+              {renderPropertyDetails(property.listing_type)}
             </div>
 
             {/* Highlighted Features Section */}
@@ -183,5 +182,13 @@ const PropertyDetail = () => {
     </div>
   );
 };
+
+// Helper Component for rendering property details
+const DetailItem = ({ icon, label, value }) => (
+  <div className="flex items-center text-lg text-gray-600">
+    {icon && <span className="mr-2 text-gray-500">{icon}</span>}
+    <p><strong>{label}:</strong> {value || 'Not available'}</p>
+  </div>
+);
 
 export default PropertyDetail;

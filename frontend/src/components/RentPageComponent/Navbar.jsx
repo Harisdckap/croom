@@ -18,8 +18,7 @@ const Navbar = ({ search, onSearchChange, onSearchSubmit, gender, onGenderChange
     };
 
     return (
-        <nav className="bg-white shadow-lg fixed w-full z-10">
-            <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+            <div className="container bg-white mx-auto flex items-center justify-between pt-16 mt-2 pb-2 px-4">
                 <div className="flex items-center space-x-6">
                     <NavLink
                         to="?address=Chennai&p=0&t=a"
@@ -107,7 +106,6 @@ const Navbar = ({ search, onSearchChange, onSearchSubmit, gender, onGenderChange
                     </div>
                 </form>
             </div>
-        </nav>
     );
 };
 

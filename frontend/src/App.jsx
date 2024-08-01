@@ -14,7 +14,6 @@ import PropertyPage from "./components/RentPageComponent/property";
 import PropertyDetail from "./components/RentPageComponent/PropertyDetail";
 import PlanPage from "./components/RentPageComponent/PlanPage";
 
-
 function App() {
     return (
         <Router>
@@ -31,16 +30,17 @@ function App() {
                 <Route path="/NeedRoomForm" element={<NeedRoomForm />} />
                 <Route path="/NeedRoomateForm" element={<NeedRoomate />} />
                 <Route path="/PgForm" element={<Add_PG />} />
-                
+
                 <Route
                     path="/PostRequirementPage"
                     element={<PostRequirementPage />}
                 />
                 <Route path="/property" element={<PropertyPage />} />
                 <Route
-                    path="/property/:id/:location"
+                    path="/property/:id/:location/:listingType"
                     element={<PropertyDetail />}
                 />
+
                 <Route path="/PlanPage" element={<PlanPage />} />
             </Routes>
         </Router>

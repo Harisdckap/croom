@@ -28,11 +28,10 @@ Route::post('reset-password', [ResetPasswordController::class, 'reset']);
 Route::get('/password/reset/', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset');
 Route::post('/listings', [ListingController::class, 'store']);
 Route::get('/properties', [PropertyController::class, 'index']);
-Route::get('/property/{id}/{location}', [PropertyController::class, 'show']);
+Route::get('/property/{id}/{location}/{listingType}', [PropertyController::class, 'show']);
 Route::post('/upload', [ImageController::class, 'upload']);
 Route::post('/roommates', [RoommateController::class,'store']);
 Route::post('/pg_listings', [PgListingController::class, 'store']);
-
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [ProfileController::class, 'index']);
     Route::post('/profile', [ProfileController::class, 'store']);
