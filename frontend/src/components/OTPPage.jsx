@@ -1,7 +1,9 @@
+
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { verifyOtp } from "../js/api/auth";
 import img from '../assets/otp.png';
+import logo from "../assets/logo.png";
 
 const OTPPage = () => {
     const [otp, setOtp] = useState("");
@@ -29,14 +31,19 @@ const OTPPage = () => {
     };
 
     return (
-        <div className="min-h-screen flex flex-col bg-gray-100">
-            <div className="flex-grow flex items-center justify-center">
-                <div className="flex w-full">
-                    <div className="hidden md:flex md:w-1/2 items-center justify-center">
-                        <img className="max-w-full h-auto" src={img} alt="OTP Logo" />
+        <div className="min-h-screen flex flex-col bg-gray-100" style={{ backgroundColor: 'rgb(31, 41, 59)' }}> 
+            <nav className="bg-gray-100 px-3 py-4">
+                <div className="flex items-center">
+                    <img src={logo} alt="Logo" className="w-20 h-auto" />
+                </div>
+            </nav>
+            <div className="main flex-grow flex items-center justify-between">
+                <div className="flex mx-auto rounded-md bg-gray-100">
+                    <div className="hidden md:flex items-center justify-between">
+                        <img src={img} alt="OTP Logo" />
                     </div>
-                    <div className="md:w-1/2 flex items-center justify-center">
-                        <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+                    <div className="md:w-1/2 flex items-center justify-between">
+                        <div className="w-full max-w-md">
                             <h2 className="text-center text-2xl font-bold mb-4">Verify OTP</h2>
                             <p className="text-center text-gray-600 mb-4">Please check your email for the OTP and enter it below:</p>
 
