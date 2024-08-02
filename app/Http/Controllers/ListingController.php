@@ -3,21 +3,18 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Listing;
+use App\Models\Rooms;
 use Illuminate\Support\Facades\Storage;
 
 class ListingController extends Controller
 {
     public function store(Request $request)
     {
-
-
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
             'location' => 'required|string|max:255',
             'price' => 'required|numeric',
-            'rooms' => 'required|numeric', // Ensure rooms is validated
-            'facilities' => 'required|string', // Ensure facilities is validated
+            'room_type' => 'required|string', // Ensure rooms is validated
             'contact' => 'required|string|max:255',
             'looking_for' => 'nullable|string|max:255',
             'occupancy' => 'nullable|string|max:255',
@@ -45,14 +42,14 @@ class ListingController extends Controller
             : [];
 
         // Create a new listing
-        $listing = Listing::create($validatedData);
+        $listing = Rooms::create($validatedData);
 
         return response()->json($listing, 201);
     }
 
     public function show($id)
     {
-        $listing = Listing::find($id);
+        $listing = Rooms::find($id);
 
         if (!$listing) {
             return response()->json(['message' => 'Listing not found'], 404);
@@ -63,7 +60,7 @@ class ListingController extends Controller
 
     public function update(Request $request, $id)
     {
-        $listing = Listing::find($id);
+        $listing = Rooms::find($id);
 
         if (!$listing) {
             return response()->json(['message' => 'Listing not found'], 404);
@@ -75,7 +72,6 @@ class ListingController extends Controller
             'location' => 'required|string',
             'price' => 'required|numeric',
             'rooms' => 'required|numeric',
-            'facilities' => 'required|string',
             'contact' => 'required|string',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'highlighted_features' => 'nullable|json',
@@ -103,7 +99,7 @@ class ListingController extends Controller
 
     public function destroy($id)
     {
-        $listing = Listing::find($id);
+        $listing = Rooms::find($id);
 
         if (!$listing) {
             return response()->json(['message' => 'Listing not found'], 404);

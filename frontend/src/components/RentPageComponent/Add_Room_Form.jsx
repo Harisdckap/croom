@@ -1,21 +1,19 @@
-
-
-// export default AddRoomForm;
 import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import { Link } from "react-router-dom";
 const AddRoomForm = () => {
     const [formData, setFormData] = useState({
         title: "",
         location: "",
         price: "",
-        rooms: "",
-        facilities: "",
+        room_type: "1RK",
+
         contact: "",
-        looking_for: "any",
-        occupancy: "any",
+        looking_for_gender: "any",
+        looking_for: "Roommate",
+        occupancy: "Single Occupancy",
         photo: null,
         highlighted_features: [],
         amenities: [],
@@ -120,15 +118,12 @@ const AddRoomForm = () => {
             return false;
         }
 
-        if (!formData.rooms) {
-            showToast("Number of rooms is required");
+        if (!formData.room_type) {
+            showToast("Room type is required");
             return false;
         }
 
-        if (!formData.facilities) {
-            showToast("Facilities are required");
-            return false;
-        }
+      
 
         if (!formData.contact) {
             showToast("Contact is required");
@@ -170,12 +165,11 @@ const AddRoomForm = () => {
                 title: "",
                 location: "",
                 price: "",
-                rooms: "",
-                facilities: "",
+                room_type: "1RK",
                 contact: "",
                 looking_for_gender: "any",
                 looking_for: "Roommate",
-                occupancy: "any",
+                occupancy: "Single Occupancy",
                 photo: null,
                 highlighted_features: [],
                 amenities: [],
@@ -194,41 +188,17 @@ const AddRoomForm = () => {
         }
     };
 
-    const handleCancel = () => {
-        // Reset form fields
-        setLocation("");
-        setApproxRent("");
-        setPost("");
-        setLookingFor("Any");
-        setRoomType("Single");
-        setHighlights("");
-        setPgInterested("");
-    };
-
-
     return (
         <div className="max-w-6xl mx-auto p-8 bg-white rounded-md shadow-md mt-4">
-                  <div className="absolute top-4 right-4">
-                <button
-                    onClick={handleCancel}
-                    className="text-gray-500 hover:text-gray-700 focus:outline-none"
-                    aria-label="Close"
-                >
-                    <svg
-                        className="w-6 h-6"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
+            <div className="absolute top-6 right-[3.5rem]">
+                <Link to="/PostRequirementPage">
+                    <button
+                        className="text-gray-900 text-center text-lg w-8 h-8 border border-gray-900 rounded-full absolute right-4"
+                        aria-label="Close"
                     >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M6 18L18 6M6 6l12 12"
-                        ></path>
-                    </svg>
-                </button>
+                        X
+                    </button>
+                </Link>
             </div>
             <div className="text-center mb-8">
                 <h1 className="text-3xl font-bold text-gray-800">Add Room</h1>
@@ -236,7 +206,7 @@ const AddRoomForm = () => {
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">
+                        <label className="block text-sm font-medium text-black">
                             Title
                         </label>
                         <input
@@ -244,11 +214,11 @@ const AddRoomForm = () => {
                             value={formData.title}
                             onChange={handleChange}
                             placeholder="Title"
-                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                            className="mt-1 block w-full px-3 py-2 border border-gray-400 rounded-md shadow-sm sm:text-sm"
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">
+                        <label className="block text-sm font-medium text-black">
                             Location
                         </label>
                         <input
@@ -256,11 +226,11 @@ const AddRoomForm = () => {
                             value={formData.location}
                             onChange={handleChange}
                             placeholder="Location"
-                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                            className="mt-1 block w-full px-3 py-2 border border-gray-400 rounded-md shadow-sm sm:text-sm"
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">
+                        <label className="block text-sm font-medium text-black">
                             Price
                         </label>
                         <input
@@ -269,36 +239,37 @@ const AddRoomForm = () => {
                             value={formData.price}
                             onChange={handleChange}
                             placeholder="Price"
-                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                            className="mt-1 block w-full px-3 py-2 border border-gray-400 rounded-md shadow-sm sm:text-sm"
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">
-                            Rooms
+                        <label className="block text-sm font-medium text-black">
+                            Room Type
                         </label>
-                        <input
-                            name="rooms"
-                            type="number"
-                            value={formData.rooms}
-                            onChange={handleChange}
-                            placeholder="Number of rooms"
-                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
-                        />
+                        <div className="mt-2 space-x-4">
+                            {["1RK", "1BHK", "2BHK", "3BHK"].map((option) => (
+                                <button
+                                    type="button"
+                                    key={option}
+                                    className={`px-4 py-2 border rounded-md text-sm font-medium ${
+                                        formData.room_type === option
+                                            ? "bg-gray-800 text-white"
+                                            : "bg-white text-gray-800 hover:bg-gray-100"
+                                    }`}
+                                    onClick={() =>
+                                        setFormData((prevState) => ({
+                                            ...prevState,
+                                            room_type: option,
+                                        }))
+                                    }
+                                >
+                                    {option}
+                                </button>
+                            ))}
+                        </div>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">
-                            Facilities
-                        </label>
-                        <input
-                            name="facilities"
-                            value={formData.facilities}
-                            onChange={handleChange}
-                            placeholder="Facilities"
-                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">
+                        <label className="block text-sm font-medium text-black">
                             Contact
                         </label>
                         <input
@@ -306,114 +277,109 @@ const AddRoomForm = () => {
                             value={formData.contact}
                             onChange={handleChange}
                             placeholder="Contact"
-                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                            className="mt-1 block w-full px-3 py-2 border border-gray-400 rounded-md shadow-sm sm:text-sm"
                         />
                     </div>
-                </div>
-
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div>
-                        <fieldset className="border p-3 px-10 mt-2 rounded-md shadow-sm">
-                            <legend className="block text-sm font-medium text-gray-700">
-                                Looking For Gender
-                            </legend>
-                            <div className="mt-2 space-x-4">
-                                {["Male", "Female", "Any"].map((option) => (
-                                    <button
-                                        key={option}
-                                        className={`px-8 py-3 border rounded-md text-sm font-medium ${
-                                            formData.looking_for_gender ===
-                                            option.toLowerCase()
-                                                ? "bg-gray-300"
-                                                : "hover:bg-gray-100"
-                                        }`}
-                                        onClick={() =>
-                                            handleChange({
-                                                target: {
-                                                    name: "looking_for_gender",
-                                                    value: option.toLowerCase(),
-                                                },
-                                            })
-                                        }
-                                    >
-                                        {option}
-                                    </button>
-                                ))}
-                            </div>
-                        </fieldset>
-                    </div>
-
-                    <div>
-                        <div>
-                            <fieldset className="border p-3 px-10 mt-2 rounded-md shadow-sm">
-                                <legend className="block text-sm font-medium text-gray-700">
-                                    Occupancy
-                                </legend>
-                                <div className="mt-2 space-x-4">
-                                    {["Single", "Shared", "Any"].map(
-                                        (option) => (
-                                            <button
-                                                key={option}
-                                                className={`px-8 py-3 border rounded-md text-sm font-medium ${
-                                                    formData.occupancy ===
-                                                    option.toLowerCase()
-                                                        ? "bg-gray-300"
-                                                        : "hover:bg-gray-100"
-                                                }`}
-                                                onClick={() =>
-                                                    handleChange({
-                                                        target: {
-                                                            name: "occupancy",
-                                                            value: option.toLowerCase(),
-                                                        },
-                                                    })
-                                                }
-                                            >
-                                                {option}
-                                            </button>
-                                        )
-                                    )}
-                                </div>
-                            </fieldset>
+                        <label className="block text-sm font-medium text-black">
+                            Looking For Gender
+                        </label>
+                        <div className="mt-2 space-x-4">
+                            {["any", "male", "female"].map((option) => (
+                                <button
+                                    type="button"
+                                    key={option}
+                                    className={`px-4 py-2 border rounded-md text-sm font-medium ${
+                                        formData.looking_for_gender === option
+                                            ? "bg-gray-800 text-white"
+                                            : "bg-white text-gray-800 hover:bg-gray-100"
+                                    }`}
+                                    onClick={() =>
+                                        setFormData((prevState) => ({
+                                            ...prevState,
+                                            looking_for_gender: option,
+                                        }))
+                                    }
+                                >
+                                    {option.charAt(0).toUpperCase() +
+                                        option.slice(1)}
+                                </button>
+                            ))}
                         </div>
                     </div>
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                        Photo
+                    <label className="block text-sm font-medium text-black">
+                        Occupancy
+                    </label>
+                    <div className="mt-2 space-x-4">
+                        {[
+                            "Single Occupancy",
+                            "Double Occupancy",
+                            "Family Occupancy",
+                            "Bachelor Occupancy",
+                        ].map((option) => (
+                            <button
+                                type="button"
+                                key={option}
+                                className={`px-4 py-2 border rounded-md text-sm font-medium ${
+                                    formData.occupancy === option
+                                        ? "bg-gray-800 text-white"
+                                        : "bg-white text-gray-800 hover:bg-gray-100"
+                                }`}
+                                onClick={() =>
+                                    setFormData((prevState) => ({
+                                        ...prevState,
+                                        occupancy: option,
+                                    }))
+                                }
+                            >
+                                {option}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+            
+                <div className="mt-2 p-4 border-2 border-dashed border-gray-400">
+                    <label className="block text-sm font-medium text-black">
+                        Upload House Image
                     </label>
                     <input
+                        ref={fileInputRef}
                         name="photo"
                         type="file"
-                        ref={fileInputRef}
                         onChange={handleChange}
-                        className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100"
+                        accept="image/jpeg, image/png, image/jpg, image/gif, image/svg+xml"
+                        className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4  file:border file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200"
                     />
                     {imagePreview && (
-                        <img
-                            src={imagePreview}
-                            alt="Preview"
-                            className="mt-2 h-32 w-32 object-cover rounded-md"
-                        />
+                        <div className="mt-2">
+                            <img
+                                src={imagePreview}
+                                alt="Selected Preview"
+                                className="max-h-40 rounded-md shadow-md"
+                            />
+                        </div>
                     )}
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-black">
                         Highlighted Features
                     </label>
-                    <div className="mt-2 grid grid-cols-2 gap-2">
+                    <div className="mt-2 space-x-4">
                         {allHighlightedFeatures.map((feature) => (
                             <button
                                 type="button"
                                 key={feature}
-                                className={`py-2 px-4 border rounded-md text-sm font-medium ${
+                                className={`px-4 py-2 border rounded-md text-sm font-medium ${
                                     formData.highlighted_features.includes(
                                         feature
                                     )
-                                        ? "bg-gray-300"
-                                        : "hover:bg-gray-100"
+                                        ? "bg-gray-800 text-white"
+                                        : "bg-white text-gray-800 hover:bg-gray-100 border-gray-400"
                                 }`}
                                 onClick={() => handleFeatureClick(feature)}
                             >
@@ -424,18 +390,18 @@ const AddRoomForm = () => {
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-black">
                         Amenities
                     </label>
-                    <div className="mt-2 grid grid-cols-2 gap-2">
+                    <div className="mt-2 space-x-4">
                         {allAmenities.map((amenity) => (
                             <button
                                 type="button"
                                 key={amenity}
-                                className={`py-2 px-4 border rounded-md text-sm font-medium ${
+                                className={`px-4 py-2 border rounded-md text-sm font-medium ${
                                     formData.amenities.includes(amenity)
-                                        ? "bg-gray-300"
-                                        : "hover:bg-gray-100"
+                                        ? "bg-gray-800 text-white"
+                                        : "bg-white text-gray-800 hover:bg-gray-100 border-gray-400"
                                 }`}
                                 onClick={() => handleAmenityClick(amenity)}
                             >
@@ -444,9 +410,8 @@ const AddRoomForm = () => {
                         ))}
                     </div>
                 </div>
-
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-black">
                         Description
                     </label>
                     <textarea
@@ -454,21 +419,19 @@ const AddRoomForm = () => {
                         value={formData.description}
                         onChange={handleChange}
                         placeholder="Description"
-                        rows="4"
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
+                        className="mt-1 block w-full px-3 py-2 border border-gray-400 rounded-md shadow-sm sm:text-sm"
                     />
                 </div>
 
-                <div className="flex justify-end">
+                <div className="flex justify-center">
                     <button
                         type="submit"
-                        className="px-8 py-2 bg-blue-500 text-white font-medium rounded-md hover:bg-blue-600"
+                        className="px-8 py-2 color text-white font-medium rounded-md hover:bg-blue-600"
                     >
                         Submit
                     </button>
                 </div>
             </form>
-
             <ToastContainer />
         </div>
     );

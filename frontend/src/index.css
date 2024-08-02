@@ -5,5 +5,12 @@
 
 
 html, body{
-    font-family: "Varela Round", sans-serif;
-  }
+  font-family: "Varela Round", sans-serif;
+  margin: 0;
+  padding: 0;
+}
+.gradient-text {
+  background: linear-gradient(to right, #000000, #1e3a8a, #1d4ed8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent; 
+}

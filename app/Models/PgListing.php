@@ -12,11 +12,11 @@ class PgListing extends Model
         'pg_type',
         'mobile_num',
         'pg_name',
-        'pg_address',
+        'location',
         'occupancy_type',
         'occupancy_amount',
         'listing_type',
-        'pg_files',
+        'image',
         'pg_post_content',
     ];
 

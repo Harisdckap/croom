@@ -69,5 +69,29 @@ class RegisterController extends Controller
         $user = Auth::guard('api')->user();
         return response()->json(['user' => $user], 200);
     }
+
+    public function logout(Request $request)
+    {
+        try {
+            $token = $request->header('Authorization');
+            if ($token) {
+                JWTAuth::parseToken()->invalidate();
+                return response()->json([
+                    'success' => true,
+                    'message' => 'User logged out successfully.'
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Authorization token not found.'
+                ], 401);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to log out, please try again.'
+            ], 500);
+        }
+    }
    
 }

@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { forgotPassword } from "../js/api/auth";
 import img from "../assets/forgotpwd2.png";
-import { Oval } from 'react-loader-spinner';
+import { RotatingLines } from 'react-loader-spinner';
 import logo from "../assets/logo.png";
 
 function ForgotPasswordPage() {
@@ -44,18 +44,20 @@ function ForgotPasswordPage() {
             {/* loader */}
             {loading && (
                 <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-75 z-50">
-                    <Oval
-                        height={80}
-                        width={80}
-                        color="#1D4ED8"
+                   <RotatingLines
+                        height="98"
+                        width="98"
+                        color="blue"
                         wrapperStyle={{}}
-                        secondaryColor="#93C5FD"
+                        // secondaryColor="#93C5FD"
                         wrapperClass=""
                         visible={true}
-                        ariaLabel='oval-loading'
-                        strokeWidth={5}
+                        ariaLabel='rotating-lines-loading'
+                        strokeWidth="3"
+                        strokeColor="blue"
                         animationDuration="0.75"
                     />
+
                 </div>
             )}
             <nav className="bg-gray-100 px-3 py-4">

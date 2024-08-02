@@ -26,28 +26,28 @@ class PgListingController extends Controller
             'pgType' => 'required|string|max:255',
             'mobileNum' => 'required|string|max:255',
             'pgName' => 'required|string|max:255',
-            'pgAddress' => 'required|string',
+            'location' => 'required|string',
             'occupancyType' => 'required|string|max:255',
             'occupancyAmount' => 'required|integer',
             'pgPostContent' => 'required|string',
-            'pgFiles' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
         $pgListing = new PgListing();
         $pgListing->pg_type = $validated['pgType'];
         $pgListing->mobile_num = $validated['mobileNum'];
         $pgListing->pg_name = $validated['pgName'];
-        $pgListing->pg_address = $validated['pgAddress'];
+        $pgListing->location = $validated['location'];
         $pgListing->occupancy_type = $validated['occupancyType'];
         $pgListing->occupancy_amount = $validated['occupancyAmount'];
         $pgListing->pg_post_content = $validated['pgPostContent'];
 
-        if ($request->hasFile('pgFiles')) {
-            $file = $request->file('pgFiles');
-            $path = $file->store('pg_files', 'public');
-            $pgListing->pg_files = json_encode([$path]);
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $path = $file->store('image', 'public');
+            $pgListing->image = $path;
         } else {
-            $pgListing->pg_files = null;
+            $pgListing->image = null;
         }
 
         try {

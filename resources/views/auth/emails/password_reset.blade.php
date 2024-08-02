@@ -42,7 +42,7 @@
             width: 200px;
             margin: 20px auto;
             padding: 10px 20px;
-            background-color: #007bff;
+            background-color: #333333;
             color: #ffffff;
             text-align: center;
             text-decoration: none;
