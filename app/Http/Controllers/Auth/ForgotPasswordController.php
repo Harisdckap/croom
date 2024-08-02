@@ -29,8 +29,6 @@ class ForgotPasswordController extends Controller
         if (!$user) {
             return response()->json(['error' => 'User not found'], 404);
         }
-
-        // Create a token for password reset
         $token = Password::createToken($user);
 
         // Send custom reset link via email

@@ -88,7 +88,7 @@ const Add_PG = () => {
       console.log(response.data);
     }
      catch (error) {
-        console.log(error); 
+        console.log(error);
         // console.error('Error details:', error.response?.data || error.message || error);
         // toast.error("Error submitting form", { position: "top-center" });
     }
