@@ -19,6 +19,8 @@ use App\Http\Controllers\PgListingController;
 // routes/api
 
 Route::post('/register', [RegisterController::class, 'register']);
+Route::post('/logout', [RegisterController::class, 'logout']);
+
 Route::post('/login', [LoginController::class, 'login']);
 Route::get('/get-otp', [OTPController::class, 'getOTP']);
 Route::middleware('auth:sanctum')->get('/details', [RegisterController::class, 'details']);

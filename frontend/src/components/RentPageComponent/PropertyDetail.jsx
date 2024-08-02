@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams,Link } from "react-router-dom";
 import axios from "axios";
 import {
   FaMapMarkerAlt,
@@ -47,20 +47,35 @@ const PropertyDetail = () => {
           <>
             <DetailItem icon={<FaBed />} label="Rooms" value={property.rooms} />
             <DetailItem icon={<FaTag />} label="Facilities" value={property.facilities} />
+            <DetailItem icon={<FaPhoneAlt />} label="Contact" value={property.contact} />
+            <DetailItem icon={<FaMapMarkerAlt />} label="Location" value={property.location} />
+            <DetailItem icon={<FaDollarSign />} label="Price" value={`$${property.price}`} />
+            <DetailItem icon={<FaStar />} label="Occupancy" value={property.occupancy} />
+            <DetailItem icon={<FaUser />} label="Looking For" value={property.looking_for_gender} />
           </>
         );
-      case 'roommate':
+      case 'roommates':
         return (
           <>
-            <DetailItem icon={<FaUser />} label="Looking For" value={property.looking_for_gender} />
+            <DetailItem icon={<FaMapMarkerAlt />} label="Location" value={property.location} />
+            <DetailItem icon={<FaUser />} label="Looking For" value={property.looking_for} />
+            <DetailItem icon={<FaTag />} label="Looking For Gender" value={property.looking_for_gender} />
+            <DetailItem icon={<FaDollarSign />} label="Approx Rent" value={`$${property.approx_rent}`} />
+            <DetailItem icon={<FaTag />} label="Room Type" value={property.room_type} />
+            <DetailItem icon={<FaTag />} label="Post" value={property.post} />
             <DetailItem icon={<FaStar />} label="Occupancy" value={property.occupancy} />
+            <DetailItem icon={<FaTag />} label="Number of People" value={property.number_of_people} />
           </>
         );
       case 'pg':
         return (
           <>
-            <DetailItem icon={<FaTag />} label="Facilities" value={property.facilities} />
-            <DetailItem icon={<FaStar />} label="Occupancy" value={property.occupancy} />
+            <DetailItem icon={<FaTag />} label="PG Type" value={property.pg_type} />
+            <DetailItem icon={<FaPhoneAlt />} label="Mobile Number" value={property.mobile_num} />
+            <DetailItem icon={<FaTag />} label="PG Name" value={property.pg_name} />
+            <DetailItem icon={<FaMapMarkerAlt />} label="Location" value={property.location} />
+            <DetailItem icon={<FaStar />} label="Occupancy Type" value={property.occupancy_type} />
+            <DetailItem icon={<FaDollarSign />} label="Occupancy Amount" value={`$${property.occupancy_amount}`} />
           </>
         );
       default:
@@ -85,9 +100,9 @@ const PropertyDetail = () => {
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.5 }}
           >
-            {property.photo ? (
+            {property.photo || property.image || property.house_image ? (
               <img
-                src={`http://127.0.0.1:8000/storage/${property.photo}`}
+                src={`http://127.0.0.1:8000/storage/${property.photo || property.image || property.house_image}`}
                 alt="Property Photo"
                 className="w-full h-60 object-cover rounded-lg shadow-lg"
                 onError={(e) => (e.target.src = "/path/to/fallback-image.jpg")}
@@ -104,16 +119,20 @@ const PropertyDetail = () => {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
               >
+                <Link to="/PlanPage" className="d-flex gap-2">
                 <FaPhoneAlt className="text-lg" />
                 Call
+                </Link>
               </motion.a>
               <motion.button
                 className="bg-green-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-green-600"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
               >
+                <Link to="/PlanPage">
                 <FaComments className="text-lg" />
                 Chat
+                </Link>
               </motion.button>
             </div>
           </motion.div>
@@ -125,56 +144,61 @@ const PropertyDetail = () => {
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.5 }}
           >
-            <h1 className="text-4xl font-extrabold mb-4 text-gray-800">{property.title}</h1>
+            <h1 className="text-4xl font-extrabold mb-4 text-gray-800 gradient-text">{property.title}</h1>
 
             <div className="space-y-4">
+              {/* General Details */}
               <DetailItem icon={<FaMapMarkerAlt />} label="Location" value={property.location} />
               <DetailItem icon={<FaDollarSign />} label="Price" value={`$${property.price}`} />
               <DetailItem icon={<FaPhoneAlt />} label="Contact" value={property.contact} />
 
               {/* Render specific property details */}
               {renderPropertyDetails(property.listing_type)}
-            </div>
 
-            {/* Highlighted Features Section */}
-            <div className="mt-6 p-4 bg-gray-100 rounded-lg shadow-md">
-              <h3 className="text-2xl font-semibold mb-4 text-gray-800">Highlighted Features</h3>
-              {Array.isArray(property.highlighted_features) && property.highlighted_features.length > 0 ? (
-                <ul className="list-disc list-inside text-gray-700 space-y-2 pl-5">
-                  {property.highlighted_features.map((feature, index) => (
-                    <li key={index} className="flex items-start">
-                      <FaStar className="mr-2 text-yellow-500" />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-gray-500">No highlighted features available.</p>
+              {/* Conditionally render Highlighted Features and Amenities */}
+              {['room', 'roommates'].includes(property.listing_type) && (
+                <>
+                  {/* Highlighted Features Section */}
+                  <div className="mt-6 p-4 bg-gray-100 rounded-lg shadow-md">
+                    <h3 className="text-2xl font-semibold mb-4 text-gray-800 gradient-text">Highlighted Features</h3>
+                    {Array.isArray(property.highlighted_features) && property.highlighted_features.length > 0 ? (
+                      <ul className="list-disc list-inside text-gray-700 space-y-2 pl-5">
+                        {property.highlighted_features.map((feature, index) => (
+                          <li key={index} className="flex items-start">
+                            <FaStar className="mr-2 text-yellow-500" />
+                            {feature}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-gray-500">No highlighted features available.</p>
+                    )}
+                  </div>
+
+                  {/* Amenities Section */}
+                  <div className="mt-6 p-4 bg-gray-100 rounded-lg shadow-md">
+                    <h3 className="text-2xl font-semibold mb-4 text-gray-800 gradient-text">Amenities</h3>
+                    {Array.isArray(property.amenities) && property.amenities.length > 0 ? (
+                      <ul className="list-disc list-inside text-gray-700 space-y-2 pl-5">
+                        {property.amenities.map((amenity, index) => (
+                          <li key={index} className="flex items-start">
+                            <FaStar className="mr-2 text-green-500" />
+                            {amenity}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-gray-500">No amenities available.</p>
+                    )}
+                  </div>
+                </>
               )}
-            </div>
 
-            {/* Amenities Section */}
-            <div className="mt-6 p-4 bg-gray-100 rounded-lg shadow-md">
-              <h3 className="text-2xl font-semibold mb-4 text-gray-800">Amenities</h3>
-              {Array.isArray(property.amenities) && property.amenities.length > 0 ? (
-                <ul className="list-disc list-inside text-gray-700 space-y-2 pl-5">
-                  {property.amenities.map((amenity, index) => (
-                    <li key={index} className="flex items-start">
-                      <FaStar className="mr-2 text-green-500" />
-                      {amenity}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-gray-500">No amenities available.</p>
-              )}
-            </div>
-
-            {/* Description Section */}
-            <div className="mt-6">
-              <p className="text-gray-700 text-lg">
-                <strong>Description:</strong> {property.description}
-              </p>
+              {/* Description Section */}
+              <div className="mt-6 p-4 bg-gray-100 rounded-lg shadow-md gradient-text">
+                <h3 className="text-2xl font-semibold mb-4 text-gray-800">Description</h3>
+                <p className="text-gray-700">{property.description || property.pg_post_content}</p>
+              </div>
             </div>
           </motion.div>
         </div>
@@ -183,11 +207,11 @@ const PropertyDetail = () => {
   );
 };
 
-// Helper Component for rendering property details
 const DetailItem = ({ icon, label, value }) => (
-  <div className="flex items-center text-lg text-gray-600">
-    {icon && <span className="mr-2 text-gray-500">{icon}</span>}
-    <p><strong>{label}:</strong> {value || 'Not available'}</p>
+  <div className="flex items-center mb-2 text-gray-800">
+    <div className="mr-3 text-lg">{icon}</div>
+    <div className="text-sm font-semibold">{label}: </div>
+    <div className="text-sm ml-2">{value}</div>
   </div>
 );
 

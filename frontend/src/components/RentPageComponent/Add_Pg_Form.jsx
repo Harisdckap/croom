@@ -448,7 +448,7 @@ const Add_PG = () => {
         <fieldset className="border p-4 rounded-md">
           <legend className="text-base font-medium text-gray-900">PG Type</legend>
           <div className="flex gap-4 mt-2">
-            {['Boys', 'Girls', 'Both'].map((option) => (
+            {['Boys', 'Girls', 'all'].map((option) => (
               <button
                 key={option}
                 className={`px-4 py-2 border rounded-md text-sm font-medium ${
