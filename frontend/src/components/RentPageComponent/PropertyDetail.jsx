@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams,Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import axios from "axios";
 import {
   FaMapMarkerAlt,
@@ -29,10 +29,12 @@ const PropertyDetail = () => {
       const encodedLocation = encodeURIComponent(cleanLocation);
       const encodedListingType = encodeURIComponent(listingType);
 
-      const response = await axios.get(`http://127.0.0.1:8000/api/property/${encodedId}/${encodedLocation}/${encodedListingType}`);
+      const response = await axios.get(
+        `http://127.0.0.1:8000/api/property/${encodedId}/${encodedLocation}/${encodedListingType}`
+      );
       setProperty(response.data.data);
     } catch (error) {
-      console.error('Error fetching property:', error);
+      console.error("Error fetching property:", error);
     }
   };
 
@@ -42,32 +44,31 @@ const PropertyDetail = () => {
 
   const renderPropertyDetails = (type) => {
     switch (type) {
-      case 'room':
+      case "room":
         return (
           <>
-            <DetailItem icon={<FaBed />} label="Rooms" value={property.rooms} />
-            <DetailItem icon={<FaTag />} label="Facilities" value={property.facilities} />
+            <DetailItem icon={<FaBed />} label="Rooms" value={property.room_type} />
             <DetailItem icon={<FaPhoneAlt />} label="Contact" value={property.contact} />
             <DetailItem icon={<FaMapMarkerAlt />} label="Location" value={property.location} />
-            <DetailItem icon={<FaDollarSign />} label="Price" value={`$${property.price}`} />
+            <DetailItem icon={<FaDollarSign />} label="Price" value={`₹${property.price}`} />
             <DetailItem icon={<FaStar />} label="Occupancy" value={property.occupancy} />
             <DetailItem icon={<FaUser />} label="Looking For" value={property.looking_for_gender} />
           </>
         );
-      case 'roommates':
+      case "roommates":
         return (
           <>
             <DetailItem icon={<FaMapMarkerAlt />} label="Location" value={property.location} />
             <DetailItem icon={<FaUser />} label="Looking For" value={property.looking_for} />
             <DetailItem icon={<FaTag />} label="Looking For Gender" value={property.looking_for_gender} />
-            <DetailItem icon={<FaDollarSign />} label="Approx Rent" value={`$${property.approx_rent}`} />
+            <DetailItem icon={<FaDollarSign />} label="Approx Rent" value={`₹${property.approx_rent}`} />
             <DetailItem icon={<FaTag />} label="Room Type" value={property.room_type} />
             <DetailItem icon={<FaTag />} label="Post" value={property.post} />
             <DetailItem icon={<FaStar />} label="Occupancy" value={property.occupancy} />
             <DetailItem icon={<FaTag />} label="Number of People" value={property.number_of_people} />
           </>
         );
-      case 'pg':
+      case "pg":
         return (
           <>
             <DetailItem icon={<FaTag />} label="PG Type" value={property.pg_type} />
@@ -75,7 +76,7 @@ const PropertyDetail = () => {
             <DetailItem icon={<FaTag />} label="PG Name" value={property.pg_name} />
             <DetailItem icon={<FaMapMarkerAlt />} label="Location" value={property.location} />
             <DetailItem icon={<FaStar />} label="Occupancy Type" value={property.occupancy_type} />
-            <DetailItem icon={<FaDollarSign />} label="Occupancy Amount" value={`$${property.occupancy_amount}`} />
+            <DetailItem icon={<FaDollarSign />} label="Occupancy Amount" value={`₹${property.occupancy_amount}`} />
           </>
         );
       default:
@@ -92,10 +93,10 @@ const PropertyDetail = () => {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="flex flex-col lg:flex-row gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Image Section */}
           <motion.div
-            className="flex-none w-full lg:w-1/3 mb-6 lg:mb-0"
+            className="col-span-1 mb-6 lg:mb-0"
             initial={{ x: -100, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.5 }}
@@ -119,47 +120,39 @@ const PropertyDetail = () => {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
               >
-                <Link to="/PlanPage" className="d-flex gap-2">
                 <FaPhoneAlt className="text-lg" />
                 Call
-                </Link>
               </motion.a>
               <motion.button
                 className="bg-green-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-green-600"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
               >
-                <Link to="/PlanPage">
                 <FaComments className="text-lg" />
                 Chat
-                </Link>
               </motion.button>
             </div>
           </motion.div>
 
           {/* Details Section */}
           <motion.div
-            className="flex-1"
+            className="col-span-2"
             initial={{ x: 100, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.5 }}
           >
             <h1 className="text-4xl font-extrabold mb-4 text-gray-800 gradient-text">{property.title}</h1>
 
-            <div className="space-y-4">
-              {/* General Details */}
-              <DetailItem icon={<FaMapMarkerAlt />} label="Location" value={property.location} />
-              <DetailItem icon={<FaDollarSign />} label="Price" value={`$${property.price}`} />
-              <DetailItem icon={<FaPhoneAlt />} label="Contact" value={property.contact} />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-800">
 
               {/* Render specific property details */}
               {renderPropertyDetails(property.listing_type)}
 
               {/* Conditionally render Highlighted Features and Amenities */}
-              {['room', 'roommates'].includes(property.listing_type) && (
+              {["room", "roommates"].includes(property.listing_type) && (
                 <>
                   {/* Highlighted Features Section */}
-                  <div className="mt-6 p-4 bg-gray-100 rounded-lg shadow-md">
+                  <div className="mt-6 p-4 bg-gray-300 rounded-lg shadow-md col-span-2">
                     <h3 className="text-2xl font-semibold mb-4 text-gray-800 gradient-text">Highlighted Features</h3>
                     {Array.isArray(property.highlighted_features) && property.highlighted_features.length > 0 ? (
                       <ul className="list-disc list-inside text-gray-700 space-y-2 pl-5">
@@ -176,7 +169,7 @@ const PropertyDetail = () => {
                   </div>
 
                   {/* Amenities Section */}
-                  <div className="mt-6 p-4 bg-gray-100 rounded-lg shadow-md">
+                  <div className="mt-6 p-4 bg-gray-300 rounded-lg shadow-md col-span-2">
                     <h3 className="text-2xl font-semibold mb-4 text-gray-800 gradient-text">Amenities</h3>
                     {Array.isArray(property.amenities) && property.amenities.length > 0 ? (
                       <ul className="list-disc list-inside text-gray-700 space-y-2 pl-5">
@@ -195,8 +188,8 @@ const PropertyDetail = () => {
               )}
 
               {/* Description Section */}
-              <div className="mt-6 p-4 bg-gray-100 rounded-lg shadow-md gradient-text">
-                <h3 className="text-2xl font-semibold mb-4 text-gray-800">Description</h3>
+              <div className="mt-6 p-4 bg-gray-300 rounded-lg col-span-2">
+                <h3 className="text-2xl font-semibold mb-4  gradient-text">Description</h3>
                 <p className="text-gray-700">{property.description || property.pg_post_content}</p>
               </div>
             </div>
@@ -208,10 +201,10 @@ const PropertyDetail = () => {
 };
 
 const DetailItem = ({ icon, label, value }) => (
-  <div className="flex items-center mb-2 text-gray-800">
-    <div className="mr-3 text-lg">{icon}</div>
-    <div className="text-sm font-semibold">{label}: </div>
-    <div className="text-sm ml-2">{value}</div>
+  <div className="flex items-center gap-2">
+    <div className="text-xl text-gray-600">{icon}</div>
+    <span className="font-semibold text-gray-600">{label}:</span>
+    <span className="text-gray-700">{value}</span>
   </div>
 );
 
