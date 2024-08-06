@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Oval } from 'react-loader-spinner';
+import { Oval } from "react-loader-spinner";
 import logo from "../assets/logo.png";
-import img from '../assets/reg.png';
+import img from "../assets/reg.png";
 import { register } from "../js/api/auth";
+import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
 // import "./Style.css";
 
 const Register = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
     const [formData, setFormData] = useState({
         name: "",
@@ -42,7 +44,10 @@ const Register = () => {
                     const now = new Date();
                     const expirationTime = now.getTime() + 24 * 60 * 60 * 1000;
                     localStorage.setItem("auth_token", access_token);
-                    localStorage.setItem("auth_token_expiration", expirationTime);
+                    localStorage.setItem(
+                        "auth_token_expiration",
+                        expirationTime
+                    );
                     localStorage.setItem("user_id", user_id);
 
                     setTimeout(() => {
@@ -67,22 +72,24 @@ const Register = () => {
 
         if (!data.name.trim()) errors.name = "Username is required";
         if (!data.email.trim()) errors.email = "Email is required";
-        else if (!/\S+@\S+\.\S+/.test(data.email)) errors.email = "Email is invalid";
+        else if (!/\S+@\S+\.\S+/.test(data.email))
+            errors.email = "Email is invalid";
         if (!data.gender) errors.gender = "Gender is required";
         if (!data.mobile.trim()) errors.mobile = "Phone number is required";
-        else if (data.mobile.length !== 10) errors.mobile = "Phone number must be 10 digits";
+        else if (data.mobile.length !== 10)
+            errors.mobile = "Phone number must be 10 digits";
         if (!data.password.trim()) errors.password = "Password is required";
-        else if (data.password.length < 8) errors.password = "Password must be at least 8 characters long";
-
+        else if (data.password.length < 8)
+            errors.password = "Password must be at least 8 characters long";
 
         return errors;
     };
 
     return (
-<div
-  className="container mx-auto min-h-screen flex flex-col rounded"
-  style={{ backgroundColor: 'rgb(31, 41, 59)' }}
->
+        <div
+            className="min-h-screen"
+            style={{ backgroundColor: "rgb(31, 41, 59)" }}
+        >
             {/* loader */}
             {loading && (
                 <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-75 z-50">
@@ -94,16 +101,16 @@ const Register = () => {
                         secondaryColor="#93C5FD"
                         wrapperClass=""
                         visible={true}
-                        ariaLabel='oval-loading'
+                        ariaLabel="oval-loading"
                         strokeWidth={5}
                         animationDuration="0.75"
                     />
                 </div>
             )}
             {/* navbar */}
-            <nav className="bg-gray-100 px-3 py-4">
+            <nav className="w-full bg-gray-100 px-3 py-2">
                 <div className="flex items-center">
-                    <img src={logo} alt="Logo" className="w-20 h-auto" />
+                    <img src={logo} alt="Logo" className="w-30 h-10" />
                 </div>
             </nav>
             <div className="main flex flex-grow items-center justify-center">
@@ -113,46 +120,82 @@ const Register = () => {
                     </div>
                     <div className="w-1/2 flex items-center justify-center">
                         <div className="p-4 rounded w-full max-w-md">
-                        <h1 className='text-center text-2xl font-bold mb-4'>Create your account</h1>
+                            <h1 className="text-center text-2xl font-bold mb-4">
+                                Create your account
+                            </h1>
                             {/* registration form */}
                             <form onSubmit={handleSubmit} autoComplete="off">
                                 {/* username */}
                                 <div className="mb-3">
-                                    <label htmlFor="name" className="block text-sm font-medium text-gray-700">Username</label>
+                                    <label
+                                        htmlFor="name"
+                                        className="block text-sm font-medium text-gray-700"
+                                    >
+                                        Username:
+                                    </label>
                                     <input
                                         type="text"
-                                        className={`mt-1 block w-full p-2 border ${errors.name ? "border-red-500" : "border-gray-300"} rounded-md`}
+                                        className={`mt-1 block w-full p-1 border ${
+                                            errors.name
+                                                ? "border-red-500"
+                                                : "border-gray-300"
+                                        } rounded-md`}
                                         name="name"
                                         id="name"
                                         value={formData.name}
                                         onChange={handleChange}
                                     />
-                                    {errors.name && <div className="text-red-500 text-sm">{errors.name}</div>}
+                                    {errors.name && (
+                                        <div className="text-red-500 text-sm">
+                                            {errors.name}
+                                        </div>
+                                    )}
                                 </div>
                                 {/* email */}
                                 <div className="mb-3">
-                                    <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+                                    <label
+                                        htmlFor="email"
+                                        className="block text-sm font-medium text-gray-700"
+                                    >
+                                        Email:
+                                    </label>
                                     <input
                                         type="email"
-                                        className={`mt-1 block w-full p-2 border ${errors.email ? "border-red-500" : "border-gray-300"} rounded-md`}
+                                        className={`mt-1 block w-full p-1 border ${
+                                            errors.email
+                                                ? "border-red-500"
+                                                : "border-gray-300"
+                                        } rounded-md`}
                                         name="email"
                                         id="email"
                                         value={formData.email}
                                         onChange={handleChange}
                                     />
-                                    {errors.email && <div className="text-red-500 text-sm">{errors.email}</div>}
+                                    {errors.email && (
+                                        <div className="text-red-500 text-sm">
+                                            {errors.email}
+                                        </div>
+                                    )}
                                 </div>
                                 {/* gender */}
-                                <fieldset className="mb-3">
-                                    <label className="block text-sm font-medium text-gray-700">Gender</label>
-                                    <div className="mt-1">
+                                <fieldset className="mb-3 flex items-center gap-4">
+                                    <label className="block text-sm font-medium text-gray-700">
+                                        Gender:
+                                    </label>
+                                    <div className="">
                                         <label className="inline-flex items-center">
                                             <input
                                                 type="radio"
-                                                className={`form-radio ${errors.gender ? "text-red-500" : ""}`}
+                                                className={`form-radio ${
+                                                    errors.gender
+                                                        ? "text-red-500"
+                                                        : ""
+                                                }`}
                                                 name="gender"
                                                 value="male"
-                                                checked={formData.gender === "male"}
+                                                checked={
+                                                    formData.gender === "male"
+                                                }
                                                 onChange={handleChange}
                                             />
                                             <span className="ml-2">Male</span>
@@ -160,72 +203,128 @@ const Register = () => {
                                         <label className="inline-flex items-center ml-6">
                                             <input
                                                 type="radio"
-                                                className={`form-radio ${errors.gender ? "text-red-500" : ""}`}
+                                                className={`form-radio ${
+                                                    errors.gender
+                                                        ? "text-red-500"
+                                                        : ""
+                                                }`}
                                                 name="gender"
                                                 value="female"
-                                                checked={formData.gender === "female"}
+                                                checked={
+                                                    formData.gender === "female"
+                                                }
                                                 onChange={handleChange}
                                             />
                                             <span className="ml-2">Female</span>
                                         </label>
                                     </div>
-                                    {errors.gender && <div className="text-red-500 text-sm">{errors.gender}</div>}
+                                    {errors.gender && (
+                                        <div className="text-red-500 text-sm">
+                                            {errors.gender}
+                                        </div>
+                                    )}
                                 </fieldset>
                                 {/* phone number */}
                                 <div className="mb-3">
-                                    <label htmlFor="mobile" className="block text-sm font-medium text-gray-700">Phone Number</label>
+                                    <label
+                                        htmlFor="mobile"
+                                        className="block text-sm font-medium text-gray-700"
+                                    >
+                                        Phone Number:
+                                    </label>
                                     <input
                                         type="text"
-                                        className={`mt-1 block w-full p-2 border ${errors.mobile ? "border-red-500" : "border-gray-300"} rounded-md`}
+                                        className={`mt-1 block w-full p-1 border ${
+                                            errors.mobile
+                                                ? "border-red-500"
+                                                : "border-gray-300"
+                                        } rounded-md`}
                                         name="mobile"
                                         id="mobile"
                                         value={formData.mobile}
                                         onChange={handleChange}
                                     />
-                                    {errors.mobile && <div className="text-red-500 text-sm">{errors.mobile}</div>}
+                                    {errors.mobile && (
+                                        <div className="text-red-500 text-sm">
+                                            {errors.mobile}
+                                        </div>
+                                    )}
                                 </div>
                                 {/* password */}
-                                <div className="mb-3">
-                                    <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+                                <div className="mb-3 relative">
+                                    <label
+                                        htmlFor="password"
+                                        className="block text-sm font-medium text-gray-700"
+                                    >
+                                        Password:
+                                    </label>
                                     <input
-                                        type="password"
-                                        className={`mt-1 block w-full p-2 border ${errors.password ? "border-red-500" : "border-gray-300"} rounded-md`}
+                                        type={
+                                            showPassword ? "text" : "password"
+                                        }
+                                        className={`mt-1 block w-full p-1 border ${
+                                            errors.password
+                                                ? "border-red-500"
+                                                : "border-gray-300"
+                                        } rounded-md`}
                                         name="password"
                                         id="password"
+                                        placeholder="password"
                                         value={formData.password}
                                         onChange={handleChange}
+                                        autoComplete="off"
                                     />
-                                    {errors.password && <div className="text-red-500 text-sm">{errors.password}</div>}
+                                    <p
+                                        className="absolute top-8 right-3 cursor-pointer"
+                                        onClick={() =>
+                                            setShowPassword(!showPassword)
+                                        }
+                                        id="eye"
+                                    >
+                                        {showPassword ? (
+                                            <EyeOutlined
+                                                style={{
+                                                    fontSize: "16px",
+                                                    color: "#1F293B",
+                                                }}
+                                            />
+                                        ) : (
+                                            <EyeInvisibleOutlined
+                                                style={{
+                                                    fontSize: "16px",
+                                                    color: "#1F293B",
+                                                }}
+                                            />
+                                        )}
+                                    </p>
+                                    {errors.password && (
+                                        <div className="text-red-500 text-sm">
+                                            {errors.password}
+                                        </div>
+                                    )}
                                 </div>
-                                {/* select avatar */}
-                                {/* <div className="mb-3">
-                                    <label htmlFor="selectAvatar" className="block text-sm font-medium text-gray-700">Select Avatar</label>
-                                    <div class="grid grid-cols-4 mt-2">
-                                        <div class="relative w-16 h-16">
-                                            <img src="https://mighty.tools/mockmind-api/content/cartoon/9.jpg" alt="avatar" class="w-16 h-16 rounded-full bg-gray-200 cursor-pointer transform false" />
-                                        </div>
-                                        <div class="relative w-16 h-16">
-                                            <img src="https://mighty.tools/mockmind-api/content/cartoon/7.jpg" alt="avatar" class="w-16 h-16 rounded-full bg-gray-200 cursor-pointer transform false" />
-                                        </div>
-                                        <div class="relative w-16 h-16">
-                                            <img src="https://mighty.tools/mockmind-api/content/cartoon/32.jpg" alt="avatar" class="w-16 h-16 rounded-full bg-gray-200 cursor-pointer transform false" />
-                                        </div>
-                                        <div class="relative w-16 h-16">
-                                            <img src="https://mighty.tools/mockmind-api/content/cartoon/5.jpg" alt="avatar" class="w-16 h-16 rounded-full bg-gray-200 cursor-pointer transform false" />
-                                        </div>
-                                    </div>
-                                </div> */}
-                                {/* register button */}
+
                                 <div className="mt-4">
                                     {!loading && (
-                                        <button type="submit" className="w-full py-2 px-4 bg-blue-500 text-white font-semibold rounded-md shadow-md hover:bg-blue-700 focus:outline-none">Register</button>
+                                        <button
+                                            type="submit"
+                                            className="w-full py-2 px-4 bg-blue-500 text-white font-semibold rounded-md shadow-md hover:bg-blue-700 focus:outline-none"
+                                        >
+                                            Register
+                                        </button>
                                     )}
                                 </div>
                             </form>
                             {/* ----- */}
                             <div className="text-center mt-3">
                                 <p className="text-sm">
-                                    Already have an account? <Link to="/login" className="text-blue-500 hover:underline">Login</Link>
+                                    Already have an account?{" "}
+                                    <Link
+                                        to="/login"
+                                        className="text-blue-500 hover:underline"
+                                    >
+                                        Login
+                                    </Link>
                                 </p>
                             </div>
                         </div>
