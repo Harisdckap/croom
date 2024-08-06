@@ -12,6 +12,9 @@ import {
   FaComments,
 } from "react-icons/fa";
 import { motion } from "framer-motion";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 import HomeNavBar from "../Header";
 
 const PropertyDetail = () => {
@@ -84,6 +87,19 @@ const PropertyDetail = () => {
     }
   };
 
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 5000, // 5000 milliseconds = 5 seconds
+  };
+
+  // Parse the photos field if it exists
+  const photos = property.photos ? JSON.parse(property.photos).map(photo => photo.replace('\\/', '/')) : [];
+
   return (
     <div>
       <HomeNavBar />
@@ -101,13 +117,19 @@ const PropertyDetail = () => {
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.5 }}
           >
-            {property.photo || property.image || property.house_image ? (
-              <img
-                src={`http://127.0.0.1:8000/storage/${property.photo || property.image || property.house_image}`}
-                alt="Property Photo"
-                className="w-full h-60 object-cover rounded-lg shadow-lg"
-                onError={(e) => (e.target.src = "/path/to/fallback-image.jpg")}
-              />
+            {photos.length > 0 ? (
+              <Slider {...settings}>
+                {photos.map((photo, index) => (
+                  <div key={index}>
+                    <img
+                      src={`http://127.0.0.1:8000/storage/${photo}`}
+                      alt={`Property Photo ${index + 1}`}
+                      className="w-full h-60 object-cover rounded-lg shadow-lg"
+                      onError={(e) => (e.target.src = "/path/to/fallback-image.jpg")}
+                    />
+                  </div>
+                ))}
+              </Slider>
             ) : (
               <p className="text-gray-500 text-center">No photo available.</p>
             )}
@@ -144,12 +166,11 @@ const PropertyDetail = () => {
             <h1 className="text-4xl font-extrabold mb-4 text-gray-800 gradient-text">{property.title}</h1>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-800">
-
               {/* Render specific property details */}
               {renderPropertyDetails(property.listing_type)}
 
               {/* Conditionally render Highlighted Features and Amenities */}
-              {["room", "roommates"].includes(property.listing_type) && (
+              {["room", "roommates","pg"].includes(property.listing_type) && (
                 <>
                   {/* Highlighted Features Section */}
                   <div className="mt-6 p-4 bg-gray-300 rounded-lg shadow-md col-span-2">
@@ -186,12 +207,12 @@ const PropertyDetail = () => {
                   </div>
                 </>
               )}
+            </div>
 
-              {/* Description Section */}
-              <div className="mt-6 p-4 bg-gray-300 rounded-lg col-span-2">
-                <h3 className="text-2xl font-semibold mb-4  gradient-text">Description</h3>
-                <p className="text-gray-700">{property.description || property.pg_post_content}</p>
-              </div>
+            {/* Description Section */}
+            <div className="mt-6 p-4 bg-gray-100 rounded-lg shadow-md">
+              <h2 className="text-2xl font-semibold mb-4 text-gray-800 gradient-text">Description</h2>
+              <p className="text-gray-700">{property.description}</p>
             </div>
           </motion.div>
         </div>
@@ -201,10 +222,12 @@ const PropertyDetail = () => {
 };
 
 const DetailItem = ({ icon, label, value }) => (
-  <div className="flex items-center gap-2">
-    <div className="text-xl text-gray-600">{icon}</div>
-    <span className="font-semibold text-gray-600">{label}:</span>
-    <span className="text-gray-700">{value}</span>
+  <div className="flex items-center mb-4">
+    <div className="text-blue-500 text-2xl mr-4">{icon}</div>
+    <div>
+      <h4 className="text-lg font-semibold text-gray-800">{label}</h4>
+      <p className="text-gray-700">{value}</p>
+    </div>
   </div>
 );
 

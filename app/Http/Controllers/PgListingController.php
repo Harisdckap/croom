@@ -23,32 +23,41 @@ class PgListingController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'pgType' => 'required|string|max:255',
-            'mobileNum' => 'required|string|max:255',
-            'pgName' => 'required|string|max:255',
-            'location' => 'required|string',
-            'occupancyType' => 'required|string|max:255',
-            'occupancyAmount' => 'required|integer',
-            'pgPostContent' => 'required|string',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'pg_type' => 'required|string|max:255',
+            'mobile_num' => 'required|numeric',
+            'pg_name' => 'required|string|max:255',
+            'location' => 'required|string|max:255',
+            'occupancy_type' => 'required|string|max:255',
+            'occupancy_amount' => 'required|numeric',
+            'pg_post_content' => 'required|string',
+            'photos.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'highlighted_features' => 'nullable|json',
+            'amenities' => 'nullable|json',
         ]);
+        // Handle file upload
+        $imagePaths = [];
 
-        $pgListing = new PgListing();
-        $pgListing->pg_type = $validated['pgType'];
-        $pgListing->mobile_num = $validated['mobileNum'];
-        $pgListing->pg_name = $validated['pgName'];
-        $pgListing->location = $validated['location'];
-        $pgListing->occupancy_type = $validated['occupancyType'];
-        $pgListing->occupancy_amount = $validated['occupancyAmount'];
-        $pgListing->pg_post_content = $validated['pgPostContent'];
-
-        if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $path = $file->store('image', 'public');
-            $pgListing->image = $path;
-        } else {
-            $pgListing->image = null;
+        if ($request->hasFile('photos')) {
+            foreach ($request->file('photos') as $file) {
+                // Generate a unique file name and store the file
+                $path = $file->store('photos', 'public');
+                $imagePaths[] = $path;
+            }
         }
+
+        // Convert image paths to JSON for storage
+        $validated['photos'] = json_encode($imagePaths);
+        Log::info('Uploaded files:', $imagePaths);
+
+        $validated['highlighted_features'] = isset($validated['highlighted_features'])
+        ? json_decode($validated['highlighted_features'], true)
+        : [];
+    $validated['amenities'] = isset($validated['amenities'])
+        ? json_decode($validated['amenities'], true)
+        : [];
+
+        // Create a new Roommate record
+        $pgListing = PgListing::create($validated);
 
         try {
             $pgListing->save();

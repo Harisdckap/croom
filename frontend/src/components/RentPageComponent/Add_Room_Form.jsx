@@ -1,28 +1,30 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
 const AddRoomForm = () => {
     const [formData, setFormData] = useState({
         title: "",
         location: "",
         price: "",
         room_type: "1RK",
-
         contact: "",
         looking_for_gender: "any",
         looking_for: "Roommate",
         occupancy: "Single Occupancy",
-        photo: null,
+        photos: [],
         highlighted_features: [],
         amenities: [],
         description: "",
         listing_type: "room",
     });
 
-    const [imagePreview, setImagePreview] = useState(null);
+    const [images, setImages] = useState([]);
+    const [message, setMessage] = useState('');
     const fileInputRef = useRef(null);
+    const navigate = useNavigate();
 
     const allHighlightedFeatures = [
         "Attached washroom",
@@ -41,37 +43,20 @@ const AddRoomForm = () => {
         "Microwave",
     ];
 
-    useEffect(() => {
-        return () => {
-            if (imagePreview) URL.revokeObjectURL(imagePreview);
-        };
-    }, [imagePreview]);
+    const handleFileChange = (e) => {
+        const files = Array.from(e.target.files);
+
+        if (images.length + files.length > 3) {
+            setMessage('You can only upload up to 3 images in total.');
+            return;
+        }
+
+        setImages(prevImages => [...prevImages, ...files]);
+    };
 
     const handleChange = (e) => {
-        const { name, value, files } = e.target;
-
-        if (name === "photo") {
-            const file = files[0];
-            const validTypes = [
-                "image/jpeg",
-                "image/png",
-                "image/jpg",
-                "image/gif",
-                "image/svg+xml",
-            ];
-
-            if (file && validTypes.includes(file.type)) {
-                if (imagePreview) URL.revokeObjectURL(imagePreview);
-                setImagePreview(URL.createObjectURL(file));
-                setFormData((prevState) => ({ ...prevState, photo: file }));
-            } else {
-                showToast(
-                    "Please upload a valid image (JPEG, PNG, JPG, GIF, SVG)."
-                );
-            }
-        } else {
-            setFormData((prevState) => ({ ...prevState, [name]: value }));
-        }
+        const { name, value } = e.target;
+        setFormData((prevState) => ({ ...prevState, [name]: value }));
     };
 
     const handleFeatureClick = (feature) => {
@@ -123,8 +108,6 @@ const AddRoomForm = () => {
             return false;
         }
 
-      
-
         if (!formData.contact) {
             showToast("Contact is required");
             return false;
@@ -135,23 +118,31 @@ const AddRoomForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         if (!validateInputs()) return;
-
+    
         const uploadData = new FormData();
-        Object.keys(formData).forEach((key) => {
-            if (key !== "photo") {
-                const value = Array.isArray(formData[key])
-                    ? JSON.stringify(formData[key])
-                    : formData[key];
-                uploadData.append(key, value);
-            }
+    
+        // Convert arrays to JSON strings
+        const formattedFormData = {
+            ...formData,
+            highlighted_features: JSON.stringify(formData.highlighted_features),
+            amenities: JSON.stringify(formData.amenities),
+        };
+    
+        Object.keys(formattedFormData).forEach((key) => {
+            uploadData.append(key, formattedFormData[key]);
         });
-
-        if (formData.photo) {
-            uploadData.append("photo", formData.photo);
+    
+        images.forEach((image, index) => {
+            uploadData.append(`photos[${index}]`, image); // Ensure correct field name
+        });
+    
+        // Log the FormData entries to verify images are being appended correctly
+        for (let pair of uploadData.entries()) {
+            console.log(pair[0] + ', ' + pair[1]);
         }
-
+    
         try {
             const response = await axios.post(
                 "http://127.0.0.1:8000/api/listings",
@@ -160,7 +151,7 @@ const AddRoomForm = () => {
                     headers: { "Content-Type": "multipart/form-data" },
                 }
             );
-            console.log("Room added successfully:", response.data);
+            setMessage("Room added successfully!");
             setFormData({
                 title: "",
                 location: "",
@@ -170,23 +161,24 @@ const AddRoomForm = () => {
                 looking_for_gender: "any",
                 looking_for: "Roommate",
                 occupancy: "Single Occupancy",
-                photo: null,
+                photos: [],
                 highlighted_features: [],
                 amenities: [],
                 description: "",
                 listing_type: "room",
             });
-            setImagePreview(null);
+            setImages([]);
             if (fileInputRef.current) fileInputRef.current.value = "";
-            showToast("Room added successfully", "success");
+            // Navigate to the image display route
         } catch (error) {
             console.error(
                 "There was an error adding the room:",
                 error.response.data
             );
-            showToast("There was an error adding the room.");
+            setMessage("There was an error adding the room.");
         }
     };
+    
 
     return (
         <div className="max-w-6xl mx-auto p-8 bg-white rounded-md shadow-md mt-4">
@@ -246,27 +238,17 @@ const AddRoomForm = () => {
                         <label className="block text-sm font-medium text-black">
                             Room Type
                         </label>
-                        <div className="mt-2 space-x-4">
-                            {["1RK", "1BHK", "2BHK", "3BHK"].map((option) => (
-                                <button
-                                    type="button"
-                                    key={option}
-                                    className={`px-4 py-2 border rounded-md text-sm font-medium ${
-                                        formData.room_type === option
-                                            ? "bg-gray-800 text-white"
-                                            : "bg-white text-gray-800 hover:bg-gray-100"
-                                    }`}
-                                    onClick={() =>
-                                        setFormData((prevState) => ({
-                                            ...prevState,
-                                            room_type: option,
-                                        }))
-                                    }
-                                >
-                                    {option}
-                                </button>
-                            ))}
-                        </div>
+                        <select
+                            name="room_type"
+                            value={formData.room_type}
+                            onChange={handleChange}
+                            className="mt-1 block w-full px-3 py-2 border border-gray-400 rounded-md shadow-sm sm:text-sm"
+                        >
+                            <option value="1RK">1RK</option>
+                            <option value="1BHK">1BHK</option>
+                            <option value="2BHK">2BHK</option>
+                            <option value="3BHK">3BHK</option>
+                        </select>
                     </div>
                     <div>
                         <label className="block text-sm font-medium text-black">
@@ -276,138 +258,56 @@ const AddRoomForm = () => {
                             name="contact"
                             value={formData.contact}
                             onChange={handleChange}
-                            placeholder="Contact"
+                            placeholder="Contact Number"
                             className="mt-1 block w-full px-3 py-2 border border-gray-400 rounded-md shadow-sm sm:text-sm"
                         />
                     </div>
                     <div>
                         <label className="block text-sm font-medium text-black">
+                            Looking For
+                        </label>
+                        <select
+                            name="looking_for"
+                            value={formData.looking_for}
+                            onChange={handleChange}
+                            className="mt-1 block w-full px-3 py-2 border border-gray-400 rounded-md shadow-sm sm:text-sm"
+                        >
+                            <option value="Roommate">Roommate</option>
+                            <option value="Tenant">Tenant</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-black">
                             Looking For Gender
                         </label>
-                        <div className="mt-2 space-x-4">
-                            {["any", "male", "female"].map((option) => (
-                                <button
-                                    type="button"
-                                    key={option}
-                                    className={`px-4 py-2 border rounded-md text-sm font-medium ${
-                                        formData.looking_for_gender === option
-                                            ? "bg-gray-800 text-white"
-                                            : "bg-white text-gray-800 hover:bg-gray-100"
-                                    }`}
-                                    onClick={() =>
-                                        setFormData((prevState) => ({
-                                            ...prevState,
-                                            looking_for_gender: option,
-                                        }))
-                                    }
-                                >
-                                    {option.charAt(0).toUpperCase() +
-                                        option.slice(1)}
-                                </button>
-                            ))}
-                        </div>
+                        <select
+                            name="looking_for_gender"
+                            value={formData.looking_for_gender}
+                            onChange={handleChange}
+                            className="mt-1 block w-full px-3 py-2 border border-gray-400 rounded-md shadow-sm sm:text-sm"
+                        >
+                            <option value="any">Any</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                        </select>
                     </div>
-                </div>
-
-                <div>
-                    <label className="block text-sm font-medium text-black">
-                        Occupancy
-                    </label>
-                    <div className="mt-2 space-x-4">
-                        {[
-                            "Single Occupancy",
-                            "Double Occupancy",
-                            "Family Occupancy",
-                            "Bachelor Occupancy",
-                        ].map((option) => (
-                            <button
-                                type="button"
-                                key={option}
-                                className={`px-4 py-2 border rounded-md text-sm font-medium ${
-                                    formData.occupancy === option
-                                        ? "bg-gray-800 text-white"
-                                        : "bg-white text-gray-800 hover:bg-gray-100"
-                                }`}
-                                onClick={() =>
-                                    setFormData((prevState) => ({
-                                        ...prevState,
-                                        occupancy: option,
-                                    }))
-                                }
-                            >
-                                {option}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-
-            
-                <div className="mt-2 p-4 border-2 border-dashed border-gray-400">
-                    <label className="block text-sm font-medium text-black">
-                        Upload House Image
-                    </label>
-                    <input
-                        ref={fileInputRef}
-                        name="photo"
-                        type="file"
-                        onChange={handleChange}
-                        accept="image/jpeg, image/png, image/jpg, image/gif, image/svg+xml"
-                        className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4  file:border file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200"
-                    />
-                    {imagePreview && (
-                        <div className="mt-2">
-                            <img
-                                src={imagePreview}
-                                alt="Selected Preview"
-                                className="max-h-40 rounded-md shadow-md"
-                            />
-                        </div>
-                    )}
-                </div>
-
-                <div>
-                    <label className="block text-sm font-medium text-black">
-                        Highlighted Features
-                    </label>
-                    <div className="mt-2 space-x-4">
-                        {allHighlightedFeatures.map((feature) => (
-                            <button
-                                type="button"
-                                key={feature}
-                                className={`px-4 py-2 border rounded-md text-sm font-medium ${
-                                    formData.highlighted_features.includes(
-                                        feature
-                                    )
-                                        ? "bg-gray-800 text-white"
-                                        : "bg-white text-gray-800 hover:bg-gray-100 border-gray-400"
-                                }`}
-                                onClick={() => handleFeatureClick(feature)}
-                            >
-                                {feature}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-
-                <div>
-                    <label className="block text-sm font-medium text-black">
-                        Amenities
-                    </label>
-                    <div className="mt-2 space-x-4">
-                        {allAmenities.map((amenity) => (
-                            <button
-                                type="button"
-                                key={amenity}
-                                className={`px-4 py-2 border rounded-md text-sm font-medium ${
-                                    formData.amenities.includes(amenity)
-                                        ? "bg-gray-800 text-white"
-                                        : "bg-white text-gray-800 hover:bg-gray-100 border-gray-400"
-                                }`}
-                                onClick={() => handleAmenityClick(amenity)}
-                            >
-                                {amenity}
-                            </button>
-                        ))}
+                    <div>
+                        <label className="block text-sm font-medium text-black">
+                            Occupancy
+                        </label>
+                        <select
+                            name="occupancy"
+                            value={formData.occupancy}
+                            onChange={handleChange}
+                            className="mt-1 block w-full px-3 py-2 border border-gray-400 rounded-md shadow-sm sm:text-sm"
+                        >
+                            <option value="Single Occupancy">
+                                Single Occupancy
+                            </option>
+                            <option value="Double Occupancy">
+                                Double Occupancy
+                            </option>
+                        </select>
                     </div>
                 </div>
                 <div>
@@ -420,18 +320,97 @@ const AddRoomForm = () => {
                         onChange={handleChange}
                         placeholder="Description"
                         className="mt-1 block w-full px-3 py-2 border border-gray-400 rounded-md shadow-sm sm:text-sm"
+                        rows={4}
                     />
                 </div>
-
-                <div className="flex justify-center">
+                <div>
+                    <label className="block text-sm font-medium text-black">
+                        Highlighted Features
+                    </label>
+                    <div className="grid grid-cols-2 gap-2">
+                        {allHighlightedFeatures.map((feature) => (
+                            <button
+                                key={feature}
+                                type="button"
+                                onClick={() =>
+                                    handleFeatureClick(feature)
+                                }
+                                className={`py-2 px-3 rounded-md ${
+                                    formData.highlighted_features.includes(
+                                        feature
+                                    )
+                                        ? "bg-blue-500 text-white"
+                                        : "bg-gray-200"
+                                }`}
+                            >
+                                {feature}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-black">
+                        Amenities
+                    </label>
+                    <div className="grid grid-cols-2 gap-2">
+                        {allAmenities.map((amenity) => (
+                            <button
+                                key={amenity}
+                                type="button"
+                                onClick={() =>
+                                    handleAmenityClick(amenity)
+                                }
+                                className={`py-2 px-3 rounded-md ${
+                                    formData.amenities.includes(
+                                        amenity
+                                    )
+                                        ? "bg-green-500 text-white"
+                                        : "bg-gray-200"
+                                }`}
+                            >
+                                {amenity}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-black">
+                        Upload Photos (up to 3)
+                    </label>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        onChange={handleFileChange}
+                        ref={fileInputRef}
+                        className="block w-full mt-1"
+                    />
+                    {images.length > 0 && (
+                        <div className="mt-4 flex flex-wrap gap-4">
+                            {images.map((image, index) => (
+                                <div key={index} className="relative">
+                                    <img
+                                        src={URL.createObjectURL(image)}
+                                        alt={`Preview ${index}`}
+                                        className="w-32 h-32 object-cover rounded-md shadow-md"
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+                <div>
                     <button
                         type="submit"
-                        className="px-8 py-2 color text-white font-medium rounded-md hover:bg-blue-600"
+                        className="w-full py-3 px-6 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none"
                     >
-                        Submit
+                        Add Room
                     </button>
                 </div>
             </form>
+            {message && (
+                <p className="text-center mt-4 text-red-600">{message}</p>
+            )}
             <ToastContainer />
         </div>
     );

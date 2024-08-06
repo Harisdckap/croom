@@ -33,7 +33,7 @@ const Navbar = ({ search, onSearchChange, onSearchSubmit, gender, onGenderChange
     };
 
     return (
-        <div className="container bg-white mx-auto flex items-center justify-between pt-16 mt-2 pb-2 px-4">
+        <div className="w-full bg-white mx-auto flex items-center justify-between pt-16 mt-2 pb-2 px-4">
             <div className="flex items-center space-x-6">
                 <NavLink
                     to="?address=Chennai&p=0&t=a"

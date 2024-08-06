@@ -1,15 +1,11 @@
 <?php
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePgListingsTable extends Migration
+return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
         Schema::create('pg_listings', function (Blueprint $table) {
@@ -21,7 +17,9 @@ class CreatePgListingsTable extends Migration
             $table->string('occupancy_type');
             $table->integer('occupancy_amount');
             $table->string('listing_type')->default('pg');
-            $table->text('image')->nullable();
+            $table->json('highlighted_features')->nullable();  
+            $table->json('amenities')->nullable();
+            $table->json('photos')->nullable();
             $table->text('pg_post_content');
             $table->timestamps();
         });
@@ -36,4 +34,4 @@ class CreatePgListingsTable extends Migration
     {
         Schema::dropIfExists('pg_listings');
     }
-}
+};
