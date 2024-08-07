@@ -2,9 +2,7 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-// use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
@@ -13,7 +11,7 @@ use App\Notifications\ResetPasswordNotification;
 
 class User extends Authenticatable implements JWTSubject
 {
-    use HasFactory, Notifiable,HasApiTokens;
+    use HasFactory, Notifiable, HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -27,8 +25,8 @@ class User extends Authenticatable implements JWTSubject
         'userType',
         'gender',
         'mobile',
+        'profile_photo',  // Include profile_photo
     ];
-
 
     /**
      * The attributes that should be hidden for serialization.
@@ -41,33 +39,36 @@ class User extends Authenticatable implements JWTSubject
     ];
 
     /**
-     * Get the attributes that should be cast.
+     * The attributes that should be cast.
      *
-     * @return array<string, string>
+     * @var array<string, string>
      */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+    ];
 
+    /**
+     * Get the JWT identifier.
+     */
     public function getJWTIdentifier()
     {
         return $this->getKey();
     }
 
+    /**
+     * Get the custom JWT claims.
+     */
     public function getJWTCustomClaims()
     {
         return [];
     }
 
+    /**
+     * Define a one-to-one relationship with Profile.
+     */
     public function profile()
     {
-        return $this->hasOne(Profile::class);
+        return $this->hasOne(User::class);
     }
-
-   
-
 }

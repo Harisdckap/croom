@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import logo from "../assets/logo.png";
 
-const Profile = () => {
+const User = () => {
     const [profileImage, setProfileImage] = useState(null);
 
     useEffect(() => {
@@ -113,7 +113,7 @@ const Profile = () => {
     );
 }
 
-export default Profile;
+export default User;
 
 
 

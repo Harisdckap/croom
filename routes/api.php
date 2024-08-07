@@ -11,7 +11,7 @@ use App\Http\Controllers\Auth\OTPVerificationController;
 use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\RoommateController;
-use App\Http\Controllers\ProfileController;
+// use App\Http\Controllers\ProfileController;
 // use App\Http\Controllers\PgListingController;
 
 
@@ -35,10 +35,14 @@ Route::get('/property/{id}/{location}/{listingType}', [PropertyController::class
 Route::post('/upload', [ImageController::class, 'upload']);
 Route::post('/roommates', [RoommateController::class,'store']);
 // Route::post('/pg_listings', [PgListingController::class, 'store']);
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'index']);
-    Route::post('/profile', [ProfileController::class, 'store']);
+
+use App\Http\Controllers\UserController;
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [UserController::class, 'show']);
+    Route::post('/profile', [UserController::class, 'update']);
 });
+
 
 use App\Http\Controllers\PgListingController;
 Route::get('/pg_listings', [PgListingController::class, 'index']);
