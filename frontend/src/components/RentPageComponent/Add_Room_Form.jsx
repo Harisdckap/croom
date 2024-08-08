@@ -3,6 +3,8 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Link, useNavigate } from "react-router-dom";
+import { useMyContext } from "../../context/AppContext";
+
 
 const AddRoomForm = () => {
     const [formData, setFormData] = useState({
@@ -116,6 +118,11 @@ const AddRoomForm = () => {
         return true;
     };
 
+   
+
+    // Inside your component
+    const { userDetail } = useMyContext();
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
     
@@ -123,11 +130,13 @@ const AddRoomForm = () => {
     
         const uploadData = new FormData();
     
+        uploadData.append("user_id", userDetail.id);
         // Convert arrays to JSON strings
         const formattedFormData = {
             ...formData,
             highlighted_features: JSON.stringify(formData.highlighted_features),
             amenities: JSON.stringify(formData.amenities),
+            
         };
     
         Object.keys(formattedFormData).forEach((key) => {
@@ -137,11 +146,6 @@ const AddRoomForm = () => {
         images.forEach((image, index) => {
             uploadData.append(`photos[${index}]`, image); // Ensure correct field name
         });
-    
-        // Log the FormData entries to verify images are being appended correctly
-        for (let pair of uploadData.entries()) {
-            console.log(pair[0] + ', ' + pair[1]);
-        }
     
         try {
             const response = await axios.post(
@@ -169,7 +173,7 @@ const AddRoomForm = () => {
             });
             setImages([]);
             if (fileInputRef.current) fileInputRef.current.value = "";
-            // Navigate to the image display route
+            navigate("/some-success-page");
         } catch (error) {
             console.error(
                 "There was an error adding the room:",
@@ -178,6 +182,7 @@ const AddRoomForm = () => {
             setMessage("There was an error adding the room.");
         }
     };
+    
     
 
     return (

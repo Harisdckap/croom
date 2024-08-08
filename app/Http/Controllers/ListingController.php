@@ -14,7 +14,7 @@ class ListingController extends Controller
             'title' => 'required|string|max:255',
             'location' => 'required|string|max:255',
             'price' => 'required|numeric',
-            'room_type' => 'required|string', 
+            'room_type' => 'required|string',
             'contact' => 'required|string|max:255',
             'looking_for' => 'nullable|string|max:255',
             'occupancy' => 'nullable|string|max:255',
@@ -25,20 +25,19 @@ class ListingController extends Controller
             'looking_for_gender' => 'nullable|string|max:255',
             'photos.*' => 'image|mimes:jpg,png,jpeg,gif,webp|max:2048',
         ]);
-
+    
         // Handle file upload
         $imagePaths = [];
-
+    
         if ($request->hasFile('photos')) {
             foreach ($request->file('photos') as $file) {
-                // Generate a unique file name
                 $path = $file->store('photos', 'public');
                 $imagePaths[] = $path;
             }
         }
-
+    
         $validatedData['photos'] = json_encode($imagePaths);
-
+    
         // Decode JSON strings back to arrays
         $validatedData['highlighted_features'] = isset($validatedData['highlighted_features'])
             ? json_decode($validatedData['highlighted_features'], true)
@@ -46,12 +45,16 @@ class ListingController extends Controller
         $validatedData['amenities'] = isset($validatedData['amenities'])
             ? json_decode($validatedData['amenities'], true)
             : [];
-
+    
+        // Add user_id from the request
+        $validatedData['user_id'] = $request->user()->id;
+    
         // Create a new listing
         $listing = Rooms::create($validatedData);
-
+    
         return response()->json($listing, 201);
     }
+    
 
     public function show($id)
     {
