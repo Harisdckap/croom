@@ -28,6 +28,7 @@ class RoommateController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
+            'title'=>'required|string|max:255',
             'location' => 'required|string|max:255',
             'looking_for' => 'required|string|max:255',
             'looking_for_gender' => 'nullable|string|max:255',
@@ -39,7 +40,7 @@ class RoommateController extends Controller
             'listing_type' => 'required|string|max:255|in:roommates',
             'occupancy' => 'required|integer',
             'number_of_people' => 'required|integer',
-            'photos.*' => 'image|mimes:jpg,png,jpeg,gif|max:2048',
+            'photos.*' => 'image|mimes:jpg,png,jpeg,gif,webp|max:2048',
         ]);
 
         // Handle file upload

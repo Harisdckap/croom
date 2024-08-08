@@ -7,30 +7,27 @@ import {
     BuildingOfficeIcon,
     CurrencyDollarIcon
 } from "@heroicons/react/24/outline";
-// import BudgetModal from "./BugetModel"; 
+
 
 const Navbar = ({ search, onSearchChange, onSearchSubmit, gender, onGenderChange, setListingType }) => {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
-    const currentType = queryParams.get('t') || 'a'; // Default to 'a' (all types)
+    const currentType = queryParams.get('t') || 'a'; 
 
 
     const handleTypeClick = (type) => {
         setListingType(type);
     };
 
-    const handleBudgetApply = (min, max) => {
-        // Assuming you need to include budget in the URL query
-        const queryString = new URLSearchParams({
-            address: 'Chennai',
-            p: 0,
-            t: currentType,
-            min_budget: min,
-            max_budget: max
-        }).toString();
-        // Update the URL or submit the form based on your requirements
-        window.location.search = queryString;
-    };
+    // const handleBudgetApply = (min, max) => {
+    //     const queryString = new URLSearchParams({
+    //         address: 'Chennai',
+    //         p: 0,
+    //         t: currentType,
+    //     }).toString();
+    //     // Update the URL or submit the form based on your requirements
+    //     window.location.search = queryString;
+    // };
 
     return (
         <div className="w-full bg-white mx-auto flex items-center justify-between pt-16 mt-2 pb-2 px-4">
@@ -126,13 +123,13 @@ const Navbar = ({ search, onSearchChange, onSearchSubmit, gender, onGenderChange
                         </svg>
                     </div>
                 </div>
-                <button
+                {/* <button
                     onClick={() => setIsModalOpen(true)}
                     className="flex items-center font-medium text-gray-700 hover:text-blue-600"
                 >
                     <CurrencyDollarIcon className="h-6 w-6 mr-1" />
                     Budget
-                </button>
+                </button> */}
             </form>
 
    
@@ -141,4 +138,3 @@ const Navbar = ({ search, onSearchChange, onSearchSubmit, gender, onGenderChange
 };
 
 export default Navbar;
-

@@ -262,20 +262,7 @@ const AddRoomForm = () => {
                             className="mt-1 block w-full px-3 py-2 border border-gray-400 rounded-md shadow-sm sm:text-sm"
                         />
                     </div>
-                    <div>
-                        <label className="block text-sm font-medium text-black">
-                            Looking For
-                        </label>
-                        <select
-                            name="looking_for"
-                            value={formData.looking_for}
-                            onChange={handleChange}
-                            className="mt-1 block w-full px-3 py-2 border border-gray-400 rounded-md shadow-sm sm:text-sm"
-                        >
-                            <option value="Roommate">Roommate</option>
-                            <option value="Tenant">Tenant</option>
-                        </select>
-                    </div>
+                
                     <div>
                         <label className="block text-sm font-medium text-black">
                             Looking For Gender

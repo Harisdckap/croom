@@ -19,22 +19,19 @@ class PropertyController extends Controller
     $address = $request->input('address', '');
     $page = $request->input('p', 1);
     $itemsPerPage = 8;
-    $type = $request->input('t', 'a'); // Default to 'a' (all types)
-    $gender = $request->input('gender', 'all'); // Default to 'all'
+    $type = $request->input('t', 'a');
+    $gender = $request->input('gender', 'all'); 
 
-    // Initialize queries for roommates, listings, and PGs
     $roommateQuery = Roommate::query()->where('location', 'LIKE', "%{$address}%");
     $listingQuery = Rooms::query()->where('location', 'LIKE', "%{$address}%");
     $pgQuery = PgListing::query()->where('location', 'LIKE', "%{$address}%")->where('listing_type', 'pg');
 
-    // Apply gender filter if specified
     if ($gender !== 'all') {
         $roommateQuery->where('looking_for_gender', $gender);
         $listingQuery->where('looking_for_gender', $gender);
         $pgQuery->where('pg_type', $gender);
     }
 
-    // Filter by type
     switch ($type) {
         case 'r':
             $listings = $listingQuery->where('listing_type', 'room')->get();
@@ -53,12 +50,11 @@ class PropertyController extends Controller
             break;
         default:
             $roommates = $roommateQuery->get();
-            $listings = $listingQuery->where('listing_type', '!=', 'pg')->get(); // Exclude PG listings
+            $listings = $listingQuery->where('listing_type', '!=', 'pg')->get(); 
             $pglistings = $pgQuery->get();
             break;
     }
 
-    // Combine listings, roommates, and PG listings into one collection
     $combinedListings = $listings->merge($roommates)->merge($pglistings)->sortByDesc('created_at')->values();
 
     // Paginate the combined collection
@@ -98,45 +94,7 @@ class PropertyController extends Controller
     }
 
 
-    // public function show($id, $location)
-    // {
-    //     // Decode the base64 encoded id
-    //     $decodedId = base64_decode($id);
 
-    //     // Log the decoded ID and location for debugging
-    //     Log::info('Decoded ID:', ['id' => $decodedId]);
-    //     Log::info('Location:', ['location' => $location]);
-
-    //     // First, try to find the property in the Roommate table
-    //     $roommate = Roommate::find($decodedId);
-
-    //     if ($roommate) {
-    //         Log::info('Roommate found:', ['roommate' => $roommate]);
-    //         // Return the roommate data with location
-    //         return response()->json(['data' => $roommate, 'location' => $location]);
-    //     }
-
-    //     // If not found in Roommate, try to find the property in the Listing table
-    //     $listing = Listing::find($decodedId);
-
-    //     if ($listing) {
-    //         Log::info('Listing found:', ['listing' => $listing]);
-    //         // Return the listing data with location
-    //         return response()->json(['data' => $listing, 'location' => $location]);
-    //     }
-
-    //     $Pglisting = PgListing::find($decodedId);
-
-    //     if ($Pglisting) {
-    //         Log::info('Listing found:', ['listing' => $Pglisting]);
-    //         // Return the listing data with location
-    //         return response()->json(['data' => $Pglisting, 'location' => $location]);
-    //     }
-
-    //     // If no property is found in either table, return a 404 error
-    //     Log::error('Property not found:', ['id' => $decodedId]);
-    //     return response()->json(['error' => 'Property not found'], 404);
-    // }
 
 
    public function show($id, $location, $listing_type)

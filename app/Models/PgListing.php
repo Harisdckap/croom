@@ -11,6 +11,7 @@ class PgListing extends Model
 
     protected $fillable = [
         'pg_type',
+        'looking_for_gender',
         'mobile_num',
         'pg_name',
         'location',

@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('roommates', function (Blueprint $table) {
             $table->id();
+            $table->string('title');
             $table->string('location');
             $table->string('looking_for');
             $table->string('looking_for_gender')->nullable();

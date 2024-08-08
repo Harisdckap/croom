@@ -10,8 +10,9 @@ return new class extends Migration
     {
         Schema::create('pg_listings', function (Blueprint $table) {
             $table->id();
-            $table->string('pg_type')->default('Both');
+            $table->string('pg_type');
             $table->string('mobile_num');
+            $table->string('looking_for_gender')->nullable();
             $table->string('pg_name');
             $table->text('location');
             $table->string('occupancy_type');

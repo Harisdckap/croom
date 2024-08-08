@@ -23,7 +23,7 @@ class ListingController extends Controller
             'description' => 'nullable|string',
             'listing_type' => 'required|string|max:255',
             'looking_for_gender' => 'nullable|string|max:255',
-            'photos.*' => 'image|mimes:jpg,png,jpeg,gif|max:2048',
+            'photos.*' => 'image|mimes:jpg,png,jpeg,gif,webp|max:2048',
         ]);
 
         // Handle file upload

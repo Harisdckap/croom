@@ -24,13 +24,14 @@ class PgListingController extends Controller
     {
         $validated = $request->validate([
             'pg_type' => 'required|string|max:255',
+            'looking_for_gender' => 'nullable|string|max:255',
             'mobile_num' => 'required|numeric',
             'pg_name' => 'required|string|max:255',
             'location' => 'required|string|max:255',
             'occupancy_type' => 'required|string|max:255',
             'occupancy_amount' => 'required|numeric',
             'pg_post_content' => 'required|string',
-            'photos.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'photos.*' => 'image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
             'highlighted_features' => 'nullable|json',
             'amenities' => 'nullable|json',
         ]);

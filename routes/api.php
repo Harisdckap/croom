@@ -13,7 +13,7 @@ use App\Http\Controllers\ImageController;
 use App\Http\Controllers\RoommateController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PgListingController;
-
+use App\Http\Controllers\JwtController;
 
 
 // routes/api
@@ -38,3 +38,4 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [ProfileController::class, 'index']);
     Route::post('/profile', [ProfileController::class, 'store']);
 });
+Route::get('/decode', [JwtController::class, 'decodeTokenQuery']);
