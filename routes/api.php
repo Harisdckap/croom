@@ -11,7 +11,10 @@ use App\Http\Controllers\Auth\OTPVerificationController;
 use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\RoommateController;
-// use App\Http\Controllers\PgListingController;
+// use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PgListingController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\AdsController;
 
 
 // routes/api
@@ -30,9 +33,11 @@ Route::get('/properties', [PropertyController::class, 'index']);
 Route::get('/property/{id}/{location}/{listingType}', [PropertyController::class, 'show']);
 Route::post('/upload', [ImageController::class, 'upload']);
 Route::post('/roommates', [RoommateController::class,'store']);
-// Route::post('/pg_listings', [PgListingController::class, 'store']);
-
-use App\Http\Controllers\PgListingController;
-Route::get('/pg_listings', [PgListingController::class, 'index']);
-Route::get('/pg_listings/{id}', [PgListingController::class, 'show']);
 Route::post('/pg_listings', [PgListingController::class, 'store']);
+// Route::middleware('auth:sanctum')->group(function () {
+//     Route::get('/profile', [ProfileController::class, 'index']);
+//     Route::post('/profile', [ProfileController::class, 'store']);
+// });
+
+Route::get('/userDetail', [UserController::class, 'decodeToken']);
+Route::get('/user-ads/{id}/', [AdsController::class, 'getUserAds']);

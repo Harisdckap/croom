@@ -9,6 +9,7 @@ class PgListing extends Model
     use HasFactory;
 
     protected $fillable = [
+        'user_id',
         'pg_type',
         'mobile_num',
         'pg_name',
@@ -16,8 +17,16 @@ class PgListing extends Model
         'occupancy_type',
         'occupancy_amount',
         'listing_type',
-        'image',
+        'photos',
         'pg_post_content',
+        'highlighted_features',
+        'amenities',
+    ];
+
+    protected $casts = [
+        'photos' => 'array',
+        'highlighted_features' => 'array',
+        'amenities' => 'array',
     ];
 
 }

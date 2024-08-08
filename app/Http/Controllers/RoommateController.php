@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Roommate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class RoommateController extends Controller
 {
@@ -32,24 +33,44 @@ class RoommateController extends Controller
             'looking_for_gender' => 'nullable|string|max:255',
             'approx_rent' => 'required|numeric',
             'room_type' => 'required|string|max:255',
-            'highlights' => 'nullable|string|max:255',
+            'highlighted_features' => 'nullable|json',
+            'amenities' => 'nullable|json',
             'post' => 'nullable|string',
             'listing_type' => 'required|string|max:255|in:roommates',
             'occupancy' => 'required|integer',
             'number_of_people' => 'required|integer',
-            'house_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'photos.*' => 'image|mimes:jpg,png,jpeg,gif|max:2048',
         ]);
-    
-        if ($request->hasFile('house_image')) {
-            $image = $request->file('house_image');
-            $imagePath = $image->store('images', 'public');
-            $validatedData['house_image'] = $imagePath;
+
+        // Handle file upload
+        $imagePaths = [];
+
+        if ($request->hasFile('photos')) {
+            foreach ($request->file('photos') as $file) {
+                // Generate a unique file name and store the file
+                $path = $file->store('photos', 'public');
+                $imagePaths[] = $path;
+            }
         }
-    
+        // Decode JSON strings back to arrays
+        $validatedData['highlighted_features'] = isset($validatedData['highlighted_features'])
+            ? json_decode($validatedData['highlighted_features'], true)
+            : [];
+        $validatedData['amenities'] = isset($validatedData['amenities'])
+            ? json_decode($validatedData['amenities'], true)
+            : [];
+
+        // Convert image paths to JSON for storage
+        $validatedData['photos'] = json_encode($imagePaths);
+        Log::info('Uploaded files:', $imagePaths);
+
+        // Create a new Roommate record
         $roommate = Roommate::create($validatedData);
+
         return response()->json($roommate, 201);
     }
-    
+
+
 
     public function show($id)
     {
@@ -72,15 +93,22 @@ class RoommateController extends Controller
             'listing_type' => 'sometimes|required|string|max:255|in:roommates',
             'occupancy' => 'sometimes|required|integer',
             'number_of_people' => 'sometimes|required|integer',
-            'house_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'house_images.*' => 'image|mimes:jpg,png,jpeg,gif|max:2048',
         ]);
 
-        if ($request->hasFile('house_image')) {
-            $image = $request->file('house_image');
-            $imageName = time().'.'.$image->extension();
-            $image->move(public_path('images'), $imageName);
-            $validatedData['house_image'] = 'images/'.$imageName;
+        // Handle file upload
+        $imagePaths = [];
+
+        if ($request->hasFile('house_images')) {
+            foreach ($request->file('house_images') as $file) {
+                // Generate a unique file name
+                $path = $file->store('house_images', 'public');
+                $imagePaths[] = $path;
+            }
         }
+
+        $validatedData['house_images'] = json_encode($imagePaths);
+
 
         $roommate->update($validatedData);
         return response()->json($roommate);
