@@ -3,11 +3,13 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Link, useNavigate } from "react-router-dom";
-import { useMyContext } from "../../context/AppContext";
+import { MyContextProvider } from "../../context/AppContext";
 
 
 const AddRoomForm = () => {
+    const { userDetail } = MyContextProvider(); 
     const [formData, setFormData] = useState({
+
         title: "",
         location: "",
         price: "",
@@ -27,6 +29,7 @@ const AddRoomForm = () => {
     const [message, setMessage] = useState('');
     const fileInputRef = useRef(null);
     const navigate = useNavigate();
+    
 
     const allHighlightedFeatures = [
         "Attached washroom",
@@ -121,7 +124,6 @@ const AddRoomForm = () => {
    
 
     // Inside your component
-    const { userDetail } = useMyContext();
     
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -130,7 +132,8 @@ const AddRoomForm = () => {
     
         const uploadData = new FormData();
     
-        uploadData.append("user_id", userDetail.id);
+        uploadData.append("user_id", userDetail.id);   
+
         // Convert arrays to JSON strings
         const formattedFormData = {
             ...formData,
