@@ -13,7 +13,7 @@ import PostRequirementPage from "./components/PostRequirementPage";
 import PropertyPage from "./components/RentPageComponent/property";
 import PropertyDetail from "./components/RentPageComponent/PropertyDetail";
 import PlanPage from "./components/RentPageComponent/PlanPage";
-import Profile from "./components/User";
+import User from "./components/User";
 
 function App() {
     return (
@@ -43,7 +43,7 @@ function App() {
                 />
 
                 <Route path="/PlanPage" element={<PlanPage />} />
-                 <Route path="/Profile" element={<Profile />} />
+                 <Route path="/Profile" element={<User />} />
             </Routes>
         </Router>
     );

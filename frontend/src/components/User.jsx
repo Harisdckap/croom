@@ -1,8 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import logo from "../assets/logo.png";
 
 const User = () => {
     const [profileImage, setProfileImage] = useState(null);
+    const [formData, setFormData] = useState({
+        username: '',
+        email: '',
+        mobile: '',
+        gender: '',
+    });
 
     useEffect(() => {
         const savedImage = localStorage.getItem('profileImage');
@@ -13,14 +20,51 @@ const User = () => {
 
     const handleImageUpload = (event) => {
         const file = event.target.files[0];
+        if (!file) {
+            console.error("No file selected.");
+            return;
+        }
+
         const reader = new FileReader();
         reader.onloadend = () => {
-            setProfileImage(reader.result);
-            localStorage.setItem('profileImage', reader.result);
+            if (reader.result) {
+                setProfileImage(reader.result);
+            } else {
+                console.error("Failed to read file.");
+            }
         };
-        if (file) {
-            reader.readAsDataURL(file);
+
+        reader.readAsDataURL(file);
+    };
+
+    const handleInputChange = (e) => {
+        const { id, value } = e.target;
+        setFormData({ ...formData, [id]: value });
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const data = new FormData();
+        data.append('username', formData.username);
+        data.append('email', formData.email);
+        data.append('mobile', formData.mobile);
+        data.append('gender', formData.gender);
+        if (profileImage) {
+            data.append('profile_photo', profileImage);
         }
+
+        axios.post('http://localhost:8000/api/update-profile', data, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `Bearer ${localStorage.getItem('token')}` // Ensure you're sending the token if needed
+            }
+        })
+            .then((response) => {
+                console.log(response.data.message);
+            })
+            .catch((error) => {
+                console.error('Error:', error.response ? error.response.data : error.message);
+            });
     };
 
     return (
@@ -37,7 +81,6 @@ const User = () => {
                             <h1 className="lg:text-2xl md:text-xl sm:text-xl xs:text-lg font-serif font-extrabold mb-2 dark:text-white">
                                 Profile
                             </h1>
-                            {/* profile image */}
                             <div className='flex justify-between items-center'>
                                 <div className="w-[141px] h-[141px] bg-blue-300/20 rounded-full bg-cover bg-center bg-no-repeat"
                                     style={{ backgroundImage: `url(${profileImage || 'https://mighty.tools/mockmind-api/content/cartoon/32.jpg'})` }}>
@@ -58,11 +101,10 @@ const User = () => {
                                     </div>
                                 </div>
                                 <div className="w-28 h-10 rounded-xl bg-blue-500 text-white text-base font-semibold">
-                                    <button type="submit" className="p-2 ml-6 mx-auto hover:bg-blue-400 text-center rounded-xl">Save</button>
+                                    <button type="submit" className="p-2 ml-6 mx-auto text-center rounded-xl" onClick={handleSubmit}>Save</button>
                                 </div>
                             </div>
                             <form>
-                                {/* username */}
                                 <div className="flex justify-between items-center mb-4">
                                     <label htmlFor="username" className="block text-md font-medium text-gray-700">User Name</label>
                                     <input
@@ -70,9 +112,10 @@ const User = () => {
                                         className="mt-2 p-1 w-96 border-2 border-blue-200 rounded-lg dark:text-gray-200 dark:border-blue-600 dark:bg-blue-800"
                                         placeholder="First Name"
                                         id="username"
+                                        value={formData.username}
+                                        onChange={handleInputChange}
                                     />
                                 </div>
-                                {/* email */}
                                 <div className="flex justify-between items-center mb-4">
                                     <label htmlFor="email" className="block text-md font-medium text-gray-700">Email Address</label>
                                     <input
@@ -80,26 +123,30 @@ const User = () => {
                                         className="mt-2 p-1 w-96 border-2 border-blue-200 rounded-lg dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
                                         placeholder="Email Address"
                                         id="email"
+                                        value={formData.email}
+                                        onChange={handleInputChange}
                                     />
                                 </div>
-                                {/* mobile number */}
                                 <div className="flex justify-between items-center mb-4">
-                                    <label htmlFor="password" className="block text-md font-medium text-gray-700">Contact Number</label>
+                                    <label htmlFor="mobile" className="block text-md font-medium text-gray-700">Mobile Number</label>
                                     <input
                                         type="text"
-                                        placeholder="Contact Number"
                                         className="mt-2 p-1 w-96 border-2 border-blue-200 rounded-lg dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
-                                        id="password"
+                                        placeholder="Mobile Number"
+                                        id="mobile"
+                                        value={formData.mobile}
+                                        onChange={handleInputChange}
                                     />
                                 </div>
-                                {/* gender */}
                                 <div className="flex justify-between items-center mb-4">
                                     <label htmlFor="gender" className="block text-md font-medium text-gray-700">Gender</label>
                                     <select
-                                        className="w-96 mb-2 mt-1 p-1 border-2 border-blue-200 rounded-lg dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
                                         id="gender"
+                                        className="mt-2 p-1 w-96 border-2 border-blue-200 rounded-lg dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
+                                        value={formData.gender}
+                                        onChange={handleInputChange}
                                     >
-                                        <option disabled value="">Select Gender</option>
+                                        <option value="" disabled>Select Gender</option>
                                         <option value="Male">Male</option>
                                         <option value="Female">Female</option>
                                     </select>
@@ -111,18 +158,6 @@ const User = () => {
             </section>
         </div>
     );
-}
+};
 
 export default User;
-
-
-
-
-
-
-
-
-
-
-
-
