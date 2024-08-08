@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Roommate;
-use App\Models\Listing;
+use App\Models\Rooms;
 use App\Models\PgListing;
 
 use Illuminate\Http\Request;
@@ -15,68 +15,64 @@ class PropertyController extends Controller
 
 
     public function index(Request $request)
-    {
-        $address = $request->input('address', '');
-        $page = $request->input('p', 1);
-        $itemsPerPage = 6;
-        $type = $request->input('t', 'a'); // Default to 'a' (all types)
-        $gender = $request->input('gender', 'all'); // Default to 'all'
+{
+    $address = $request->input('address', '');
+    $page = $request->input('p', 1);
+    $itemsPerPage = 8;
+    $type = $request->input('t', 'a'); // Default to 'a' (all types)
+    $gender = $request->input('gender', 'all'); // Default to 'all'
 
-        // Initialize queries for roommates, listings, and PGs
-        $roommateQuery = Roommate::query()->where('location', 'LIKE', "%{$address}%");
-        $listingQuery = Listing::query()->where('location', 'LIKE', "%{$address}%");
-        $pgQuery = PgListing::query()->where('location', 'LIKE', "%{$address}%")->where('listing_type', 'pg');
+    // Initialize queries for roommates, listings, and PGs
+    $roommateQuery = Roommate::query()->where('location', 'LIKE', "%{$address}%");
+    $listingQuery = Rooms::query()->where('location', 'LIKE', "%{$address}%");
+    $pgQuery = PgListing::query()->where('location', 'LIKE', "%{$address}%")->where('listing_type', 'pg');
 
-        // Apply gender filter if specified
-        if ($gender != 'all') {
-            $roommateQuery->where('looking_for_gender', $gender);
-            $listingQuery->where('looking_for_gender', $gender);
-            $pgQuery->where('pg_type', $gender);
-        }
-
-        // Filter by type
-        switch ($type) {
-            case 'r':
-                $listings = $listingQuery->where('listing_type', 'room')->get();
-                $roommates = collect();
-                $pglistings = collect();
-                break;
-            case 'rm':
-                $roommates = $roommateQuery->where('listing_type', 'roommates')->get();
-                $listings = collect();
-                $pglistings = collect();
-                break;
-            case 'pg':
-                $pglistings = $pgQuery->get();
-                $roommates = collect();
-                $listings = collect();
-                break;
-            default:
-                $roommates = $roommateQuery->get();
-                $listings = $listingQuery->where('listing_type', '!=', 'pg')->get(); // Exclude PG listings
-                $pglistings = $pgQuery->get();
-                break;
-        }
-
-        // Log the results
-        Log::info('Roommates:', $roommates->toArray());
-        Log::info('Listings:', $listings->toArray());
-        Log::info('PG Listings:', $pglistings->toArray());
-
-        // Combine listings, roommates, and PG listings into one collection
-        $combinedListings = $listings->merge($roommates)->merge($pglistings)->sortByDesc('created_at')->values();
-
-        // Paginate the combined collection
-        $paginatedListings = $this->paginate($combinedListings, $itemsPerPage, $page, $request);
-
-        // Return the response
-        return response()->json([
-            'data' => $paginatedListings->items(),
-            'current_page' => $paginatedListings->currentPage(),
-            'last_page' => $paginatedListings->lastPage(),
-            'total' => $paginatedListings->total(),
-        ]);
+    // Apply gender filter if specified
+    if ($gender !== 'all') {
+        $roommateQuery->where('looking_for_gender', $gender);
+        $listingQuery->where('looking_for_gender', $gender);
+        $pgQuery->where('pg_type', $gender);
     }
+
+    // Filter by type
+    switch ($type) {
+        case 'r':
+            $listings = $listingQuery->where('listing_type', 'room')->get();
+            $roommates = collect();
+            $pglistings = collect();
+            break;
+        case 'rm':
+            $roommates = $roommateQuery->where('listing_type', 'roommates')->get();
+            $listings = collect();
+            $pglistings = collect();
+            break;
+        case 'pg':
+            $pglistings = $pgQuery->get();
+            $roommates = collect();
+            $listings = collect();
+            break;
+        default:
+            $roommates = $roommateQuery->get();
+            $listings = $listingQuery->where('listing_type', '!=', 'pg')->get(); // Exclude PG listings
+            $pglistings = $pgQuery->get();
+            break;
+    }
+
+    // Combine listings, roommates, and PG listings into one collection
+    $combinedListings = $listings->merge($roommates)->merge($pglistings)->sortByDesc('created_at')->values();
+
+    // Paginate the combined collection
+    $paginatedListings = $this->paginate($combinedListings, $itemsPerPage, $page, $request);
+
+    // Return the response
+    return response()->json([
+        'data' => $paginatedListings->items(),
+        'current_page' => $paginatedListings->currentPage(),
+        'last_page' => $paginatedListings->lastPage(),
+        'total' => $paginatedListings->total(),
+    ]);
+}
+
 
     /**
      * Paginate a given collection.
@@ -170,7 +166,7 @@ class PropertyController extends Controller
         }
     } else {
         // Assuming 'listing' type
-        $listing = Listing::find($decodedId);
+        $listing = Rooms::find($decodedId);
         if ($listing) {
             Log::info('Listing found:', ['listing' => $listing]);
             // Return the listing data with location

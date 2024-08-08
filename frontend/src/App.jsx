@@ -13,6 +13,7 @@ import PostRequirementPage from "./components/PostRequirementPage";
 import PropertyPage from "./components/RentPageComponent/property";
 import PropertyDetail from "./components/RentPageComponent/PropertyDetail";
 import PlanPage from "./components/RentPageComponent/PlanPage";
+import Profile from "./components/Profile";
 
 function App() {
     return (
@@ -42,6 +43,7 @@ function App() {
                 />
 
                 <Route path="/PlanPage" element={<PlanPage />} />
+                 <Route path="/Profile" element={<Profile />} />
             </Routes>
         </Router>
     );

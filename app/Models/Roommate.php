@@ -15,11 +15,18 @@ class Roommate extends Model
         'looking_for_gender',
         'approx_rent',
         'room_type',
-        'highlights',
+        'highlighted_features',
         'post',
         'listing_type',
         'occupancy',
         'number_of_people',
-        'house_image'
+        'photos',
+        'amenities',
+    ];
+
+    protected $casts = [
+        'photos' => 'array',
+        'highlighted_features' => 'array',
+        'amenities' => 'array',
     ];
 }

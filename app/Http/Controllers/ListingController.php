@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Listing;
+use App\Models\Rooms;
 use Illuminate\Support\Facades\Storage;
 
 class ListingController extends Controller
@@ -14,8 +14,7 @@ class ListingController extends Controller
             'title' => 'required|string|max:255',
             'location' => 'required|string|max:255',
             'price' => 'required|numeric',
-            'rooms' => 'required|numeric', // Ensure rooms is validated
-            'facilities' => 'required|string', // Ensure facilities is validated
+            'room_type' => 'required|string', 
             'contact' => 'required|string|max:255',
             'looking_for' => 'nullable|string|max:255',
             'occupancy' => 'nullable|string|max:255',
@@ -24,15 +23,21 @@ class ListingController extends Controller
             'description' => 'nullable|string',
             'listing_type' => 'required|string|max:255',
             'looking_for_gender' => 'nullable|string|max:255',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'photos.*' => 'image|mimes:jpg,png,jpeg,gif|max:2048',
         ]);
 
         // Handle file upload
-        if ($request->hasFile('photo')) {
-            $image = $request->file('photo');
-            $imagePath = $image->store('images', 'public');
-            $validatedData['photo'] = $imagePath;
+        $imagePaths = [];
+
+        if ($request->hasFile('photos')) {
+            foreach ($request->file('photos') as $file) {
+                // Generate a unique file name
+                $path = $file->store('photos', 'public');
+                $imagePaths[] = $path;
+            }
         }
+
+        $validatedData['photos'] = json_encode($imagePaths);
 
         // Decode JSON strings back to arrays
         $validatedData['highlighted_features'] = isset($validatedData['highlighted_features'])
@@ -43,14 +48,14 @@ class ListingController extends Controller
             : [];
 
         // Create a new listing
-        $listing = Listing::create($validatedData);
+        $listing = Rooms::create($validatedData);
 
         return response()->json($listing, 201);
     }
 
     public function show($id)
     {
-        $listing = Listing::find($id);
+        $listing = Rooms::find($id);
 
         if (!$listing) {
             return response()->json(['message' => 'Listing not found'], 404);
@@ -61,7 +66,7 @@ class ListingController extends Controller
 
     public function update(Request $request, $id)
     {
-        $listing = Listing::find($id);
+        $listing = Rooms::find($id);
 
         if (!$listing) {
             return response()->json(['message' => 'Listing not found'], 404);
@@ -73,7 +78,6 @@ class ListingController extends Controller
             'location' => 'required|string',
             'price' => 'required|numeric',
             'rooms' => 'required|numeric',
-            'facilities' => 'required|string',
             'contact' => 'required|string',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'highlighted_features' => 'nullable|json',
@@ -99,21 +103,5 @@ class ListingController extends Controller
         return response()->json(['message' => 'Listing updated successfully', 'data' => $listing]);
     }
 
-    public function destroy($id)
-    {
-        $listing = Listing::find($id);
-
-        if (!$listing) {
-            return response()->json(['message' => 'Listing not found'], 404);
-        }
-
-        // Delete the image file from storage if it exists
-        if ($listing->photo) {
-            Storage::disk('public')->delete($listing->photo);
-        }
-
-        $listing->delete();
-
-        return response()->json(['message' => 'Listing deleted successfully']);
-    }
+    
 }

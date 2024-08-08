@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Oval } from "react-loader-spinner";
+import { RotatingLines } from "react-loader-spinner";
 import logo from "../assets/logo.png";
 import img from "../assets/reg.png";
 import { register } from "../js/api/auth";
 import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
-// import "./Style.css";
 
 const Register = () => {
     const navigate = useNavigate();
@@ -37,7 +36,7 @@ const Register = () => {
             setLoading(true);
             try {
                 const response = await register(formData);
-                console.log("Registration response:", response);
+                // console.log("Registration response:", response);
 
                 if (response && response.access_token) {
                     const { access_token, user_id } = response;
@@ -93,16 +92,17 @@ const Register = () => {
             {/* loader */}
             {loading && (
                 <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-75 z-50">
-                    <Oval
-                        height={80}
-                        width={80}
-                        color="#1D4ED8"
+                   <RotatingLines
+                        height="98"
+                        width="98"
+                        color="blue"
                         wrapperStyle={{}}
-                        secondaryColor="#93C5FD"
+                        // secondaryColor="#93C5FD"
                         wrapperClass=""
                         visible={true}
-                        ariaLabel="oval-loading"
-                        strokeWidth={5}
+                        ariaLabel='rotating-lines-loading'
+                        strokeWidth="3"
+                        strokeColor="blue"
                         animationDuration="0.75"
                     />
                 </div>

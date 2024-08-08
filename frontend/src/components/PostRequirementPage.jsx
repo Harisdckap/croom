@@ -15,7 +15,7 @@ export const List_page = () => {
             >
                 <div></div>
                 <p className="font-bold text-white">C-Room</p>
-                <Link to="/">
+                <Link to="/property">
                 <button className="w-8 h-8 border border-white rounded-full text-white" >
                     X
                 </button>
