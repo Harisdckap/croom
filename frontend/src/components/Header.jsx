@@ -63,8 +63,11 @@ const Header = () => {
                 </button>
                 {accountOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-white text-black rounded shadow-lg">
-                    <Link to="/Profile">
+                    <Link to="/profile">
                     <a href="#" className="block px-4 py-2">Profile</a>
+                    </Link>
+                    <Link to="/my-ads">
+                    <a href="#" className="block px-4 py-2">My Ads</a>
                     </Link>
                     <button onClick={onLogout} className="block px-4 py-2 w-full text-left">
                       Logout

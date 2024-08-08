@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('pg_listings', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user_id'); 
             $table->string('pg_type')->default('Both');
             $table->string('mobile_num');
             $table->string('pg_name');
@@ -22,14 +23,11 @@ return new class extends Migration
             $table->json('photos')->nullable();
             $table->text('pg_post_content');
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade'); //foreign key constraint
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
         Schema::dropIfExists('pg_listings');

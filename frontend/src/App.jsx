@@ -43,7 +43,8 @@ function App() {
                 />
 
                 <Route path="/PlanPage" element={<PlanPage />} />
-                 <Route path="/Profile" element={<Profile />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/my-ads" element={<Profile />} />
             </Routes>
         </Router>
     );

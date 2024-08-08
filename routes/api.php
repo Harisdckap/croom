@@ -14,6 +14,7 @@ use App\Http\Controllers\RoommateController;
 // use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PgListingController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\AdsController;
 
 
 // routes/api
@@ -40,3 +41,4 @@ Route::post('/pg_listings', [PgListingController::class, 'store']);
 // });
 
 Route::get('/userDetail', [UserController::class, 'decodeToken']);
+Route::get('/user-ads/{id}/', [AdsController::class, 'getUserAds']);
