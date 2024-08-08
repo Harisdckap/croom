@@ -10,7 +10,7 @@
     <div class="container">
         <h1>Register</h1>
         <form id="registerForm" autocomplete="off" method="post">
-        
+
             <div class="form-group">
                 <label for="name">Name</label>
                 <input type="text" id="name" class="form-control" required>
@@ -40,6 +40,7 @@
                 <label for="mobile">Mobile No</label>
                 <input type="tel" id="mobile" class="form-control" required>
             </div>
+            
             <button type="button" id="registerBtn" class="btn btn-primary">Register</button>
         </form>
     </div>

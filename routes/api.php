@@ -11,17 +11,13 @@ use App\Http\Controllers\Auth\OTPVerificationController;
 use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\RoommateController;
-// use App\Http\Controllers\ProfileController;
 // use App\Http\Controllers\PgListingController;
-
-
 
 
 // routes/api
 
 Route::post('/register', [RegisterController::class, 'register']);
 Route::post('/logout', [RegisterController::class, 'logout']);
-
 Route::post('/login', [LoginController::class, 'login']);
 Route::get('/get-otp', [OTPController::class, 'getOTP']);
 Route::middleware('auth:sanctum')->get('/details', [RegisterController::class, 'details']);
@@ -35,14 +31,6 @@ Route::get('/property/{id}/{location}/{listingType}', [PropertyController::class
 Route::post('/upload', [ImageController::class, 'upload']);
 Route::post('/roommates', [RoommateController::class,'store']);
 // Route::post('/pg_listings', [PgListingController::class, 'store']);
-
-use App\Http\Controllers\UserController;
-
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [UserController::class, 'show']);
-    Route::post('/profile', [UserController::class, 'update']);
-});
-
 
 use App\Http\Controllers\PgListingController;
 Route::get('/pg_listings', [PgListingController::class, 'index']);
