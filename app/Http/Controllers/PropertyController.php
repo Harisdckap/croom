@@ -15,59 +15,61 @@ class PropertyController extends Controller
 
 
     public function index(Request $request)
-{
-    $address = $request->input('address', '');
-    $page = $request->input('p', 1);
-    $itemsPerPage = 8;
-    $type = $request->input('t', 'a');
-    $gender = $request->input('gender', 'all'); 
-
-    $roommateQuery = Roommate::query()->where('location', 'LIKE', "%{$address}%");
-    $listingQuery = Rooms::query()->where('location', 'LIKE', "%{$address}%");
-    $pgQuery = PgListing::query()->where('location', 'LIKE', "%{$address}%")->where('listing_type', 'pg');
-
-    if ($gender !== 'all') {
-        $roommateQuery->where('looking_for_gender', $gender);
-        $listingQuery->where('looking_for_gender', $gender);
-        $pgQuery->where('pg_type', $gender);
+    {
+        $address = $request->input('address', '');
+        $page = $request->input('p', 1);
+        $itemsPerPage = 8; 
+        $type = $request->input('t', 'a');
+        $gender = $request->input('gender', 'all');
+    
+        $roommateQuery = Roommate::query()->where('location', 'LIKE', "%{$address}%");
+        $listingQuery = Rooms::query()->where('location', 'LIKE', "%{$address}%");
+        $pgQuery = PgListing::query()->where('location', 'LIKE', "%{$address}%")->where('listing_type', 'pg');
+    
+        if ($gender !== 'all') {
+            $roommateQuery->where('looking_for_gender', $gender);
+            $listingQuery->where('looking_for_gender', $gender);
+            $pgQuery->where('pg_type', $gender);
+        }
+    
+        switch ($type) {
+            case 'r':
+                $listings = $listingQuery->where('listing_type', 'room')->get();
+                $roommates = collect();
+                $pglistings = collect();
+                break;
+            case 'rm':
+                $roommates = $roommateQuery->where('listing_type', 'roommates')->get();
+                $listings = collect();
+                $pglistings = collect();
+                break;
+            case 'pg':
+                $pglistings = $pgQuery->get();
+                $roommates = collect();
+                $listings = collect();
+                break;
+            default:
+                $roommates = $roommateQuery->get();
+                $listings = $listingQuery->where('listing_type', '!=', 'pg')->get(); 
+                $pglistings = $pgQuery->get();
+                break;
+        }
+    
+        $combinedListings = $listings->merge($roommates)->merge($pglistings)->sortByDesc('created_at')->values();
+    
+        // Paginate the combined collection
+        $paginatedListings = $this->paginate($combinedListings, $itemsPerPage, $page, $request);
+     
+        Log::info($paginatedListings);
+        // Return the response
+        return response()->json([
+            'data' => $paginatedListings->items(),
+            'current_page' => $paginatedListings->currentPage(),
+            'last_page' => $paginatedListings->lastPage(),
+            'total' => $paginatedListings->total(),
+        ]);
     }
-
-    switch ($type) {
-        case 'r':
-            $listings = $listingQuery->where('listing_type', 'room')->get();
-            $roommates = collect();
-            $pglistings = collect();
-            break;
-        case 'rm':
-            $roommates = $roommateQuery->where('listing_type', 'roommates')->get();
-            $listings = collect();
-            $pglistings = collect();
-            break;
-        case 'pg':
-            $pglistings = $pgQuery->get();
-            $roommates = collect();
-            $listings = collect();
-            break;
-        default:
-            $roommates = $roommateQuery->get();
-            $listings = $listingQuery->where('listing_type', '!=', 'pg')->get(); 
-            $pglistings = $pgQuery->get();
-            break;
-    }
-
-    $combinedListings = $listings->merge($roommates)->merge($pglistings)->sortByDesc('created_at')->values();
-
-    // Paginate the combined collection
-    $paginatedListings = $this->paginate($combinedListings, $itemsPerPage, $page, $request);
-
-    // Return the response
-    return response()->json([
-        'data' => $paginatedListings->items(),
-        'current_page' => $paginatedListings->currentPage(),
-        'last_page' => $paginatedListings->lastPage(),
-        'total' => $paginatedListings->total(),
-    ]);
-}
+    
 
 
     /**

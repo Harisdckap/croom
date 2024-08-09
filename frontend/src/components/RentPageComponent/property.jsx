@@ -4,9 +4,14 @@ import axios from "axios";
 import Slider from "react-slick";
 import Navbar from "./Navbar";
 import HomeNavBar from "../Header";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMapMarkerAlt, faHome } from '@fortawesome/free-solid-svg-icons';
-import "../../slider.css"; 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+    faMapMarkerAlt,
+    faHome,
+    faArrowUp,
+} from "@fortawesome/free-solid-svg-icons";
+// import { faArrowUp } from '@fortawesome/free-solid-svg-icons';
+import "../../slider.css";
 
 const PropertyPage = () => {
     const navigate = useNavigate();
@@ -14,13 +19,14 @@ const PropertyPage = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const [search, setSearch] = useState("");
     const [gender, setGender] = useState("all");
+    const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
         fetchListings();
     }, [searchParams]);
 
     const fetchListings = async () => {
-        try { 
+        try {
             const params = {
                 address: searchParams.get("address") || "",
                 t: searchParams.get("t") || "a",
@@ -31,7 +37,17 @@ const PropertyPage = () => {
                 "http://127.0.0.1:8000/api/properties",
                 { params }
             );
-            setListings(response.data.data);
+
+            if (params.p > 1) {
+                setListings((prevListings) => [
+                    ...prevListings,
+                    ...response.data.data,
+                ]);
+            } else {
+                setListings(response.data.data);
+            }
+
+            setCurrentPage(parseInt(params.p));
         } catch (error) {
             console.error("Error fetching listings:", error);
         }
@@ -78,6 +94,15 @@ const PropertyPage = () => {
         );
     };
 
+    const handleLoadMore = () => {
+        const nextPage = currentPage + 1;
+        setSearchParams((prev) => {
+            const newParams = new URLSearchParams(prev);
+            newParams.set("p", nextPage);
+            return newParams;
+        });
+    };
+
     const renderSlider = (photos) => {
         const settings = {
             dots: true,
@@ -87,8 +112,8 @@ const PropertyPage = () => {
             slidesToScroll: 1,
             autoplay: true,
             autoplaySpeed: 5000,
-            className: 'custom-slider', 
-            dotsClass: 'custom-dots'
+            className: "custom-slider",
+            dotsClass: "custom-dots",
         };
 
         return (
@@ -118,12 +143,17 @@ const PropertyPage = () => {
         }
 
         return (
-            <div key={listing.id} className="border rounded-lg p-6 bg-white shadow-md ml-4 mr-4">
+            <div
+                key={listing.id}
+                className="border rounded-lg p-6 bg-white shadow-md ml-4 mr-4"
+            >
                 <div className="relative">
                     {photos.length > 0 ? (
                         renderSlider(photos)
                     ) : (
-                        <p className="text-gray-500 text-center">No photo available.</p>
+                        <p className="text-gray-500 text-center">
+                            No photo available.
+                        </p>
                     )}
                 </div>
                 <div className="px-2">
@@ -131,25 +161,37 @@ const PropertyPage = () => {
                         {listing.title || listing.pg_name || listing.post}
                     </h2>
                     <p className="text-green-600 mb-1 flex items-center">
-                        <FontAwesomeIcon icon={faMapMarkerAlt} className="mr-2" />
-                        {listing.type}  {listing.location}
+                        <FontAwesomeIcon
+                            icon={faMapMarkerAlt}
+                            className="mr-2"
+                        />
+                        {listing.type} {listing.location}
                     </p>
                     <hr className="my-2 " />
                     <div
                         className="flex items-center justify-between mt-2 cursor-pointer hover:bg-slate-300 rounded p-1"
-                        onClick={() => handleViewClick(listing.id, listing.location, listing.listing_type)}
+                        onClick={() =>
+                            handleViewClick(
+                                listing.id,
+                                listing.location,
+                                listing.listing_type
+                            )
+                        }
                     >
                         <div className="text-gray-700 mb-2 flex items-center">
                             <p className="grid">
                                 Starts at{" "}
                                 <span className="font-semibold">
-                                    ₹{listing.price || listing.occupancy_amount || listing.approx_rent}
+                                    ₹
+                                    {listing.price ||
+                                        listing.occupancy_amount ||
+                                        listing.approx_rent}
                                 </span>
                             </p>
                         </div>
                         <p className="text-gray-700 flex items-center">
                             <FontAwesomeIcon icon={faHome} className="mr-2" />
-                            Room Type: {listing.room_type||listing.pg_type}
+                            Room Type: {listing.room_type || listing.pg_type}
                         </p>
                     </div>
                 </div>
@@ -173,6 +215,18 @@ const PropertyPage = () => {
                     {listings.map(renderListing)}
                 </div>
             </div>
+            {listings.length >= 8 && (
+                <div className="flex justify-center mt-6">
+                    <button
+                        onClick={handleLoadMore}
+                        className="w-30 h-30 text-white p-2 bg-blue-600 hover:bg-blue-800 rounded-sm flex items-center justify-center"
+                    >
+                        <span className="font-semibold">
+                            Load More <FontAwesomeIcon icon={faArrowUp} />
+                        </span>
+                    </button>
+                </div>
+            )}
         </div>
     );
 };
