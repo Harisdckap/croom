@@ -15,6 +15,7 @@ const Register = () => {
         name: "",
         email: "",
         password: "",
+        password_confirmation: "",
         gender: "",
         mobile: "",
     });
@@ -36,7 +37,6 @@ const Register = () => {
             setLoading(true);
             try {
                 const response = await register(formData);
-                // console.log("Registration response:", response);
 
                 if (response && response.access_token) {
                     const { access_token, user_id } = response;
@@ -80,6 +80,10 @@ const Register = () => {
         if (!data.password.trim()) errors.password = "Password is required";
         else if (data.password.length < 8)
             errors.password = "Password must be at least 8 characters long";
+        if (!data.password_confirmation.trim())
+            errors.password_confirmation = "Confirm Password is required";
+        else if (data.password !== data.password_confirmation)
+            errors.password_confirmation = "Passwords do not match";
 
         return errors;
     };
@@ -97,7 +101,6 @@ const Register = () => {
                         width="98"
                         color="blue"
                         wrapperStyle={{}}
-                        // secondaryColor="#93C5FD"
                         wrapperClass=""
                         visible={true}
                         ariaLabel='rotating-lines-loading'
@@ -142,6 +145,7 @@ const Register = () => {
                                         } rounded-md`}
                                         name="name"
                                         id="name"
+                                        placeholder="Username"
                                         value={formData.name}
                                         onChange={handleChange}
                                     />
@@ -168,6 +172,7 @@ const Register = () => {
                                         } rounded-md`}
                                         name="email"
                                         id="email"
+                                        placeholder="Email"
                                         value={formData.email}
                                         onChange={handleChange}
                                     />
@@ -241,6 +246,7 @@ const Register = () => {
                                         } rounded-md`}
                                         name="mobile"
                                         id="mobile"
+                                        placeholder="Phone Number"
                                         value={formData.mobile}
                                         onChange={handleChange}
                                     />
@@ -269,7 +275,7 @@ const Register = () => {
                                         } rounded-md`}
                                         name="password"
                                         id="password"
-                                        placeholder="password"
+                                        placeholder="Password"
                                         value={formData.password}
                                         onChange={handleChange}
                                         autoComplete="off"
@@ -300,6 +306,59 @@ const Register = () => {
                                     {errors.password && (
                                         <div className="text-red-500 text-sm">
                                             {errors.password}
+                                        </div>
+                                    )}
+                                </div>
+                                {/* confirm password */}
+                                <div className="mb-3 relative">
+                                    <label
+                                        htmlFor="password_confirmation"
+                                        className="block text-sm font-medium text-gray-700"
+                                    >
+                                        Confirm Password:
+                                    </label>
+                                    <input
+                                        type={
+                                            showPassword ? "text" : "password"
+                                        }
+                                        className={`mt-1 block w-full p-1 border ${
+                                            errors.password_confirmation
+                                                ? "border-red-500"
+                                                : "border-gray-300"
+                                        } rounded-md`}
+                                        name="password_confirmation"
+                                        id="password_confirmation"
+                                        placeholder="Confirm Password"
+                                        value={formData.password_confirmation}
+                                        onChange={handleChange}
+                                        autoComplete="off"
+                                    />
+                                    <p
+                                        className="absolute top-8 right-3 cursor-pointer"
+                                        onClick={() =>
+                                            setShowPassword(!showPassword)
+                                        }
+                                        id="eye"
+                                    >
+                                        {showPassword ? (
+                                            <EyeOutlined
+                                                style={{
+                                                    fontSize: "16px",
+                                                    color: "#1F293B",
+                                                }}
+                                            />
+                                        ) : (
+                                            <EyeInvisibleOutlined
+                                                style={{
+                                                    fontSize: "16px",
+                                                    color: "#1F293B",
+                                                }}
+                                            />
+                                        )}
+                                    </p>
+                                    {errors.password_confirmation && (
+                                        <div className="text-red-500 text-sm">
+                                            {errors.password_confirmation}
                                         </div>
                                     )}
                                 </div>

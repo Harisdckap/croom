@@ -31,12 +31,12 @@ const OTPPage = () => {
     };
 
     return (
-        <div className="min-h-screen flex flex-col bg-gray-100" style={{ backgroundColor: 'rgb(31, 41, 59)' }}> 
+        <div className="min-h-screen flex flex-col bg-gray-100" style={{ backgroundColor: 'rgb(31, 41, 59)' }}>
             <nav className="bg-gray-100 px-3 py-4">
                 <div className="flex items-center">
                     <img src={logo} alt="Logo" className="w-20 h-auto" />
                 </div>
-            </nav>
+            </nav>a portion of space within a building or other structure, separated by walls or partitions
             <div className="main flex-grow flex items-center justify-between">
                 <div className="flex mx-auto rounded-md bg-gray-100">
                     <div className="hidden md:flex items-center justify-between">
