@@ -1,19 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Tooltip } from "react-tooltip";
 import { useNavigate, Link } from "react-router-dom";
 import { RotatingLines } from "react-loader-spinner";
-import logo from "../assets/logo.png";
 import img from "../assets/reg.png";
 import { register } from "../js/api/auth";
-// import "./Style.css";
+import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
+import Auth_navbar from "./RentPageComponent/Auth_navbar";
 
 const Register = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
 
     const [formData, setFormData] = useState({
         name: "",
         email: "",
         password: "",
+        password_confirmation: "",
         gender: "",
         mobile: "",
     });
@@ -35,7 +40,6 @@ const Register = () => {
             setLoading(true);
             try {
                 const response = await register(formData);
-                console.log("Registration response:", response);
 
                 if (response && response.access_token) {
                     const { access_token, user_id } = response;
@@ -79,13 +83,28 @@ const Register = () => {
         if (!data.password.trim()) errors.password = "Password is required";
         else if (data.password.length < 8)
             errors.password = "Password must be at least 8 characters long";
+        if (!data.password_confirmation.trim())
+            errors.password_confirmation = "Confirm Password is required";
+        else if (data.password !== data.password_confirmation)
+            errors.password_confirmation = "Passwords do not match";
 
         return errors;
     };
 
+    // password
+    useEffect(() => {
+        let timer;
+        if (isOpen) {
+            timer = setTimeout(() => {
+                setIsOpen(false);
+            }, 3000);
+        }
+        return () => clearTimeout(timer);
+    }, [isOpen]);
+
     return (
         <div
-            className="min-h-screen flex flex-col rounded"
+            className="min-h-screen"
             style={{ backgroundColor: "rgb(31, 41, 59)" }}
         >
             {/* loader */}
@@ -96,7 +115,6 @@ const Register = () => {
                         width="98"
                         color="blue"
                         wrapperStyle={{}}
-                        // secondaryColor="#93C5FD"
                         wrapperClass=""
                         visible={true}
                         ariaLabel='rotating-lines-loading'
@@ -107,13 +125,10 @@ const Register = () => {
                 </div>
             )}
             {/* navbar */}
-            <nav className="w-full bg-gray-100 px-3 py-4">
-                <div className="flex items-center">
-                    <img src={logo} alt="Logo" className="w-20 h-auto" />
-                </div>
-            </nav>
+            <Auth_navbar />
+
             <div className="main flex flex-grow items-center justify-center">
-                <div className="bg-gray-100 mt-3 mb-3 rounded-md w-3xl flex">
+                <div className="bg-gray-100 mt-20 rounded-md w-3xl flex">
                     <div className="w-1/2 flex items-center justify-between">
                         <img className="w-full h-auto" src={img} alt="house" />
                     </div>
@@ -130,22 +145,23 @@ const Register = () => {
                                         htmlFor="name"
                                         className="block text-sm font-medium text-gray-700"
                                     >
-                                        Username
+                                        Username:
                                     </label>
                                     <input
                                         type="text"
-                                        className={`mt-1 block w-full p-2 border ${
+                                        className={`mt-1 block w-full p-1 border ${
                                             errors.name
                                                 ? "border-red-500"
                                                 : "border-gray-300"
                                         } rounded-md`}
                                         name="name"
                                         id="name"
+                                        placeholder="Username"
                                         value={formData.name}
                                         onChange={handleChange}
                                     />
-                                    {errors.name && (
-                                        <div className="text-red-500 text-sm">
+                                   {errors.name && (
+                                        <div className="text-red-500 text-sm fixed">
                                             {errors.name}
                                         </div>
                                     )}
@@ -156,32 +172,33 @@ const Register = () => {
                                         htmlFor="email"
                                         className="block text-sm font-medium text-gray-700"
                                     >
-                                        Email
+                                        Email:
                                     </label>
                                     <input
                                         type="email"
-                                        className={`mt-1 block w-full p-2 border ${
+                                        className={`mt-1 block w-full p-1 border ${
                                             errors.email
                                                 ? "border-red-500"
                                                 : "border-gray-300"
                                         } rounded-md`}
                                         name="email"
                                         id="email"
+                                        placeholder="Email"
                                         value={formData.email}
                                         onChange={handleChange}
                                     />
                                     {errors.email && (
-                                        <div className="text-red-500 text-sm">
+                                        <div className="text-red-500 fixed text-sm">
                                             {errors.email}
                                         </div>
                                     )}
                                 </div>
                                 {/* gender */}
-                                <fieldset className="mb-3">
+                                <fieldset className="mb-3 flex items-center gap-4">
                                     <label className="block text-sm font-medium text-gray-700">
-                                        Gender
+                                        Gender:
                                     </label>
-                                    <div className="mt-1">
+                                    <div className="">
                                         <label className="inline-flex items-center">
                                             <input
                                                 type="radio"
@@ -222,6 +239,7 @@ const Register = () => {
                                             {errors.gender}
                                         </div>
                                     )}
+
                                 </fieldset>
                                 {/* phone number */}
                                 <div className="mb-3">
@@ -229,91 +247,177 @@ const Register = () => {
                                         htmlFor="mobile"
                                         className="block text-sm font-medium text-gray-700"
                                     >
-                                        Phone Number
+                                        Phone Number:
                                     </label>
                                     <input
                                         type="text"
-                                        className={`mt-1 block w-full p-2 border ${
+                                        className={`mt-1 block w-full p-1 border ${
                                             errors.mobile
                                                 ? "border-red-500"
                                                 : "border-gray-300"
                                         } rounded-md`}
                                         name="mobile"
                                         id="mobile"
+                                        placeholder="Phone Number"
                                         value={formData.mobile}
                                         onChange={handleChange}
                                     />
-                                    {errors.mobile && (
-                                        <div className="text-red-500 text-sm">
+                                    <span className="fixed">{errors.mobile && (
+                                        <div className="text-red-500 fixed text-sm">
                                             {errors.mobile}
                                         </div>
                                     )}
+                                    </span>
                                 </div>
                                 {/* password */}
-                                <div className="mb-3">
+                                <div className="mb-3 relative">
                                     <label
                                         htmlFor="password"
                                         className="block text-sm font-medium text-gray-700"
                                     >
-                                        Password
+                                        Password:
                                     </label>
                                     <input
-                                        type="password"
-                                        className={`mt-1 block w-full p-2 border ${
+                                        type={
+                                            showPassword ? "text" : "password"
+                                        }
+                                        className={`mt-1 block w-full p-1 border ${
                                             errors.password
                                                 ? "border-red-500"
                                                 : "border-gray-300"
                                         } rounded-md`}
                                         name="password"
                                         id="password"
+                                        placeholder="Password"
                                         value={formData.password}
                                         onChange={handleChange}
+                                        autoComplete="off"
+                                        data-tooltip-id="tooltip-password"
+                                        onFocus={() => setIsOpen(true)}
                                     />
-                                    {errors.password && (
-                                        <div className="text-red-500 text-sm">
+                                    <span
+                                        onClick={() =>
+                                            setShowPassword(!showPassword)
+                                        }
+                                        className="absolute right-2 top-8 cursor-pointer"
+                                    >
+                                        {showPassword ? (
+                                            <EyeOutlined
+                                                style={{
+                                                    fontSize: "16px",
+                                                    color: "#1F293B",
+                                                }}
+                                            />
+                                        ) : (
+                                            <EyeInvisibleOutlined
+                                                style={{
+                                                    fontSize: "16px",
+                                                    color: "#1F293B",
+                                                }}
+                                            />
+                                        )}
+                                    </span>
+                                    <span className="fixed">{errors.password && (
+                                        <div className="text-red-500 fixed text-sm">
                                             {errors.password}
                                         </div>
                                     )}
+                                    </span>
+                                    <Tooltip
+                                        id="tooltip-password"
+                                        anchorSelect="#password"
+                                        isOpen={isOpen}
+                                        place="right-top"
+                                        className="bg-zinc-300 w-1/4"
+                                    >
+                                        <div>
+                                            <p className="font-semibold">Password must meet the following requirements</p>
+                                            <ul className="text-md">
+                                                <li>Be at least 8 characters</li>
+                                                <li>At least one Uppercase letter</li>
+                                                <li>At least one number</li>
+                                                <li>At least one special character</li>
+                                            </ul>
+                                        </div>
+                                    </Tooltip>
                                 </div>
-                                {/* select avatar */}
-                                {/* <div className="mb-3">
-                                    <label htmlFor="selectAvatar" className="block text-sm font-medium text-gray-700">Select Avatar</label>
-                                    <div class="grid grid-cols-4 mt-2">
-                                        <div class="relative w-16 h-16">
-                                            <img src="https://mighty.tools/mockmind-api/content/cartoon/9.jpg" alt="avatar" class="w-16 h-16 rounded-full bg-gray-200 cursor-pointer transform false" />
+                                {/* confirm password */}
+                                <div className="mb-3 relative">
+                                    <label
+                                        htmlFor="password_confirmation"
+                                        className="block text-sm font-medium text-gray-700"
+                                    >
+                                        Confirm Password:
+                                    </label>
+                                    <input
+                                        type={
+                                            showConfirmPassword
+                                                ? "text"
+                                                : "password"
+                                        }
+                                        className={`mt-1 block w-full p-1 border ${
+                                            errors.password_confirmation
+                                                ? "border-red-500"
+                                                : "border-gray-300"
+                                        } rounded-md`}
+                                        name="password_confirmation"
+                                        id="password_confirmation"
+                                        placeholder="Confirm Password"
+                                        value={formData.password_confirmation}
+                                        onChange={handleChange}
+                                        autoComplete="off"
+                                    />
+                                    <span
+                                        onClick={() =>
+                                            setShowConfirmPassword(
+                                                !showConfirmPassword
+                                            )
+                                        }
+                                        className="absolute right-2 top-8 cursor-pointer"
+                                    >
+                                        {showConfirmPassword ? (
+                                            <EyeOutlined
+                                            style={{
+                                                fontSize: "16px",
+                                                color: "#1F293B",
+                                            }}
+                                        />
+                                        ) : (
+                                            <EyeInvisibleOutlined
+                                                style={{
+                                                    fontSize: "16px",
+                                                    color: "#1F293B",
+                                                }}
+                                            />
+                                        )}
+                                    </span>
+                                    <span className="fixed">{errors.password_confirmation && (
+                                        <div className="text-red-500 fixed text-sm">
+                                            {errors.password_confirmation}
                                         </div>
-                                        <div class="relative w-16 h-16">
-                                            <img src="https://mighty.tools/mockmind-api/content/cartoon/7.jpg" alt="avatar" class="w-16 h-16 rounded-full bg-gray-200 cursor-pointer transform false" />
-                                        </div>
-                                        <div class="relative w-16 h-16">
-                                            <img src="https://mighty.tools/mockmind-api/content/cartoon/32.jpg" alt="avatar" class="w-16 h-16 rounded-full bg-gray-200 cursor-pointer transform false" />
-                                        </div>
-                                        <div class="relative w-16 h-16">
-                                            <img src="https://mighty.tools/mockmind-api/content/cartoon/5.jpg" alt="avatar" class="w-16 h-16 rounded-full bg-gray-200 cursor-pointer transform false" />
-                                        </div>
-                                    </div>
-                                </div> */}
-                                {/* register button */}
-                                <div className="mt-4">
-                                    {!loading && (
-                                        <button
-                                            type="submit"
-                                            className="w-full py-2 px-4 bg-blue-500 text-white font-semibold rounded-md shadow-md hover:bg-blue-700 focus:outline-none"
-                                        >
-                                            Register
-                                        </button>
                                     )}
+                                    </span>
+                                </div>
+
+                                {/* register */}
+                                <div className="text-center">
+                                    <button
+                                        type="submit"
+                                        className="inline-flex items-center px-4 py-2 mt-4 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                    >
+                                        Register
+                                    </button>
                                 </div>
                             </form>
-                            {/* ----- */}
+                            {/* login */}
                             <div className="text-center mt-3">
                                 <p className="text-sm">
                                     Already have an account?{" "}
                                     <Link
                                         to="/login"
-                                        className="text-blue-500 hover:underline"
+                                        className="text-blue-600 hover:underline"
                                     >
-                                        Login
+                                        Sign In
                                     </Link>
                                 </p>
                             </div>

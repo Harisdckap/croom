@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { login } from '../js/api/auth';
 import apartmentIMG from '../assets/log3.png';
-import logo from '../assets/logo.png';
+import Auth_navbar from './RentPageComponent/Auth_navbar';
+// import logo from '../assets/logo.png';
 
 
 function LoginPage() {
@@ -45,25 +46,21 @@ function LoginPage() {
     };
 
     return (
-        <div className=' min-h-screen flex flex-col bg-gray-100'   style={{ backgroundColor: 'rgb(31, 41, 59)' }}>
+        <div className='min-h-screen flex flex-col bg-gray-100'   style={{ backgroundColor: 'rgb(31, 41, 59)' }}>
             {/* Navbar with Logo */}
-            <nav className="bg-gray-100 px-3 py-4">
-                <div className="flex items-center">
-                    <img src={logo} alt="Logo" className="w-20 h-auto" />
-                </div>
-            </nav>
+            <Auth_navbar />
 
             {/* Main Content */}
-            <div className='mt-12 w-full flex items-center justify-center'>
-            <div className="bg-gray-100 rounded-md flex">
+            <div className='flex items-center justify-center'>
+            <div className="bg-gray-100 w-3xl rounded-md flex">
                 {/* Image Section */}
-                <div className='hidden md:flex md:w-1/2 items-center justify-center'>
+                <div className='w-2/1 flex items-center justify-between'>
                     <img src={apartmentIMG} className='max-h-96' alt='Apartment' />
                 </div>
 
                 {/* Form Section */}
-                <div className='flex items-center mt-2 mb-2 p-2 justify-between'>
-                    <div>
+                <div className='flex items-center mt-2 mb-2 p-4 justify-between'>
+                    <div className='max-w-md w-full'>
                         <h1 className='text-center text-2xl font-bold mb-4'>Login to your account</h1>
                         <p className='text-center text-gray-500 mb-4'>Welcome back! Select a method to login:</p>
                         <div className='flex justify-center gap-3 mb-4'>

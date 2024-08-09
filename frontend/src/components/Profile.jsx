@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import logo from "../assets/logo.png";
+import Auth_navbar from './RentPageComponent/Auth_navbar';
+// import logo from "../assets/logo.png";
 
 const Profile = () => {
     const [profileImage, setProfileImage] = useState(null);
@@ -25,11 +26,9 @@ const Profile = () => {
 
     return (
         <div>
-            <nav className="bg-gray-100 px-3 py-4">
-                <div className="flex items-center">
-                    <img src={logo} alt="Logo" className="w-20 h-auto" />
-                </div>
-            </nav>
+            {/* navbar with logo */}
+            <Auth_navbar />
+            
             <section className="mt-0 mx-auto dark:bg-gray-900">
                 <div className="lg:w-[54%] md:w-[54%] xs:w-[54%] mx-auto flex gap-0">
                     <div className="xs:w-[54%] md:w-[54%] mx-auto mt-20 bg-gray-200 absolute top-10 shadow-2xl p-6 rounded-xl h-fit self-center dark:bg-gray-800/40">

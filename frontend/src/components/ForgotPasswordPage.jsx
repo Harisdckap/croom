@@ -3,7 +3,8 @@ import React, { useState } from "react";
 import { forgotPassword } from "../js/api/auth";
 import img from "../assets/forgotpwd2.png";
 import { RotatingLines } from 'react-loader-spinner';
-import logo from "../assets/logo.png";
+import Auth_navbar from "./RentPageComponent/Auth_navbar";
+// import logo from "../assets/logo.png";
 
 function ForgotPasswordPage() {
     const [email, setEmail] = useState("");
@@ -60,11 +61,9 @@ function ForgotPasswordPage() {
 
                 </div>
             )}
-            <nav className="bg-gray-100 px-3 py-4">
-                <div className="flex items-center">
-                    <img src={logo} alt="Logo" className="w-20 h-auto" />
-                </div>
-            </nav>
+            {/* navbar with logo */}
+            <Auth_navbar />
+
             <div className="flex flex-col items-center">
 
 
