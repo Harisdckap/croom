@@ -10,6 +10,7 @@ const Register = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const [formData, setFormData] = useState({
         name: "",
@@ -21,6 +22,7 @@ const Register = () => {
     });
 
     const [errors, setErrors] = useState({});
+    const [serverError, setServerError] = useState("");
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -43,10 +45,7 @@ const Register = () => {
                     const now = new Date();
                     const expirationTime = now.getTime() + 24 * 60 * 60 * 1000;
                     localStorage.setItem("auth_token", access_token);
-                    localStorage.setItem(
-                        "auth_token_expiration",
-                        expirationTime
-                    );
+                    localStorage.setItem("auth_token_expiration", expirationTime);
                     localStorage.setItem("user_id", user_id);
 
                     setTimeout(() => {
@@ -58,7 +57,11 @@ const Register = () => {
                 }
             } catch (error) {
                 console.error("Registration error:", error);
-                alert("Registration failed. Please try again.");
+                if (error.response && error.response.status === 409) {
+                    setServerError(error.response.data.message || "Email is already registered. Please log in.");
+                } else {
+                    setServerError("Registration failed. Please try again.");
+                }
                 setLoading(false);
             }
         } else {
@@ -183,44 +186,45 @@ const Register = () => {
                                     )}
                                 </div>
                                 {/* gender */}
-                                <fieldset className="mb-3 flex items-center gap-4">
-                                    <label className="block text-sm font-medium text-gray-700">
+                                <div className="mb-3">
+                                    <label
+                                        className="block text-sm font-medium text-gray-700"
+                                    >
                                         Gender:
                                     </label>
-                                    <div className="">
-                                        <label className="inline-flex items-center">
+                                    <div className="flex items-center mt-1">
+                                        <label className="inline-flex items-center mr-4">
                                             <input
                                                 type="radio"
-                                                className={`form-radio ${
-                                                    errors.gender
-                                                        ? "text-red-500"
-                                                        : ""
-                                                }`}
                                                 name="gender"
                                                 value="male"
-                                                checked={
-                                                    formData.gender === "male"
-                                                }
+                                                className="form-radio text-blue-600"
+                                                checked={formData.gender === "male"}
                                                 onChange={handleChange}
                                             />
                                             <span className="ml-2">Male</span>
                                         </label>
-                                        <label className="inline-flex items-center ml-6">
+                                        <label className="inline-flex items-center mr-4">
                                             <input
                                                 type="radio"
-                                                className={`form-radio ${
-                                                    errors.gender
-                                                        ? "text-red-500"
-                                                        : ""
-                                                }`}
                                                 name="gender"
                                                 value="female"
-                                                checked={
-                                                    formData.gender === "female"
-                                                }
+                                                className="form-radio text-blue-600"
+                                                checked={formData.gender === "female"}
                                                 onChange={handleChange}
                                             />
                                             <span className="ml-2">Female</span>
+                                        </label>
+                                        <label className="inline-flex items-center">
+                                            <input
+                                                type="radio"
+                                                name="gender"
+                                                value="other"
+                                                className="form-radio text-blue-600"
+                                                checked={formData.gender === "other"}
+                                                onChange={handleChange}
+                                            />
+                                            <span className="ml-2">Other</span>
                                         </label>
                                     </div>
                                     {errors.gender && (
@@ -228,14 +232,14 @@ const Register = () => {
                                             {errors.gender}
                                         </div>
                                     )}
-                                </fieldset>
+                                </div>
                                 {/* phone number */}
                                 <div className="mb-3">
                                     <label
                                         htmlFor="mobile"
                                         className="block text-sm font-medium text-gray-700"
                                     >
-                                        Phone Number:
+                                        Phone number:
                                     </label>
                                     <input
                                         type="text"
@@ -246,7 +250,7 @@ const Register = () => {
                                         } rounded-md`}
                                         name="mobile"
                                         id="mobile"
-                                        placeholder="Phone Number"
+                                        placeholder="Phone number"
                                         value={formData.mobile}
                                         onChange={handleChange}
                                     />
@@ -257,52 +261,35 @@ const Register = () => {
                                     )}
                                 </div>
                                 {/* password */}
-                                <div className="mb-3 relative">
+                                <div className="mb-3">
                                     <label
                                         htmlFor="password"
                                         className="block text-sm font-medium text-gray-700"
                                     >
                                         Password:
                                     </label>
-                                    <input
-                                        type={
-                                            showPassword ? "text" : "password"
-                                        }
-                                        className={`mt-1 block w-full p-1 border ${
-                                            errors.password
-                                                ? "border-red-500"
-                                                : "border-gray-300"
-                                        } rounded-md`}
-                                        name="password"
-                                        id="password"
-                                        placeholder="Password"
-                                        value={formData.password}
-                                        onChange={handleChange}
-                                        autoComplete="off"
-                                    />
-                                    <p
-                                        className="absolute top-8 right-3 cursor-pointer"
-                                        onClick={() =>
-                                            setShowPassword(!showPassword)
-                                        }
-                                        id="eye"
-                                    >
-                                        {showPassword ? (
-                                            <EyeOutlined
-                                                style={{
-                                                    fontSize: "16px",
-                                                    color: "#1F293B",
-                                                }}
-                                            />
-                                        ) : (
-                                            <EyeInvisibleOutlined
-                                                style={{
-                                                    fontSize: "16px",
-                                                    color: "#1F293B",
-                                                }}
-                                            />
-                                        )}
-                                    </p>
+                                    <div className="relative">
+                                        <input
+                                            type={showPassword ? "text" : "password"}
+                                            className={`mt-1 block w-full p-1 border ${
+                                                errors.password
+                                                    ? "border-red-500"
+                                                    : "border-gray-300"
+                                            } rounded-md`}
+                                            name="password"
+                                            id="password"
+                                            placeholder="Password"
+                                            value={formData.password}
+                                            onChange={handleChange}
+                                        />
+                                        <button
+                                            type="button"
+                                            className="absolute inset-y-0 right-0 flex items-center px-2"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                        >
+                                            {showPassword ? <EyeInvisibleOutlined /> : <EyeOutlined />}
+                                        </button>
+                                    </div>
                                     {errors.password && (
                                         <div className="text-red-500 text-sm">
                                             {errors.password}
@@ -310,82 +297,61 @@ const Register = () => {
                                     )}
                                 </div>
                                 {/* confirm password */}
-                                <div className="mb-3 relative">
+                                <div className="mb-3">
                                     <label
                                         htmlFor="password_confirmation"
                                         className="block text-sm font-medium text-gray-700"
                                     >
                                         Confirm Password:
                                     </label>
-                                    <input
-                                        type={
-                                            showPassword ? "text" : "password"
-                                        }
-                                        className={`mt-1 block w-full p-1 border ${
-                                            errors.password_confirmation
-                                                ? "border-red-500"
-                                                : "border-gray-300"
-                                        } rounded-md`}
-                                        name="password_confirmation"
-                                        id="password_confirmation"
-                                        placeholder="Confirm Password"
-                                        value={formData.password_confirmation}
-                                        onChange={handleChange}
-                                        autoComplete="off"
-                                    />
-                                    <p
-                                        className="absolute top-8 right-3 cursor-pointer"
-                                        onClick={() =>
-                                            setShowPassword(!showPassword)
-                                        }
-                                        id="eye"
-                                    >
-                                        {showPassword ? (
-                                            <EyeOutlined
-                                                style={{
-                                                    fontSize: "16px",
-                                                    color: "#1F293B",
-                                                }}
-                                            />
-                                        ) : (
-                                            <EyeInvisibleOutlined
-                                                style={{
-                                                    fontSize: "16px",
-                                                    color: "#1F293B",
-                                                }}
-                                            />
-                                        )}
-                                    </p>
+                                    <div className="relative">
+                                        <input
+                                            type={showConfirmPassword ? "text" : "password"}
+                                            className={`mt-1 block w-full p-1 border ${
+                                                errors.password_confirmation
+                                                    ? "border-red-500"
+                                                    : "border-gray-300"
+                                            } rounded-md`}
+                                            name="password_confirmation"
+                                            id="password_confirmation"
+                                            placeholder="Confirm Password"
+                                            value={formData.password_confirmation}
+                                            onChange={handleChange}
+                                        />
+                                        <button
+                                            type="button"
+                                            className="absolute inset-y-0 right-0 flex items-center px-2"
+                                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                        >
+                                            {showConfirmPassword ? <EyeInvisibleOutlined /> : <EyeOutlined />}
+                                        </button>
+                                    </div>
                                     {errors.password_confirmation && (
                                         <div className="text-red-500 text-sm">
                                             {errors.password_confirmation}
                                         </div>
                                     )}
                                 </div>
-
-                                <div className="mt-4">
-                                    {!loading && (
-                                        <button
-                                            type="submit"
-                                            className="w-full py-2 px-4 bg-blue-500 text-white font-semibold rounded-md shadow-md hover:bg-blue-700 focus:outline-none"
-                                        >
-                                            Register
-                                        </button>
-                                    )}
-                                </div>
+                                {/* submit button */}
+                                <button
+                                    type="submit"
+                                    className="w-full bg-blue-500 text-white py-2 px-4 rounded-md"
+                                >
+                                    Register
+                                </button>
                             </form>
-                            {/* ----- */}
-                            <div className="text-center mt-3">
-                                <p className="text-sm">
-                                    Already have an account?{" "}
-                                    <Link
-                                        to="/login"
-                                        className="text-blue-500 hover:underline"
-                                    >
-                                        Login
-                                    </Link>
-                                </p>
-                            </div>
+                            {/* server-side error message */}
+                            {serverError && (
+                                <div className="mt-4 text-red-500">
+                                    {serverError}
+                                </div>
+                            )}
+                            <p className="text-center mt-4">
+                                Already have an account?{" "}
+                                <Link to="/login" className="text-blue-500 underline">
+                                    Log In
+                                </Link>
+                            </p>
                         </div>
                     </div>
                 </div>

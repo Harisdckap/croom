@@ -17,6 +17,13 @@ class RegisterController extends Controller
 {
     public function register(Request $request)
     {
+        $existingUser = User::where('email', $request->email)->first();
+        if ($existingUser) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User already registered. Please login.'
+            ], 409);
+        }
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
@@ -29,7 +36,6 @@ class RegisterController extends Controller
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
-
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,

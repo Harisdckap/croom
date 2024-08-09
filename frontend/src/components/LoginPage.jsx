@@ -29,28 +29,35 @@ function LoginPage() {
         try {
             const response = await login(formData);
 
-            if (response && response.access_token) {
-                const { access_token } = response;
+            if (response && response.success) {
+                if (response.access_token) {
+                    const { access_token } = response;
 
-                // Store the token in localStorage
-                localStorage.setItem("auth_token", access_token);
+                    // Store the token in localStorage
+                    localStorage.setItem("auth_token", access_token);
 
-                // Redirect to home page
-                navigate("/");
+                    // Redirect to home page
+                    navigate("/");
+                }
             } else {
-                throw new Error("No access token received from the server");
+                throw new Error(response.message || "Login failed.");
             }
         } catch (error) {
             console.error("Login error:", error);
-            setErrorMessage(
-                "Login failed. Please check your credentials and try again."
-            );
+
+            if (error.response && error.response.status === 404) {
+                setErrorMessage("User not found. Please register.");
+            } else if (error.response && error.response.status === 401) {
+                setErrorMessage("Invalid credentials. Please try again.");
+            } else {
+                setErrorMessage("An error occurred. Please try again.");
+            }
         }
     };
 
     return (
         <div
-            className=" min-h-screen flex flex-col bg-gray-100"
+            className="min-h-screen flex flex-col bg-gray-100"
             style={{ backgroundColor: "rgb(31, 41, 59)" }}
         >
             {/* Navbar with Logo */}
@@ -103,11 +110,6 @@ function LoginPage() {
                                         onChange={handleChange}
                                         required
                                     />
-                                    {errorMessage && (
-                                        <div className="text-red-500 text-sm">
-                                            {errorMessage}
-                                        </div>
-                                    )}
                                 </div>
                                 <div className="mb-3 relative">
                                     <label
@@ -131,7 +133,7 @@ function LoginPage() {
                                         value={formData.password}
                                         onChange={handleChange}
                                         required
-                                        autocomplete="off"
+                                        autoComplete="off"
                                     />
                                     <p
                                         className="absolute top-9 right-3 cursor-pointer"
@@ -156,12 +158,6 @@ function LoginPage() {
                                             />
                                         )}
                                     </p>
-
-                                    {errorMessage && (
-                                        <div className="text-red-500 text-sm">
-                                            {errorMessage}
-                                        </div>
-                                    )}
                                 </div>
                                 <div className="mb-3 flex items-center">
                                     <input
@@ -178,9 +174,8 @@ function LoginPage() {
                                 </div>
                                 <div className="mb-3 flex justify-between items-center">
                                     <div>
-                                        {/* Use Link component for navigation */}
                                         <Link
-                                            to="/forgot-Password"
+                                            to="/forgot-password"
                                             className="text-blue-500 hover:underline"
                                         >
                                             Forgot password?
@@ -193,6 +188,11 @@ function LoginPage() {
                                 >
                                     Login
                                 </button>
+                                {errorMessage && (
+                                    <div className="text-red-500 text-sm mt-4">
+                                        {errorMessage}
+                                    </div>
+                                )}
                                 <div className="flex gap-4 justify-center pt-4">
                                     <Link className="transform transition-transform duration-200 hover:scale-110">
                                         <img

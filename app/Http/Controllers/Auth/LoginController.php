@@ -1,6 +1,4 @@
 <?php
-
-
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
@@ -8,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class LoginController extends Controller
 {
@@ -21,15 +20,18 @@ class LoginController extends Controller
         if ($validator->fails()) {
             return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
         }
+        $user = User::where('email', $request->email)->first();
 
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'User not found. Please register.'], 404);
+        }
         $credentials = $request->only('email', 'password');
 
         try {
-            if (! $token = JWTAuth::attempt($credentials)) {
+            if (!$token = JWTAuth::attempt($credentials)) {
                 return response()->json(['success' => false, 'message' => 'Invalid credentials'], 401);
             }
 
-            $user = Auth::user();
             return response()->json([
                 'success' => true,
                 'user' => $user,
@@ -46,4 +48,3 @@ class LoginController extends Controller
         // Handle Google login here
     }
 }
-
