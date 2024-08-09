@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { FaHeart, FaUser } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from "../assets/logo.png";
@@ -21,15 +22,14 @@ const Header = () => {
 
     if (token) {
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/logout', {
-          method: 'POST',
+        const response = await axios.post('http://127.0.0.1:8000/api/logout', {}, {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
         });
 
-        if (response.ok) {
+        if (response.status === 200) {
           localStorage.removeItem('auth_token');
           setIsLoggedIn(false);
           navigate('/login');
@@ -40,7 +40,7 @@ const Header = () => {
         console.error('Error:', error);
       }
     }
-  };
+};
 
   return (
     <nav className="fixed top-0 z-[9999] w-full bg-white text-gray-900 p-2 border-b-2">
